@@ -187,7 +187,7 @@
                           <td>{{$item->durasi}} menit</td>
                           <td>{{$item->created_at}}</td>
                           <td>
-                            <a href="{{route('pengajar.cat.edit', [$item->id])}}"><button type="button" class="btn btn-sm btn-success">edit</button></a>
+                            <a href="{{route('pengajar.cat.soal', [$item->id])}}"><button type="button" class="btn btn-sm btn-success">Soal</button></a>
                             <button type="button" class="btn btn-sm btn-danger" data-toggle="modal" data-target="#">hapus</button>
                           </td>
                       @endforeach

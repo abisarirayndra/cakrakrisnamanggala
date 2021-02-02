@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Kelas;
 use App\PaketSoal;
 use App\Tema;
+use App\Soal;
 
 
 class CatController extends Controller
@@ -60,8 +61,11 @@ class CatController extends Controller
         return back();
     }
 
-    public function tambahSoal(Request $request){
+    public function Soal($id){
         $user = Auth::user()->nama;
-        $nama = PaketSoal::select('paket_soals.nama_paket')->where('id', $id)->get();
+        $tema_id = $id;
+        $soal = Soal::where('tema_id', $id)->get();
+
+        return view('pengajar.cat.soal', compact('user', 'tema_id','soal'));
     }
 }

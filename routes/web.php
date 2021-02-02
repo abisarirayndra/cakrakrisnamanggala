@@ -38,4 +38,6 @@ Route::group(['middleware' => ['auth','pengajar-role']], function(){
     Route::post('pengajar/cat/tambahpaket','CatController@store')->name('pengajar.cat.tambahpaket');
     Route::get('/pengajar/cat/edit/{id}','CatController@edit')->name('pengajar.cat.edit');
     Route::post('/pengajar/cat/buattema','CatController@buatTema')->name('pangajar.cat.buattema');
+    Route::get('/pengajar/cat/soal/{id}','CatController@Soal')->name('pengajar.cat.soal');
+
 });
