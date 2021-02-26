@@ -36,8 +36,28 @@ Route::group(['middleware' => ['auth','super-role']], function(){
 Route::group(['middleware' => ['auth','pengajar-role']], function(){
     Route::get('/pengajar/cat/index','CatController@index')->name('pengajar.cat.index');
     Route::post('pengajar/cat/tambahpaket','CatController@store')->name('pengajar.cat.tambahpaket');
-    Route::get('/pengajar/cat/edit/{id}','CatController@edit')->name('pengajar.cat.edit');
+    // Route::get('/pengajar/cat/edit/{id}','CatController@edit')->name('pengajar.cat.edit');
+    Route::get('/pengajar/cat/tema','CatController@tema')->name('pengajar.cat.tema');
     Route::post('/pengajar/cat/buattema','CatController@buatTema')->name('pangajar.cat.buattema');
+    Route::get('/pengajar/cat/edit/{id}','CatController@editTema')->name('pengajar.cat.edit');
+    Route::post('/pengajar/cat/updatetema/{id}','CatController@updateTema')->name('pengajar.cat.updatetema');
+    Route::get('/pengajar/cat/hapustema/{id}','CatController@destroyTema')->name('pengajar.cat.hapustema');
+    Route::get('/pengajar/cat/hasil/{id}','CatController@hasilPengajar')->name('pengajar.cat.hasil');
     Route::get('/pengajar/cat/soal/{id}','CatController@Soal')->name('pengajar.cat.soal');
+    Route::post('/pengajar/cat/importsoal','CatController@importSoal')->name('pengajar.cat.importsoal');
+});
+
+Route::group(['middleware' => ['auth','pelajar-role']], function(){
+    Route::get('/pelajar/index','PelajarController@index')->name('pelajar.index');
+    // Route::get('/pelajar/cat/tema/{id}','CatController@temaSoal')->name('pelajar.cat.tema');
+    Route::get('/pelajar/cat/tema','CatController@temaSoal')->name('pelajar.cat.tema');
+    Route::post('/pengajar/cat/upjawaban','CatController@upJawaban')->name('pelajar.cat.upjawaban');
+    Route::get('/pelajar/cat/soal/{id}','CatController@lembarSoal')->name('pelajar.cat.soal');
+    Route::get('/pelajar/cat/kumpulkan/{id}','CatController@reviewJawaban')->name('pelajar.cat.kumpulkan');
+    Route::get('/pelajar/cat/jawaban', 'CatController@jawaban')->name('pelajar.cat.jawaban');
+    Route::get('/pelajar/cat/skoring/{id}','CatController@skoring')->name('pelajar.cat.skoring');
+    Route::get('/pelajar/cat/hasil', 'CatController@hasilPelajar')->name('pelajar.cat.hasil');
+
+    //baru
 
 });

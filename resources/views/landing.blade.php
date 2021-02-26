@@ -29,8 +29,8 @@
                         {{-- <li class="nav-item"><a class="nav-link js-scroll-trigger" href="#services">Services</a></li>
                         <li class="nav-item"><a class="nav-link js-scroll-trigger" href="#portfolio">Portfolio</a></li>
                         <li class="nav-item"><a class="nav-link js-scroll-trigger" href="#about">About</a></li> --}}
-                        <li class="nav-item"><a class="nav-link js-scroll-trigger" href="">Login</a></li>
-                        <li class="nav-item"><a class="nav-link js-scroll-trigger" href="#contact">Contact Us</a></li>
+                        <li class="nav-item"><a class="nav-link js-scroll-trigger" href="{{route('login')}}">Login</a></li>
+                        <li class="nav-item"><a class="nav-link js-scroll-trigger" href="{{route('auth.register')}}">Daftar</a></li>
                     </ul>
                 </div>
         </nav>
@@ -69,7 +69,7 @@
               
               </div>
         </header>
-        {{-- Info --}}
+        {{-- Info
         <section class="page-section bg-dark" id="info">
             
             <div class="container">
@@ -80,7 +80,7 @@
                         <div class="h6 text-light">Ujian Online Gratis</div>
                         <div><p class="text-light">lorem ipsum dolor sit amet</p></div>
                         <div><button type="button" class="btn btn-primary btn-sm">Daftar</button></div>
-            </div>
+            </div> --}}
         </section>
         {{-- Profil --}}
         <section class="page-section" id="profil">
@@ -126,7 +126,7 @@
             </div>
         </section>
         <!-- Portfolio Grid-->
-        <section class="page-section bg-dark" id="portfolio">
+        {{-- <section class="page-section bg-dark" id="portfolio">
             <div class="container">
                 <div class="text-center">
                     <h2 class="section-heading text-uppercase text-light">Dokumentasi Kegiatan</h2>
@@ -219,7 +219,7 @@
                     </div>
                 </div>
             </div>
-        </section>
+        </section> --}}
         {{-- <!-- About-->
         <section class="page-section" id="about">
             <div class="container">
@@ -346,7 +346,7 @@
             </div>
         </div>
         <!-- Contact-->
-        <section class="page-section" id="contact">
+        {{-- <section class="page-section" id="contact">
             <div class="container">
                 <div class="text-center">
                     <h2 class="section-heading text-uppercase">Contact Us</h2>
@@ -381,20 +381,20 @@
                     </div>
                 </form>
             </div>
-        </section>
+        </section> --}}
         <!-- Footer-->
         <footer class="footer py-4">
             <div class="container">
                 <div class="row align-items-center">
-                    <div class="col-lg-4 text-lg-left">Copyright © Your Website 2020</div>
+                    <div class="col-lg-4 text-lg-left">Copyright © Cakra Krisna Manggala 2021</div>
                     <div class="col-lg-4 my-3 my-lg-0">
                         <a class="btn btn-dark btn-social mx-2" href="#!"><i class="fab fa-twitter"></i></a>
                         <a class="btn btn-dark btn-social mx-2" href="#!"><i class="fab fa-facebook-f"></i></a>
                         <a class="btn btn-dark btn-social mx-2" href="#!"><i class="fab fa-linkedin-in"></i></a>
                     </div>
                     <div class="col-lg-4 text-lg-right">
-                        <a class="mr-3" href="#!">Privacy Policy</a>
-                        <a href="#!">Terms of Use</a>
+                        {{-- <a class="mr-3" href="#!">Privacy Policy</a>
+                        <a href="#!">Terms of Use</a> --}}
                     </div>
                 </div>
             </div>

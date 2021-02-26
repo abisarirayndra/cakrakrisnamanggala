@@ -18,7 +18,7 @@
   <link rel="stylesheet" href="{{asset('admin/assets/css/style.css')}}">
   <link rel="stylesheet" href="{{asset('admin/assets/css/components.css')}}">
 </head>
-
+@include('sweetalert::alert')
 <body>
   <div id="app">
     <div class="main-wrapper">
@@ -127,6 +127,7 @@
                               $no = 1;
                           @endphp
                           @foreach ($paket as $item)
+                          <tr>
                               <td>{{$no++}}</td>
                               <td>{{$item->nama_paket}}</td>
                               <td>{{$item->pengajar}}</td>
@@ -141,6 +142,7 @@
                                 <a href="{{route('pengajar.cat.edit', [$item->id])}}"><button type="button" class="btn btn-sm btn-success">edit</button></a>
                                 <button type="button" class="btn btn-sm btn-danger" data-toggle="modal" data-target="#">hapus</button>
                               </td>
+                          <td>
                           @endforeach
                       </tbody>
                     </table>
