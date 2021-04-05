@@ -6,7 +6,7 @@
 
 @section('css')
      <!-- Custom styles for this page -->
-     <link href="{{asset('vendor/datatables/dataTables.bootstrap4.min.css')}}" rel="stylesheet">
+     <link href="{{asset('vendor/datatables/datatables.min.css')}}" rel="stylesheet">
 @endsection
 
 @section('content')
@@ -15,35 +15,7 @@
   <!-- Page Wrapper -->
   <div id="wrapper">
 
-      <!-- Sidebar -->
-      <ul class="navbar-nav bg-gradient-warning sidebar sidebar-dark accordion" id="accordionSidebar">
-
-          <!-- Sidebar - Brand -->
-          <a class="sidebar-brand d-flex align-items-center justify-content-center" href="index.html">
-             
-                <img src="{{asset('assets/img/logos/krisna.png')}}" width="50" alt="">
-             
-          </a>
-
-          <!-- Divider -->
-          <hr class="sidebar-divider my-0">
-
-          <!-- Nav Item - Dashboard -->
-          <li class="nav-item">
-              <a class="nav-link">
-                  <i class="fas fa-fw fa-tachometer-alt"></i>
-                  <span>Dashboard</span></a>
-          </li>
-
-          
-
-          <!-- Sidebar Toggler (Sidebar) -->
-          <div class="text-center d-none d-md-inline">
-              <button class="rounded-circle border-0" id="sidebarToggle"></button>
-          </div>
-
-      </ul>
-      <!-- End of Sidebar -->
+      
 
       <!-- Content Wrapper -->
       <div id="content-wrapper" class="d-flex flex-column">
@@ -96,7 +68,7 @@
                   <h5>Kerjakan dengan teliti !</h5>
                   <div>Waktu yang tersisa adalah <b><span id="demo"> </span></b></div>
                 </div>
-                <div class="card-body">
+                <div class="card-body ml-3">
                   <div class="row">
                     @foreach ($soal as $item)
                     <form action="{{route('pelajar.cat.soal', [$item->tema_id])}}" method="get">
@@ -105,112 +77,55 @@
                     @endforeach                                  
                   </div>          
                   <a href="" class="btn btn-primary mt-3" data-toggle="modal" data-target="#selesaiModal">Selesai</a> 
-      @if ($tenggat->jenis == "matematika")
-                @foreach ($tampil_soal as $item)
-                <div class="row mt-4">
-                    <h6>{{$item->nomor_soal}}.</h6> <h4>${{$item->soal}}$</h4> 
-                </div>
-                <form action="{{route('pelajar.cat.jawaban')}}" method="GET">
-                  @csrf
-                  <input hidden name="soal" value={{$item->id}}>
-                  <input hidden name="nomorsoal" value={{$item->nomor_soal}}>
-                  <div class="form-group">
-                    <div class="form-check">
-                      <input class="form-check-input" type="radio" name="jawaban" value="{{$item->opsi_a}}">
-                      <label class="form-check-label" for="exampleRadios1">
-                        <h4>${{$item->opsi_a}}$</h4>
-                      </label>
-                    </div>
-                    <div class="form-check">
-                      <input class="form-check-input" type="radio" name="jawaban" value="{{$item->opsi_b}}">
-                      <label class="form-check-label" for="exampleRadios2">
-                        <h4>${{$item->opsi_b}}$</h4>
-                      </label>
-                    </div>
-                    <div class="form-check">
-                      <input class="form-check-input" type="radio" name="jawaban" value="{{$item->opsi_c}}">
-                      <label class="form-check-label" for="exampleRadios2">
-                        <h4>${{$item->opsi_c}}$</h4>
-                      </label>
-                    </div>
-                    <div class="form-check">
-                      <input class="form-check-input" type="radio" name="jawaban" value="{{$item->opsi_d}}">
-                      <label class="form-check-label" for="exampleRadios2">
-                        <h4>${{$item->opsi_d}}$ </h4>
-                      </label>
-                    </div>
-                    @if ($item->opsi_e == null)
-
-                    @else
-                    <div class="form-check">
-                      <input class="form-check-input" type="radio" name="jawaban" value="{{$item->opsi_e}}">
-                      <label class="form-check-label" for="exampleRadios2">
-                        <h4>${{$item->opsi_e}}$</h4>
-                      </label>
-                    </div>
-                    @endif
-                    <button type="submit" class="btn btn-success mt-4" id="simpan">Simpan Jawaban</button>
-                  </div>
-                  
-                </form>
-                {{-- <div class="row float-right">
-                  <form action="{{route('pelajar.cat.soal', [$item->tema_id])}}" method="get">
-                    @csrf
-                    <div class="text-center mt-5 mr-3"><button class="btn btn-danger" type="submit"><input hidden name="nomor" value="{{$item->nomor_soal-1 }}"><input hidden name="soal" value="{{$item->id}}">Sebelumnya</button></div>                 
-                  </form>
-                  <form action="{{route('pelajar.cat.soal', [$item->tema_id])}}" method="get">
-                    <div class="text-center mt-5 mr-3"><button class="btn btn-primary" type="submit"><input hidden name="nomor" value="{{$item->nomor_soal+1 }}"><input hidden name="soal" value="{{$item->id}}">Selanjutnya</button></div>               
-                  </form>
-                </div> --}}
-            @endforeach
-            @foreach($sudah_jawab as $item)
-            @if ($item->jawaban == null)
-             <div class="h6">Jawaban yang dipilih : Belum Ada</div>
-            @else
-              <div class="h6">Jawaban yang dipilih : <h4>${{$item->jawaban}}$</h4></div>
-            @endif
-            @endforeach
-    @else
             @foreach ($tampil_soal as $item)
+            @if (isset($item->foto))
             <div class="row mt-4">
-                <h6>{{$item->nomor_soal}}. {{$item->soal}}</h6>
+              <img src="{{asset('storage/soal/'.$item->foto)}}" alt="" width="500">
             </div>
+            <div class="row mt-4">
+                <h6>{{$item->nomor_soal}}. {!!($item->soal)!!}</h6>
+            </div>
+            @else
+            <div class="row mt-4">
+              {!!($item->soal)!!}
+            </div>
+            @endif
             <form action="{{route('pelajar.cat.jawaban')}}" method="GET">
               @csrf
               <input hidden name="soal" value={{$item->id}}>
               <input hidden name="nomorsoal" value={{$item->nomor_soal}}>
               <div class="form-group">
                 <div class="form-check">
-                  <input class="form-check-input" type="radio" name="jawaban" value="{{$item->opsi_a}}">
+                  <input class="form-check-input" type="radio" name="jawaban" value="A" @if($sudah_jawab->jawaban == "A") {{'checked="checked"'}} @endif>
                   <label class="form-check-label" for="exampleRadios1">
-                    {{$item->opsi_a}}
+                    {!!$item->opsi_a!!}
                   </label>
                 </div>
                 <div class="form-check">
-                  <input class="form-check-input" type="radio" name="jawaban" value="{{$item->opsi_b}}">
+                  <input class="form-check-input" type="radio" name="jawaban" value="B" @if($sudah_jawab->jawaban == "B") {{'checked="checked"'}} @endif>
                   <label class="form-check-label" for="exampleRadios2">
-                    {{$item->opsi_b}}
+                    {!!$item->opsi_b!!}
                   </label>
                 </div>
                 <div class="form-check">
-                  <input class="form-check-input" type="radio" name="jawaban" value="{{$item->opsi_c}}">
+                  <input class="form-check-input" type="radio" name="jawaban" value="C" @if($sudah_jawab->jawaban == "C") {{'checked="checked"'}} @endif>
                   <label class="form-check-label" for="exampleRadios2">
-                    {{$item->opsi_c}}
+                    {!!$item->opsi_c!!}
                   </label>
                 </div>
                 <div class="form-check">
-                  <input class="form-check-input" type="radio" name="jawaban" value="{{$item->opsi_d}}">
+                  <input class="form-check-input" type="radio" name="jawaban" value="D" @if($sudah_jawab->jawaban == "D") {{'checked="checked"'}} @endif>
                   <label class="form-check-label" for="exampleRadios2">
-                    {{$item->opsi_d}}
+                    {!!$item->opsi_d!!}
                   </label>
                 </div>
                 @if ($item->opsi_e == null)
 
                 @else
                 <div class="form-check">
-                  <input class="form-check-input" type="radio" name="jawaban" value="{{$item->opsi_e}}">
+                  <input class="form-check-input" type="radio" name="jawaban" value="E" @if($sudah_jawab->jawaban == "E") {{'checked="checked"'}} @endif>
                   <label class="form-check-label" for="exampleRadios2">
-                    {{$item->opsi_e}}
+                    {!!$item->opsi_e!!}
                   </label>
                 </div>
                 @endif
@@ -218,27 +133,7 @@
               </div>
               
             </form>
-            {{-- <div class="row float-right">
-              <form action="{{route('pelajar.cat.soal', [$item->tema_id])}}" method="get">
-                @csrf
-                <div class="text-center mt-5 mr-3"><button class="btn btn-danger" type="submit"><input hidden name="nomor" value="{{$item->nomor_soal-1 }}"><input hidden name="soal" value="{{$item->id}}">Sebelumnya</button></div>                 
-              </form>
-              <form action="{{route('pelajar.cat.soal', [$item->tema_id])}}" method="get">
-                <div class="text-center mt-5 mr-3"><button class="btn btn-primary" type="submit"><input hidden name="nomor" value="{{$item->nomor_soal+1 }}"><input hidden name="soal" value="{{$item->id}}">Selanjutnya</button></div>               
-              </form>
-            </div> --}}
         @endforeach
-        @foreach($sudah_jawab as $item)
-        @if ($item->jawaban == null)
-        <div class="h6">Jawaban yang dipilih : Belum Ada</div>
-        @else
-          <div class="h6">Jawaban yang dipilih : {{$item->jawaban}}</div>
-        @endif
-        @endforeach      
-
-
-    @endif  
-
                 </div>
                 
              </div>
@@ -256,7 +151,7 @@
           <!-- End of Main Content -->
 
           <!-- Footer -->
-          <footer class="sticky-footer bg-white">
+          <footer class="sticky-footer bg-white mt-5">
               <div class="container my-auto">
                   <div class="copyright text-center my-auto">
                       <span>Developed With Love by IT Staff Cakra Krisna Manggala 2021</span>
@@ -309,7 +204,11 @@
               <div class="modal-body">Periksa ulang jawaban agar tidak ada yang belum dikerjakan</div>
               <div class="modal-footer">
                   <button class="btn btn-danger" type="button" data-dismiss="modal">Cancel</button>
-                  <a class="btn btn-primary" href="{{route('pelajar.cat.kumpulkan',[$tema_id])}}">Selesai</a>
+                  <form action="{{route('pelajar.cat.kumpulkan',[$tema_id])}}" method="GET">
+                  <input type="text" value="{{$user_id}}" name="user">
+                  <input type="text" value="{{$tenggat->paket_id}}" name="paket">
+                  <button class="btn btn-primary" type="submit" >Selesai</button>
+                  </form>
               </div>
           </div>
       </div>

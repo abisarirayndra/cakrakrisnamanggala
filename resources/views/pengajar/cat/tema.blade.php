@@ -6,7 +6,8 @@
 
 @section('css')
      <!-- Custom styles for this page -->
-     <link href="{{asset('vendor/datatables/dataTables.bootstrap4.min.css')}}" rel="stylesheet">
+     <link href="{{asset('vendor/datatables/datatables.min.css')}}" rel="stylesheet">
+     {{-- <link rel="stylesheet" href="cdn.datatables.net/1.10.24/css/jquery.dataTables.min.css"> --}}
 @endsection
 
 @section('content')
@@ -43,7 +44,7 @@
             <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
                 <div class="bg-white py-2 collapse-inner rounded">
                     <h6 class="collapse-header">Cakra Assesement Test</h6>
-                    <a class="collapse-item" href="{{route('pengajar.cat.tema')}}">CAT - Daftar Tes</a>
+                    <a class="collapse-item" href="{{route('pengajar.cat.paket')}}">CAT - Daftar Tes</a>
                 </div>
             </div>
         </li>
@@ -104,9 +105,7 @@
                     <div class="col-xl-6">
                         <h1 class="h3 mb-4 text-gray-800">Cakra Assesment Test - Pengajar</h1>
                     </div>
-                    <div class="col-xl-6">
-                        <button type="button" class="btn btn-sm btn-primary float-right" data-toggle="modal" data-target="#myModal">Tambah Tes</button>
-                    </div>
+                    
                   </div>
                   <!-- DataTales Example -->
                   <div class="card shadow mb-4">
@@ -120,9 +119,9 @@
                                       <tr>
                                         <th>No.</th>
                                         <th>Mata Pelajaran</th>
+                                        <th>Judul Tes</th>
                                         <th>Mulai</th>
                                         <th>Tenggat</th>
-                                        <th>Kelas</th>
                                         <th>Status</th>
                                         <th>Aksi</th>
                                       </tr>
@@ -134,10 +133,10 @@
                                           @foreach ($tema as $item)
                                           <tr>
                                           <td>{{$no++}}</td>
-                                          <td>{{$item->tema}}</td>
+                                          <td>{{$item->mapel->mapel}}</td>
+                                          <td>{{$item->judul_tes}}</td>
                                           <td>{{\Carbon\Carbon::parse($item->mulai)->isoFormat('dddd, D MMMM Y HH:mm')}}</td>
                                           <td>{{\Carbon\Carbon::parse($item->tenggat)->isoFormat('dddd, D MMMM Y HH:mm')}}</td>
-                                          <td>{{$item->kelas->nama}}</td>
                                           @if ($item->status == 1)
                                           <td>Aktif</td>
                                           @else
@@ -147,28 +146,9 @@
                                             <a href="{{route('pengajar.cat.soal', [$item->id])}}"><button type="button" class="btn btn-sm btn-success">Soal</button></a>
                                             <a href="{{route('pengajar.cat.edit', [$item->id])}}"><button type="button" class="btn btn-sm btn-primary">Edit</button></a>
                                             <a href="{{route('pengajar.cat.hasil', [$item->id])}}"><button type="button" class="btn btn-sm btn-warning">Hasil</button></a>
-                                            <button type="button" class="btn btn-sm btn-danger" data-toggle="modal" data-target="#modal-hapus">Hapus</button>
-                                            <!-- Logout Modal-->
-                                                <div class="modal fade" id="modal-hapus" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
-                                                aria-hidden="true">
-                                                <div class="modal-dialog" role="document">
-                                                    <div class="modal-content">
-                                                        <div class="modal-header">
-                                                            <h5 class="modal-title" id="exampleModalLabel">Anda yakin ingin menghapus tes ini ?</h5>
-                                                            <button class="close" type="button" data-dismiss="modal" aria-label="Close">
-                                                                <span aria-hidden="true">×</span>
-                                                            </button>
-                                                        </div>
-                                                        <div class="modal-body">Menghapus tes akan menghapus soal dari tes tersebut</div>
-                                                        <div class="modal-footer">
-                                                            <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
-                                                            <a class="btn btn-primary" href="{{route('pengajar.cat.hapustema', [$item->id])}}">Hapus</a>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                </div>
-                                          </td>
-                                          <tr>
+                                            <a href="{{route('pengajar.cat.hapustema', [$item->id])}}" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure?')">Hapus</a>
+                                            </td>
+                                        </tr>
                                       @endforeach
                                   </tbody>
                               </table>
@@ -225,75 +205,18 @@
 
   
 
-  {{-- Modal Tema --}}
-  <div class="modal fade" tabindex="-1" role="dialog" id="myModal">
-    <div class="modal-dialog modal-lg" role="document">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title">Tambah Tes</h5>
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-          </button>
-        </div>
-        <div class="modal-body">
-          <form method="POST" action="{{route('pangajar.cat.buattema')}}">
-            @csrf
-              <div class="form-group">
-                <label for="tema">Judul Tes</label>
-                  <input type="text" class="form-control" name="tema" required autofocus>
-                  <input name="pengajar_id" readonly hidden value="{{$id}}"> 
-              </div>
-            <div class="form-group">
-              <label for="durasi">Jumlah Soal</label>
-                <input type="number" class="form-control" name="jumlah_soal" required>
-            </div>
-            <div class="form-group">
-              <label for="mulai">Mulai</label>
-                <input type="datetime-local" class="form-control" name="mulai" required>
-            </div>
-            <div class="form-group">
-              <label for="tenggat">Tenggat</label>
-                <input type="datetime-local" class="form-control" name="tenggat" required>
-            </div>
-            <div class="form-group">
-              <label for="kelas">Kelas</label>
-                <select name="kelas_id" class="form-control" id="">
-                    @foreach ($kelas as $item)
-                        <option value="{{$item->id}}">{{$item->nama}}</option>
-                    @endforeach
-                </select>
-            </div>
-            <div class="form-group">
-                <label for="Status">Jenis Soal</label>
-                  <select name="jenis" class="form-control" id="">
-                      <option value="teks">teks biasa</option>
-                      <option selected value="matematika">matematika</option>
-                  </select>
-              </div>
-            <div class="form-group">
-              <label for="Status">Status</label>
-                <select name="status" class="form-control" id="">
-                    <option value="0">Tidak Aktif</option>
-                    <option selected value="1">Aktif</option>
-                </select>
-            </div>
-            <div class="modal-footer bg-whitesmoke br">
-              <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
-              <button type="submit" class="btn btn-primary text-light">Tambah</button>
-            </div>
-          </form>
-        </div>
-      </div>
-    </div>
-  </div>
     
 @endsection
 
 @section('js')
     <!-- Page level plugins -->
     <script src="{{asset('vendor/datatables/jquery.dataTables.min.js')}}"></script>
-    <script src="{{asset('vendor/datatables/dataTables.bootstrap4.min.js')}}"></script>
+    <script src="{{asset('vendor/datatables/datatables.min.js')}}"></script>
 
     <!-- Page level custom scripts -->
     <script src="{{asset('js/demo/datatables-demo.js')}}"></script>
+    {{-- <script charset="utf8" src="cdn.datatables.net/1.10.24/js/jquery.dataTables.min.js"></script> --}}
+    <script>
+        
+    </script>
 @endsection

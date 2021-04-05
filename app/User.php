@@ -43,6 +43,12 @@ class User extends Authenticatable
         }
         return false;
     }
+    public function isAdmin(){
+        if($this->role_id == 2){
+            return true;
+        }
+        return false;
+    }
     public function isPengajar(){
         if($this->role_id == 3){
             return true;

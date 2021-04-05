@@ -49,7 +49,12 @@
                                   <hr>
                                   
                                   <div class="text-center">
-                                      <a class="small" href="{{route('auth.register')}}">Create an Account!</a>
+                                      <div class="row">
+                                             <a class="small" href="{{route('auth.register')}}">Belum Punya Akun ?</a>
+                                      </div>
+                                      <div class="row">
+                                           <a class="small" href="{{route('reset')}}"> Lupa Password ?</a>
+                                      </div>
                                   </div>
                               </div>
                           </div>

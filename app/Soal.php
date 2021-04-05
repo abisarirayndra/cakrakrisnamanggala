@@ -9,7 +9,7 @@ class Soal extends Model
 {
     
     protected $fillable = [
-        'tema_id', 'nomor_soal', 'soal', 'opsi_a', 'opsi_b', 'opsi_c', 'opsi_d', 'opsi_e','kunci','skor'
+        'tema_id', 'nomor_soal', 'foto' ,'soal', 'opsi_a', 'opsi_b', 'opsi_c', 'opsi_d', 'opsi_e','kunci','skor'
     ];
 
     public function tema(){

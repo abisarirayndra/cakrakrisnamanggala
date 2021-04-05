@@ -6,7 +6,7 @@
 
 @section('css')
      <!-- Custom styles for this page -->
-     <link href="{{asset('vendor/datatables/dataTables.bootstrap4.min.css')}}" rel="stylesheet">
+     <link href="{{asset('vendor/datatables/datatables.min.css')}}" rel="stylesheet">
 @endsection
 
 @section('content')
@@ -19,7 +19,7 @@
       <ul class="navbar-nav bg-gradient-warning sidebar sidebar-dark accordion" id="accordionSidebar">
 
         <!-- Sidebar - Brand -->
-        <a class="sidebar-brand d-flex align-items-center justify-content-center" href="index.html">
+        <a class="sidebar-brand d-flex align-items-center justify-content-center" href="">
            
               <img src="{{asset('assets/img/logos/krisna.png')}}" width="50" alt="">
            
@@ -35,19 +35,15 @@
 
         <!-- Nav Item - Pages Collapse Menu -->
         <li class="nav-item">
-            <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseTwo"
-                aria-expanded="true" aria-controls="collapseTwo">
+            <a class="nav-link" href="{{route('pelajar.cat.paket')}}">
                 <i class="fas fa-fw fa-cog"></i>
-                <span>CAT</span>
-            </a>
-            <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
-                <div class="bg-white py-2 collapse-inner rounded">
-                    <h6 class="collapse-header">Cakra Assesement Test</h6>
-                    <a class="collapse-item" href="{{route('pelajar.cat.tema')}}">CAT - Daftar Tes</a>
-                    <a class="collapse-item" href="{{route('pelajar.cat.hasil')}}">CAT - Hasil</a>
-                </div>
-            </div>
-        </li>
+                <span>CAT - Daftar Paket</span></a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{{route('pelajar.cat.hasil')}}">
+                    <i class="fas fa-fw fa-cog"></i>
+                    <span>CAT - Hasil</span></a>
+                </li> 
 
         <!-- Sidebar Toggler (Sidebar) -->
         <div class="text-center d-none d-md-inline">
@@ -118,7 +114,8 @@
                                 <thead>
                                   <tr>
                                     <th>No.</th>
-                                    <th>Tema</th>
+                                    <th>Tes</th>
+                                    <th>mapel</th>
                                     <th>Jumlah Soal</th>
                                     <th>Mulai</th>
                                     <th>Tenggat</th>
@@ -132,7 +129,8 @@
                                   @foreach ($tema as $item)
                                   <tr>
                                   <td>{{$no++}}</td>
-                                  <td>{{$item->tema}}</td>
+                                  <td>{{$item->judul_tes}}</td>
+                                  <td>{{$item->mapel->mapel}}</td>
                                   <td>{{$item->jumlah_soal}}</td>
                                   <td>{{\Carbon\Carbon::parse($item->mulai)->isoFormat('dddd, D MMMM Y HH:mm')}}</td>
                                   <td>{{\Carbon\Carbon::parse($item->tenggat)->isoFormat('dddd, D MMMM Y HH:mm')}}</td>
@@ -148,7 +146,7 @@
                                     <a href="{{route('pelajar.cat.soal', [$item->id])}}" class="btn btn-sm btn-success">Buka</a>
                                     @endif
                                   </td>
-                                  <tr>
+                                </tr>
                                     @endforeach
                                 </tbody>
                               </table>
@@ -209,7 +207,7 @@
 @section('js')
     <!-- Page level plugins -->
     <script src="{{asset('vendor/datatables/jquery.dataTables.min.js')}}"></script>
-    <script src="{{asset('vendor/datatables/dataTables.bootstrap4.min.js')}}"></script>
+    <script src="{{asset('vendor/datatables/datatables.min.js')}}"></script>
 
     <!-- Page level custom scripts -->
     <script src="{{asset('js/demo/datatables-demo.js')}}"></script>

@@ -22,11 +22,7 @@
                           <form method="POST" action="{{route('reg')}}">
                             @csrf
                             <div class="form-group">
-                              <label for="nama">Role</label>
-                              <select name="role_id" id="" class="form-control" required>
-                                <option value="4">Pelajar</option>
-                                <option value="3">Pengajar</option>
-                              </select>
+                              <input type="text" value="4" name="role_id" hidden>
                             </div>
                               <div class="form-group">
                                 <label for="nama">Nama Lengkap</label>
@@ -35,13 +31,10 @@
                               <div class="form-group">
                                 <label for="nama">Kelas</label>
                                 <select name="kelas_id" id="" class="form-control">
-                                  <option value="" selected></option>
-                                  <option value="1">Kelas A - Genteng</option>
-                                  <option value="2">Kelas B - Genteng</option>
-                                  <option value="4">Kelas Banyuwangi</option>
-                                  <option value="3">Umum</option>
+                                  @foreach ($kelas as $item)
+                                  <option value="{{$item->id}}">{{$item->nama}}</option>
+                                  @endforeach
                                 </select>
-                                <span class="text-muted">Apabila pengajar, harap dikosongkan</span>
                               </div>                         
                             <div class="row">
                               <div class="form-group col-6">
@@ -52,8 +45,7 @@
                               </div>
                               <div class="form-group col-6">
                                 <label for="nomor_registrasi">Nomor Registrasi</label>
-                                <input id="nomor_registrasi" type="text" class="form-control" name="nomor_registrasi">
-                                <span>Apabila pengajar, harap dikosongkan</span>
+                                <input id="nomor_registrasi" type="number" class="form-control" name="nomor_registrasi">
                                 <div class="invalid-feedback">
                                 </div>
                               </div>
@@ -62,11 +54,7 @@
                             <div class="row">
                               <div class="form-group col-6">
                                 <label for="password" class="d-block">Password</label>
-                                <input id="password" type="password" class="form-control pwstrength" data-indicator="pwindicator" name="password" required>
-                                <div id="pwindicator" class="pwindicator" >
-                                  <div class="bar"></div>
-                                  <div class="label"></div>
-                                </div>
+                                <input id="password" type="password" class="form-control" name="password" placeholder="Minimal 8 Karakter" required>
                               </div>
                               <div class="form-group col-6">
                                 <label for="password2" class="d-block">Password Confirmation</label>
@@ -76,21 +64,14 @@
                             </div>
           
                             <div class="form-group">
-                              <label for="whatsapp">Whatsapp</label>
+                              <label for="whatsapp">No. Whatsapp</label>
                               <input id="whatsapp" type="number" class="form-control" name="whatsapp" required>
                               <div class="invalid-feedback">
                               </div>
                             </div>
           
                             <div class="form-group">
-                              <div class="custom-control custom-checkbox">
-                                <input type="checkbox" name="agree" class="custom-control-input" id="agree">
-                                <label class="custom-control-label" for="agree">I agree with the terms and conditions</label>
-                              </div>
-                            </div>
-          
-                            <div class="form-group">
-                              <button type="submit" class="btn btn-primary btn-lg btn-block">
+                              <button type="submit" id="button" class="btn btn-primary btn-lg btn-block" disabled>
                                 Register
                               </button>
                             </div>
@@ -110,8 +91,11 @@
   $('#password, #confirm_password').on('keyup', function () {
         if ($('#password').val() == $('#confirm_password').val()) {
           $('#message').html('Password Cocok').css('color', 'green');
+          $('#button').removeAttr("disabled");
         } else {
           $('#message').html('Password Tidak Cocok').css('color', 'red');
+          var element = document.getElementById('button');
+          element.setAttribute('disabled','disabled');
         }
 
       });

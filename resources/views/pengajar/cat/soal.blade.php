@@ -6,7 +6,7 @@
 
 @section('css')
      <!-- Custom styles for this page -->
-     <link href="{{asset('vendor/datatables/dataTables.bootstrap4.min.css')}}" rel="stylesheet">
+     <link href="{{asset('vendor/datatables/datatables.min.css')}}" rel="stylesheet">
 @endsection
 
 @section('content')
@@ -43,7 +43,7 @@
             <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
                 <div class="bg-white py-2 collapse-inner rounded">
                     <h6 class="collapse-header">Cakra Assesement Test</h6>
-                    <a class="collapse-item" href="{{route('pengajar.cat.tema')}}">CAT - Daftar Tes</a>
+                    <a class="collapse-item" href="{{route('pengajar.cat.paket')}}">CAT - Daftar Tes</a>
                 </div>
             </div>
         </li>
@@ -110,35 +110,60 @@
                   {{-- cards import --}}
                   <div class="card">
                     <div class="card-body">
-                      <form action="{{route('pengajar.cat.importsoal')}}" method="post" enctype="multipart/form-data">
-                        @csrf
-                        <div class="row">
-                          <div class="form-group col-md-6">
-                            <label for="inputEmail4">Kode Tema</label>
-                            <input type="text" class="form-control" id="tema" value="{{$tema_id}}" readonly>
-                            <small id="passwordHelpBlock" class="form-text text-muted">
-                              Pastikan anda mencantumkan kode tema pada file excel yang akan anda unggah
-                            </small>
-                          </div>
-                          <div class="form-group col-md-6">
-                            <div class="form-group">
-                              <label>File</label>
-                              <input type="file" class="form-control" name="file">
+                        
+                        @if (isset($tema->jumlah_soal))
+                         <form action="{{route('pengajar.cat.importsoal')}}" method="post" enctype="multipart/form-data">
+                            @csrf
+                            <div class="row">
+                            <div class="form-group col-md-3">
+                                    <label for="inputEmail4">Jumlah Soal</label>
+                                    <input type="text" class="form-control" value="{{$tema->jumlah_soal}}" readonly>
+                            </div>
+                            <div class="form-group col-md-3">
+                              <label for="inputEmail4">Kode Tema</label>
+                              <input type="text" class="form-control" id="tema" value="{{$tema_id}}" readonly>
                               <small id="passwordHelpBlock" class="form-text text-muted">
-                                Pastikan file yang anda upload benar dengan format .xslx atau .csv
+                                Pastikan anda mencantumkan kode tema pada file excel yang akan anda unggah
                               </small>
                             </div>
+                            <div class="form-group col-md-6">
+                              <div class="form-group">
+                                <label>File</label>
+                                <input type="file" class="form-control" name="file">
+                                <small id="passwordHelpBlock" class="form-text text-muted">
+                                  Pastikan file yang anda upload benar dengan format .xslx atau .csv
+                                </small>
+                              </div>
+                            </div>
                           </div>
+                          <div class="mb-3">
+                            <button type="submit" class="btn btn-primary">Submit Soal</button>
+                          </div>
+                        </form>
+                        @else
+                        <div class="row">
+                         <form action="{{route('pengajar.cat.upjumlahsoal', [$tema->id])}}" method="post" enctype="multipart/form-data">
+                            @csrf
+                            <div class="row">
+                                <div class="form-group col-md-6">
+                                    <label for="inputEmail4">Jumlah Soal</label>
+                                    <input type="text" class="form-control" name="jumlah_soal">
+                                    <small id="passwordHelpBlock" class="form-text text-muted">
+                                      Isi jumlah soal terlebih dahulu sebelum upload soal !
+                                    </small>
+                                  </div>
+                                  <div class="mt-4">
+                                    <button type="submit" class="btn btn-primary">Submit</button>
+                                  </div>
+                            </div>
+                         </form>
                         </div>
-                        <div class="mb-3">
-                          <button type="submit" class="btn btn-primary">Submit Soal</button>
-                        </div>
-                      </form>
+                        @endif
                   </div>
                   <!-- DataTales Example -->
                   <div class="card shadow mb-4">
                     <div class="card-header py-3">
-                        <h6 class="m-0 font-weight-bold text-primary">Daftar Tes Pendidik {{$user}}</h6>
+                        <h6 class="m-0 font-weight-bold text-primary">Soal {{$tema->mapel->mapel}}</h6>
                     </div>
                       <div class="card-body">
                           <div class="table-responsive">
@@ -147,6 +172,7 @@
                                   <tr>
                                     <th>Nomor Soal</th>
                                     <th>Soal</th>
+                                    <th>Gambar</th>
                                     <th>Opsi A</th>
                                     <th>Opsi B</th>
                                     <th>Opsi C</th>
@@ -163,16 +189,25 @@
                                     @foreach ($soal as $item)
                                     <tr>
                                     <td>{{$item->nomor_soal}}</td>
-                                    <td>{{$item->soal}}</td>
-                                    <td>{{$item->opsi_a}}</td>
-                                    <td>{{$item->opsi_b}}</td>
-                                    <td>{{$item->opsi_c}}</td>
-                                    <td>{{$item->opsi_d}}</td>
-                                    <td>{{$item->opsi_e}}</td>
-                                    <td>{{$item->kunci}}</td>
+                                    <td style="max-width: 200px">{{$item->soal}}</td>
+                                    @if ($item->foto == null)
+                                        <td><a href="{{route('pengajar.cat.tambahgambar',[$item->id])}}" class="btn btn-success">Tambah Gambar</a></td>
+                                    @else
+                                        <td>
+                                            <img src="{{asset('storage/soal/'.$item->foto)}}" alt="" width="500">
+                                            <a href="{{route('pengajar.cat.editgambar', [$item->id])}}" class="btn btn-sm btn-warning">Perbarui</a>
+                                            <a href="{{route('pengajar.cat.hapusgambar', [$item->id])}}" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure?')">Hapus</a>
+                                        </td>
+                                    @endif
+                                    <td style="max-width: 200px">{{$item->opsi_a}}</td>
+                                    <td style="max-width: 200px">{{$item->opsi_b}}</td>
+                                    <td style="max-width: 200px">{{$item->opsi_c}}</td>
+                                    <td style="max-width: 200px">{{$item->opsi_d}}</td>
+                                    <td style="max-width: 200px">{{$item->opsi_e}}</td>
+                                    <td style="max-width: 200px">{{$item->kunci}}</td>
                                     <td>
-                                      <a href="{{route('pengajar.cat.soal', [$item->id])}}"><button type="button" class="btn btn-sm btn-success">Skor</button></a>
-                                      <button type="button" class="btn btn-sm btn-danger" data-toggle="modal" data-target="#">hapus</button>
+                                      <a href="{{route('pengajar.cat.editsoal', [$item->id])}}"><button type="button" class="btn btn-sm btn-success">Edit</button></a>
+                                      <a href="{{route('pengajar.cat.hapussoal', [$item->id])}}" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure?')">Hapus</a>
                                     </td>
                                   </tr>
                                     @endforeach
@@ -234,7 +269,7 @@
 @section('js')
     <!-- Page level plugins -->
     <script src="{{asset('vendor/datatables/jquery.dataTables.min.js')}}"></script>
-    <script src="{{asset('vendor/datatables/dataTables.bootstrap4.min.js')}}"></script>
+    <script src="{{asset('vendor/datatables/datatables.min.js')}}"></script>
 
     <!-- Page level custom scripts -->
     <script src="{{asset('js/demo/datatables-demo.js')}}"></script>

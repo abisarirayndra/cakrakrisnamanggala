@@ -1,7 +1,7 @@
 @extends('master.admin1')
 
 @section('title')
-<title>Daftar</title>
+<title>Edit Tes</title>
 @endsection
 
 @section('content')
@@ -22,7 +22,7 @@
                             @csrf
                             <div class="form-group">
                               <label for="tema">Judul Tes</label>
-                                <input type="text" class="form-control" name="tema" value="{{$tema->tema}}" required autofocus>
+                                <input type="text" class="form-control" name="judul_tes" value="{{$tema->judul_tes}}" required autofocus>
                                 <input name="pengajar_id" readonly hidden value="{{$id_user }}"> 
                             </div>
                           <div class="form-group">
@@ -38,28 +38,12 @@
                               <input type="datetime-local" class="form-control" name="tenggat" value="{{$tema->tenggat}}" required>
                           </div>
                           <div class="form-group">
-                            <label for="kelas">Kelas</label>
-                              <select name="kelas_id" class="form-control" id="" value="{{$tema->kelas_id}}">
-                                  @foreach ($kelas as $item)
-                                      <option value="{{$item->id}}">{{$item->nama}}</option>
-                                  @endforeach
-                              </select>
-                          </div>
-                          <div class="form-group">
-                              <label for="Status">Jenis Soal</label>
-                                <select name="jenis" class="form-control" id="" value="{{$tema->jenis}}">
-                                    <option value="teks">teks biasa</option>
-                                    <option value="matematika">matematika</option>
-                                </select>
-                            </div>
-                          <div class="form-group">
                             <label for="Status">Status</label>
                               <select name="status" class="form-control" id="" value="{{$tema->status}}">
                                   <option value="0">Tidak Aktif</option>
                                   <option selected value="1">Aktif</option>
                               </select>
                           </div>
-          
                             <div class="form-group">
                               <button type="submit" class="btn btn-primary btn-lg btn-block">
                                 Update

@@ -17,18 +17,10 @@ class PelajarController extends Controller
     public function index()
     {
         $user = Auth::user()->nama;
-        $id = Auth::user()->id;
-        $kelas = Pelajar::select('kelas_id')->where('user_id', $id)->get();
-        $kelas_id = [];
-        foreach($kelas as $item){
-            $kelas_id = $item->kelas_id;
-        }
-        $paket = PaketSoal::select('paket_soals.id','users.nama as pengajar','paket_soals.nama_paket','paket_soals.kelas_id','paket_soals.created_at')
-                        ->join('users','users.id','=','paket_soals.user_id')
-                        ->where('kelas_id', $kelas_id)
-                        ->where('status', 1)
-                        ->get();
-        // return $paket;
+        $kelas = Auth::user()->kelas_id;
+        $paket = PaketSoal::where('kelas_id', $kelas)->count();
+        $tes = 
+
         return view('pelajar.index', compact('user','paket'));
     }
 

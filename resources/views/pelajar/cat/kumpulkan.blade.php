@@ -6,7 +6,7 @@
 
 @section('css')
      <!-- Custom styles for this page -->
-     <link href="{{asset('vendor/datatables/dataTables.bootstrap4.min.css')}}" rel="stylesheet">
+     <link href="{{asset('vendor/datatables/datatables.min.css')}}" rel="stylesheet">
 @endsection
 
 @section('content')
@@ -19,7 +19,7 @@
       <ul class="navbar-nav bg-gradient-warning sidebar sidebar-dark accordion" id="accordionSidebar">
 
           <!-- Sidebar - Brand -->
-          <a class="sidebar-brand d-flex align-items-center justify-content-center" href="index.html">
+          <a class="sidebar-brand d-flex align-items-center justify-content-center" href="">
              
                 <img src="{{asset('assets/img/logos/krisna.png')}}" width="50" alt="">
              
@@ -92,6 +92,9 @@
                             <input hidden type="text" value="{{$jml_soal->jumlah_soal}}" name="q">
                             <input hidden type="text" value="{{$tema_id}}" name="t">
                             <input hidden type="text" value="{{$total_skor}}" name="n">
+                            <input hidden type="text" value="{{$mapel->mapel_id}}" name="m">
+                            <input hidden type="text" value="{{$mapel->paket_id}}" name="p">
+                            <input hidden type="text" value="{{$akademik->nilai_akademik}}" name="akademik">
                             <button class="btn btn-primary float-right" type="submit">Selanjutnya</button>
                         </form>
                     </div>
@@ -106,7 +109,6 @@
                               <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                                 <thead>
                                   <tr>
-                                    <th>No.</th>
                                     <th>Nomor Soal</th>
                                     <th>Jawaban</th>
                                   </tr>
@@ -117,10 +119,13 @@
                                   @endphp
                                   @foreach ($jawaban as $item)
                                   <tr>
-                                  <td>{{$no++}}</td>
                                   <td>{{$item->nomor_soal}}</td>
-                                  <td>{{$item->jawaban}}</td>
-                                  <tr>
+                                  @if (isset($item->jawaban))
+                                  <td>Sudah Terjawab</td>
+                                  @else
+                                  <td>Belum Terjawab</td>
+                                  @endif
+                                  </tr>
                                     @endforeach
                                 </tbody>
                               </table>
@@ -183,7 +188,8 @@
 @section('js')
     <!-- Page level plugins -->
     <script src="{{asset('vendor/datatables/jquery.dataTables.min.js')}}"></script>
-    <script src="{{asset('vendor/datatables/dataTables.bootstrap4.min.js')}}"></script>
+    <script src="{{asset('vendor/datatables/datatables.min.js')}}"></script>
+
 
     <!-- Page level custom scripts -->
     <script src="{{asset('js/demo/datatables-demo.js')}}"></script>
