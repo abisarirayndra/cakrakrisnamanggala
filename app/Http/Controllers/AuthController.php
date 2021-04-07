@@ -17,24 +17,45 @@ class AuthController extends Controller
     }
 
     public function register(Request $request){
-        $request->validate([
-            'email' => 'unique:users,email',
-            'password' => 'min:8',
-        ]);
+        // $request->validate([
+        //     'email' => 'unique:users,email',
+        //     'password' => 'min:8',
+        // ]);
+          
+        $email = $request->email;
+        $regis = $request->nomor_registrasi;
+        $sudah_email = User::where('email', $email)->first();
+        $sudah_regis = User::where('nomor_registrasi', $regis)->first();
+        $sudah_semua = User::where('email', $email)->where('nomor_registrasi', $regis)->first();
+
+        if(isset($sudah_email)){
+            Alert::error('Email Sudah Terdaftar','Register Gagal');
+            return redirect()->route('auth.register');
+        }
+        elseif(isset($sudah_regis)){
+            Alert::error('Nomor Registrasi Sudah Terdaftar','Register Gagal');
+            return redirect()->route('auth.register');
+        }
+        elseif(isset($sudah_semua)){
+            Alert::error('Email dan Nomor Registrasi Sudah Terdaftar','Register Gagal');
+            return redirect()->route('auth.register');
+        }
+        else{
+            User::create([
+                'nama' => $request->nama,
+                'nomor_registrasi' => $request->nomor_registrasi,
+                'email' => $request->email,
+                'password' => Hash::make($request->password),
+                'role_id' => $request->role_id,
+                'whatsapp' => $request->whatsapp,
+                'kelas_id' => $request->kelas_id,
+            ]);
+    
+            Alert::success('Registrasi Berhasil');
+    
+            return redirect()->route('login');
+        }
         
-        User::create([
-            'nama' => $request->nama,
-            'nomor_registrasi' => $request->nomor_registrasi,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
-            'role_id' => $request->role_id,
-            'whatsapp' => $request->whatsapp,
-            'kelas_id' => $request->kelas_id,
-        ]);
-
-        Alert::success('Registrasi Berhasil');
-
-        return redirect()->route('login');
     }
 
     public function tampilLogin(){
