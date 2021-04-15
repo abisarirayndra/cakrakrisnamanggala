@@ -101,25 +101,24 @@
 
                   <!-- Page Heading -->
                   <div class="row">
-                    <div class="col-xl-6">
-                        <h1 class="h3 mb-4 text-gray-800">Cakra Assesment Test - Pengajar</h1>
-                    </div>
-                    
                   </div>
 
                   {{-- cards import --}}
-                  <div class="card">
-                    <div class="card-body">
-                        
-                        @if (isset($tema->jumlah_soal))
+                  
+                        @if(isset($ada_soal))
+                        @elseif (isset($tema->jumlah_soal))
+                        <div class="card">
+                            <div class="card-body">
                          <form action="{{route('pengajar.cat.importsoal')}}" method="post" enctype="multipart/form-data">
                             @csrf
                             <div class="row">
-                            <div class="form-group col-md-3">
-                                    <label for="inputEmail4">Jumlah Soal</label>
-                                    <input type="text" class="form-control" value="{{$tema->jumlah_soal}}" readonly>
+                                <div class="form-group col-md-3">
+                                        <label for="inputEmail4">Jumlah Soal</label>
+                                        <input type="text" class="form-control" value="{{$tema->jumlah_soal}}" readonly>
+                                </div>
                             </div>
-                            <div class="form-group col-md-3">
+                            <div class="row">
+                            <div class="form-group col-md-6">
                               <label for="inputEmail4">Kode Tema</label>
                               <input type="text" class="form-control" id="tema" value="{{$tema_id}}" readonly>
                               <small id="passwordHelpBlock" class="form-text text-muted">
@@ -140,7 +139,11 @@
                             <button type="submit" class="btn btn-primary">Submit Soal</button>
                           </div>
                         </form>
+                    </div>
+                </div>
                         @else
+                        <div class="card">
+                            <div class="card-body">
                         <div class="row">
                          <form action="{{route('pengajar.cat.upjumlahsoal', [$tema->id])}}" method="post" enctype="multipart/form-data">
                             @csrf
@@ -158,65 +161,63 @@
                             </div>
                          </form>
                         </div>
-                        @endif
-                  </div>
-                  <!-- DataTales Example -->
-                  <div class="card shadow mb-4">
-                    <div class="card-header py-3">
-                        <h6 class="m-0 font-weight-bold text-primary">Soal {{$tema->mapel->mapel}}</h6>
                     </div>
-                      <div class="card-body">
-                          <div class="table-responsive">
-                              <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
-                                <thead>
-                                  <tr>
-                                    <th>Nomor Soal</th>
-                                    <th>Soal</th>
-                                    <th>Gambar</th>
-                                    <th>Opsi A</th>
-                                    <th>Opsi B</th>
-                                    <th>Opsi C</th>
-                                    <th>Opsi D</th>
-                                    <th>Opsi E</th>
-                                    <th>Kunci</th>
-                                    <th>Aksi</th>
-                                  </tr>
-                                </thead>
-                                <tbody>
-                                    @php
-                                        $no = 1;
-                                    @endphp
-                                    @foreach ($soal as $item)
-                                    <tr>
-                                    <td>{{$item->nomor_soal}}</td>
-                                    <td style="max-width: 200px">{{$item->soal}}</td>
-                                    @if ($item->foto == null)
-                                        <td><a href="{{route('pengajar.cat.tambahgambar',[$item->id])}}" class="btn btn-success">Tambah Gambar</a></td>
-                                    @else
-                                        <td>
-                                            <img src="{{asset('storage/soal/'.$item->foto)}}" alt="" width="500">
-                                            <a href="{{route('pengajar.cat.editgambar', [$item->id])}}" class="btn btn-sm btn-warning">Perbarui</a>
-                                            <a href="{{route('pengajar.cat.hapusgambar', [$item->id])}}" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure?')">Hapus</a>
-                                        </td>
-                                    @endif
-                                    <td style="max-width: 200px">{{$item->opsi_a}}</td>
-                                    <td style="max-width: 200px">{{$item->opsi_b}}</td>
-                                    <td style="max-width: 200px">{{$item->opsi_c}}</td>
-                                    <td style="max-width: 200px">{{$item->opsi_d}}</td>
-                                    <td style="max-width: 200px">{{$item->opsi_e}}</td>
-                                    <td style="max-width: 200px">{{$item->kunci}}</td>
-                                    <td>
-                                      <a href="{{route('pengajar.cat.editsoal', [$item->id])}}"><button type="button" class="btn btn-sm btn-success">Edit</button></a>
-                                      <a href="{{route('pengajar.cat.hapussoal', [$item->id])}}" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure?')">Hapus</a>
-                                    </td>
-                                  </tr>
-                                    @endforeach
-                                </tbody>
-                              </table>
+                </div>
+                        @endif
+                  
+                  <div class="card shadow mb-4">
+                      <div class="card-header py-3">
+                          <div class="row">
+                                <div class="col-xl-6">
+                                    <h6 class="m-0 font-weight-bold text-primary">Preview Soal {{$tema->mapel->mapel}}</h6>
+                                </div>
+                                <div class="col-xl-6">
+                                    <a href="{{route('pengajar.cat.tema', [$paket->paket_id])}}" class="btn btn-sm btn-primary float-right">Kembali ke Tes</a>
+                                </div>
                           </div>
                       </div>
+                      <div class="card-body">
+                            @php
+                             $no = 1;   
+                            @endphp
+                            @foreach ($soal as $item)
+                                
+                                <div class="row m-3 mt-5">
+                                    <div class="col-xl-1">
+                                        <p>{{$item->nomor_soal}}.</p>
+                                    </div>
+                                    <div class="col-xl-11">
+                                        @if ($item->foto != null)
+                                            <img src="{{asset('storage/soal/'.$item->foto)}}" alt="" width="500">
+                                        @else
+                                        <a href="{{route('pengajar.cat.tambahgambar',[$item->id])}}" class="btn btn-sm btn-success">Gambar</a>
+                                        @endif
+                                        <p class="mt-2">{!!$item->soal!!}</p>
+                                    </div>
+                                </div>
+                                <div class="row m-3">
+                                    <div class="col-xl-1">
+                                    </div>
+                                    <div class="col-xl-11">
+                                            <h6>A. {!!$item->opsi_a!!}</h6>
+                                            <h6>B. {!!$item->opsi_b!!}</h6>
+                                            <h6>C. {!!$item->opsi_c!!}</h6>
+                                            <h6>D. {!!$item->opsi_d!!}</h6>
+                                            @if (isset($item->opsi_e))
+                                            <h6>E. {!!$item->opsi_e!!}</h6>
+                                            @endif
+                                            <h6><b>Kunci : {!!$item->kunci!!}</b><br>
+                                            <div class="mt-3">
+                                                <a href="{{route('pengajar.cat.editsoal', [$item->id])}}"><button type="button" class="btn btn-sm btn-warning">Edit</button></a>
+                                                <a href="{{route('pengajar.cat.hapussoal', [$item->id])}}" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure?')">Hapus</a>
+                                            </div>
+                                    </div>
+                                    
+                                </div>
+                                <hr>
+                            @endforeach
+                      </div>
                   </div>
-
               </div>
               <!-- /.container-fluid -->
 
@@ -273,4 +274,12 @@
 
     <!-- Page level custom scripts -->
     <script src="{{asset('js/demo/datatables-demo.js')}}"></script>
+    <script type="text/x-mathjax-config">
+        MathJax.Hub.Config({
+          tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}
+        });
+        </script>
+        <script type="text/javascript" async
+          src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML">
+        </script>
 @endsection

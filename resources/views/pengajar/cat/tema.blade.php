@@ -146,7 +146,6 @@
                                             <a href="{{route('pengajar.cat.soal', [$item->id])}}"><button type="button" class="btn btn-sm btn-success">Soal</button></a>
                                             <a href="{{route('pengajar.cat.edit', [$item->id])}}"><button type="button" class="btn btn-sm btn-primary">Edit</button></a>
                                             <a href="{{route('pengajar.cat.hasil', [$item->id])}}"><button type="button" class="btn btn-sm btn-warning">Hasil</button></a>
-                                            <a href="{{route('pengajar.cat.hapustema', [$item->id])}}" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure?')">Hapus</a>
                                             </td>
                                         </tr>
                                       @endforeach

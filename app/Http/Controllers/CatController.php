@@ -307,10 +307,11 @@ class CatController extends Controller
         $tema_id = $id;
         $tema = Tema::find($id);
         $soal = Soal::where('tema_id', $id)->get();
+        $ada_soal = Soal::where('tema_id', $id)->first();
 
-        // $tenggat = Tema::select('tenggat')->where('id',$id)->first();
+        $paket = Tema::select('paket_id')->where('id',$id)->first();
 
-        return view('pengajar.cat.soal', compact('user', 'tema_id','soal','tema'));
+        return view('pengajar.cat.soal', compact('user', 'tema_id','soal','tema','ada_soal','paket'));
     }
 
     public function upJumlahSoal($id, Request $request){
