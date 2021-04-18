@@ -188,7 +188,9 @@
                                     </div>
                                     <div class="col-xl-11">
                                         @if ($item->foto != null)
-                                            <img src="{{asset('storage/soal/'.$item->foto)}}" alt="" width="500">
+                                            <img src="{{asset('soal/'.$item->foto)}}" alt="" width="500">
+                                            <a href="{{route('pengajar.cat.editgambar',[$item->id])}}" class="btn btn-sm btn-warning">Edit Gambar</a>
+                                            <a href="{{route('pengajar.cat.hapusgambar',[$item->id])}}" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure?')">Hapus Gambar</a>
                                         @else
                                         <a href="{{route('pengajar.cat.tambahgambar',[$item->id])}}" class="btn btn-sm btn-success">Gambar</a>
                                         @endif

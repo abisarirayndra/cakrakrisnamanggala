@@ -21,6 +21,7 @@ use App\Mapel;
 use App\User;
 use App\RekapAkademik;
 use Carbon\Carbon;
+use File;
 
 
 
@@ -231,10 +232,12 @@ class CatController extends Controller
         $tema_id = $soal->tema_id;
         $image = $request->file('foto');
             $images = 'soal'.$id.'.'.$request->file('foto')->extension();
-            Image::make($image)->save(storage_path('app/public/soal/' . $images));
+            $path = public_path('soal/');
             $soal->update([
                 'foto' => $images,
             ]);
+            $image->move($path, $images);
+
             
         Alert::toast('Tambah Foto Berhasil', 'success');
 
@@ -252,11 +255,11 @@ class CatController extends Controller
         $soal = Soal::find($id);
         $tema_id = $soal->tema_id;
 
-        if($soal->foto && file_exists(storage_path('app/public/soal/' .$soal->foto))){
-            Storage::delete('public/soal/'. $soal->foto);
+        if($soal->foto && file_exists(public_path('soal/' .$soal->foto))){
+            File::delete(public_path('soal/'. $soal->foto));
         }
         $images = 'soalbaru'.$id.'.'.$request->file('foto')->extension();
-        Image::make($new_photo)->save(storage_path('app/public/soal/' . $images));
+        Image::make($new_photo)->save(public_path('soal/' . $images));
         $soal->update([
             'foto' => $images,
         ]);
@@ -268,7 +271,7 @@ class CatController extends Controller
 
     public function hapusGambar($id){
         $soal = Soal::find($id);
-        Storage::delete('public/soal/'. $soal->foto);
+        File::delete(public_path('soal/' . $soal->foto));
         $soal->update([
             'foto' => null,
         ]);
@@ -349,6 +352,7 @@ class CatController extends Controller
     }
     public function temaSoal($id){
         $user = Auth::user()->nama;
+        $user_id = Auth::user()->id;
         $kelas = Auth::user()->kelas_id;
         $tema = Tema::where('paket_id', $id)->where('status', 1)->orderBy('id','desc')->get();
 
