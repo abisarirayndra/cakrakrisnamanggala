@@ -32,8 +32,7 @@ Route::post('/upreset', 'AuthController@upReset')->name('upreset');
 
 
 Route::group(['middleware' => ['auth','super-role']], function(){
-    Route::get('/super/index','SuperController@index')->name('super.index');
-    Route::post('/super/tambahpengajar','PengajarController@store')->name('super.tambahpengajar');
+    
 });
 
 Route::group(['middleware' => ['auth','admin-role']], function(){
@@ -48,6 +47,23 @@ Route::group(['middleware' => ['auth','admin-role']], function(){
     Route::post('/admin/cat/updatetema/{id}','CatController@updateTemaAdmin')->name('admin.cat.updatetema');
     Route::get('/admin/cat/hapustema/{id}','CatController@destroyTemaAdmin')->name('admin.cat.hapustema');
     Route::get('/admin/cat/hasil/{id}','CatController@hasilAdmin')->name('admin.cat.hasil');
+
+    // Kedinasan
+    Route::get('/admin/dinas/paket','PaketDinasController@paket')->name('admin.dinas.paket');
+    Route::get('/admin/dinas/tambahpaket','PaketDinasController@tambah')->name('admin.dinas.tambahpaket');
+    Route::post('/admin/dinas/uppaket','PaketDinasController@up')->name('admin.dinas.uppaket');
+    Route::get('/admin/dinas/lihatpaket/{id}','PaketDinasController@lihat')->name('admin.dinas.lihatpaket');
+    Route::post('/admin/dinas/tambahkelas/{id}','PaketDinasController@tambahKelas')->name('admin.dinas.tambahkelas');
+    Route::get('/admin/dinas/hapuskelas/{id}','PaketDinasController@hapusKelas')->name('admin.dinas.hapuskelas');
+    Route::post('/admin/dinas/tambahtes/{id}','TesDinasController@tambahTes')->name('admin.dinas.tambahtes');
+    Route::get('/admin/dinas/hapustes/{id}','TesDinasController@hapusTes')->name('admin.dinas.hapustes');
+    Route::get('/admin/dinas/edittes/{id}','TesDinasController@editTes')->name('admin.dinas.edittes');
+    Route::post('/admin/dinas/updatetes/{id}','TesDinasController@updateTes')->name('admin.dinas.updatetes');
+
+
+
+
+
 
 });
 
@@ -87,6 +103,7 @@ Route::group(['middleware' => ['auth','pelajar-role']], function(){
     Route::get('/pelajar/cat/skoring/{id}','CatController@skoring')->name('pelajar.cat.skoring');
     Route::get('/pelajar/cat/hasil', 'CatController@hasilPelajar')->name('pelajar.cat.hasil');
 
-    //baru
+    //Kedinasan
+    Route::get('/pelajar/dinas/index','KedinasanController@index')->name('pelajar.dinas.index');
 
 });
