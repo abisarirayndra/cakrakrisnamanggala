@@ -82,6 +82,29 @@ class PaketDinasController extends Controller
 
     }
 
+    public function hapusPaket($id){
+        $paket = PaketDinas::find($id);
+        $paket->delete();
+
+        Alert::toast('Hapus Paket Berhasil','success');
+        return redirect()->back();
+    }
+
+    public function editPaket($id){
+        $user = Auth::user()->nama;
+        $paket = PaketDinas::find($id);
+
+        return view('admin.dinas.paket.edit', compact('paket','user'));
+    }
+
+    public function updatePaket($id, Request $request){
+        $paket = PaketDinas::find($id);
+        $paket->update($request->all());
+
+        Alert::toast('Update Paket Berhasil','success');
+        return redirect()->route('admin.dinas.paket');
+    }
+
     
 
 
