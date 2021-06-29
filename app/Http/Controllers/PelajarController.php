@@ -19,7 +19,7 @@ class PelajarController extends Controller
         $user = Auth::user()->nama;
         $kelas = Auth::user()->kelas_id;
         $paket = PaketSoal::where('kelas_id', $kelas)->count();
-        $tes = 
+
 
         return view('pelajar.index', compact('user','paket'));
     }

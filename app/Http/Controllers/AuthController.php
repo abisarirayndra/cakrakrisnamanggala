@@ -17,11 +17,7 @@ class AuthController extends Controller
     }
 
     public function register(Request $request){
-        // $request->validate([
-        //     'email' => 'unique:users,email',
-        //     'password' => 'min:8',
-        // ]);
-          
+       
         $email = $request->email;
         $regis = $request->nomor_registrasi;
         $sudah_email = User::where('email', $email)->first();
@@ -73,7 +69,7 @@ class AuthController extends Controller
         if(Auth::attempt($credentials)){
             
             if(auth()->user()->role_id == 1){
-                // Alert::success('Selamat datang Administrator');
+                Alert::success('Selamat datang Admin');
                 return redirect()->route('super.index');
             }
             elseif (auth()->user()->role_id == 2) {
@@ -120,4 +116,6 @@ class AuthController extends Controller
             Alert::error('Email Tidak Ditemukan', 'Reset Gagal');
         }
     }
+
+
 }
