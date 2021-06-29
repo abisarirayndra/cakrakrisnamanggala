@@ -14,6 +14,8 @@ use App\User;
 
 class PaketDinasController extends Controller
 {
+    // /Admin
+
     public function paket(){
         $user = Auth::user()->nama;
         $paket = PaketDinas::all();
@@ -56,18 +58,18 @@ class PaketDinasController extends Controller
 
     public function tambahKelas(Request $request, $id){
             $kelas = $request->kelas_id;
-            $kelas_sudah = KelasDinas::where('kelas_id',$kelas)->first();
+            $kelas_sudah = KelasDinas::where('dn_paket_id', $id)->where('kelas_id',$kelas)->first();
 
             if(isset($kelas_sudah)){
                 Alert::toast('Kelas Sudah Ada','error');
-                return redirect()->route('admin.dinas.lihatpaket', $id); 
+                return redirect()->route('admin.dinas.lihatpaket', $id);
             }
             else {
                 KelasDinas::create([
                     'dn_paket_id' => $id,
                     'kelas_id' => $request->kelas_id,
                 ]);
-    
+
                 Alert::toast('Tambah Kelas Berhasil','success');
                 return redirect()->route('admin.dinas.lihatpaket', $id);
             }
@@ -105,8 +107,36 @@ class PaketDinasController extends Controller
         return redirect()->route('admin.dinas.paket');
     }
 
-    
+
+    // Pendidik
+    public function pendidikPaket(){
+        $user = Auth::user()->nama;
+        $id = Auth::user()->id;
+        $paket = TesDinas::join('dn_pakets','dn_pakets.id','=','dn_tes.id')
+                            ->where('dn_pakets.status', 1)
+                            ->where('dn_tes.pengajar_id', $id)
+                            ->distinct('dn_tes.dn_paket_id')
+                            ->get();
+
+        // return $paket;
+        return view('pendidik.dinas.paket.paket', compact('paket','user'));
+    }
+
+    //Pelajar
+    public function pelajarPaket(){
+        $user = Auth::user()->nama;
+        $kelas = Auth::user()->kelas_id;
+
+        $paket = KelasDinas::select('dn_pakets.nama_paket','dn_pakets.id')
+                            ->join('dn_pakets','dn_pakets.id','=','dn_kelas.dn_paket_id')
+                            ->where('dn_kelas.kelas_id', $kelas)
+                            ->where('dn_pakets.status', 1)
+                            ->get();
 
 
-    
+        return view('pelajar.dinas.paket.paket', compact('user','paket'));
+
+    }
+
+
 }

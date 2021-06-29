@@ -20,9 +20,16 @@
                     @csrf
                     <div class="form-group">
                             <label for="nama">Nama Paket</label>
-                            <input type="text" class="form-control form-control-user" id="exampleFirstName"
+                            <input type="text" class="form-control" id="exampleFirstName"
                                  name="nama_paket" required>
                     </div>
+                    <div class="form-group">
+                        <label for="nama">Nama Paket</label>
+                        <select name="status" id="" class="form-control">
+                            <option value="1">Aktif</option>
+                            <option value="0">Tidak Aktif</option>
+                        </select>
+                </div>
                     <div class="text-center mt-4">
                         <button class="btn btn-warning" type="submit">Simpan</button>
                     </div>

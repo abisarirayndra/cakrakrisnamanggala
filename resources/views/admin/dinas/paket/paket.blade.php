@@ -26,7 +26,8 @@
                         <tr>
                           <th style="max-width: 20px">No.</th>
                           <th>Paket Soal</th>
-                          <th style="max-width: 60px">Aksi</th>
+                          <th style="max-width: 60px">Status</th>
+                          <th style="max-width: 120px">Aksi</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -37,14 +38,15 @@
                             <tr>
                             <td>{{$no++}}</td>
                             <td>{{$item->nama_paket}}</td>
-                            {{-- @if ($item->status == 1)
+                            @if ($item->status == 1)
                             <td>Aktif</td>
                             @else
                             <td> Tidak Aktif</td>   
-                            @endif --}}
+                            @endif
                             <td>
-                              <a href="{{route('admin.dinas.lihatpaket', [$item->id])}}"><button type="button" class="btn btn-sm btn-success"><i class="fas fa-eye"></i> Lihat</button></a>
-                              <a href="" class="btn btn-sm btn-danger" onclick="return confirm('Anda yakin ingin Menghapus ?')"><i class="fas fa-trash"></i> Hapus</a>
+                              <a href="{{route('admin.dinas.editpaket', [$item->id])}}" class="btn btn-sm btn-success"><i class="fas fa-feather-alt"></i> Edit</a>
+                              <a href="{{route('admin.dinas.lihatpaket', [$item->id])}}"><button type="button" class="btn btn-sm btn-primary"><i class="fas fa-eye"></i> Lihat</button></a>
+                              <a href="{{route('admin.dinas.hapuspaket', [$item->id])}}" class="btn btn-sm btn-danger" onclick="return confirm('Anda yakin ingin Menghapus ?')"><i class="fas fa-trash"></i> Hapus</a>
                               </td>
                           </tr>
                         @endforeach
