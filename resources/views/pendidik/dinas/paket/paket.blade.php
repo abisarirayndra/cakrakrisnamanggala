@@ -1,7 +1,7 @@
 @extends('master.master')
 
 @section('title')
-    <title>CAT - Kedinasan</title>
+<title>Computer Assisted Test - Cakra Krisna Manggala</title>
     <link href="{{asset('vendor/datatables/datatables.min.css')}}" rel="stylesheet">
 @endsection
 
@@ -10,7 +10,7 @@
 <div class="container">
 
     <!-- Page Heading -->
-    <h1 class="h3 mb-2 text-gray-800">Paket Soal Kedinasan</h1>
+    <h1 class="h3 mb-2 text-gray-800">Paket Soal</h1>
     <p class="mb-4">Paket-paket yang disiapkan oleh pendidik untuk persiapan <i>Computer Assisted Test</i>.</p>
 
     <!-- DataTales Example -->

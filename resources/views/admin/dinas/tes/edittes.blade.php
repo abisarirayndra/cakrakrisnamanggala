@@ -1,14 +1,14 @@
-@extends('master.master')
+@extends('master.admin')
 
 @section('title')
-    <title>CAT - Kedinasan</title>
+    <title>Computer Assisted Test - Cakra Krisna Manggala</title>
 @endsection
 
 @section('content')
 <div class="container">
 
     <!-- Page Heading -->
-    <h1 class="h3 mb-2 text-gray-800">Paket Soal Kedinasan</h1>
+    <h1 class="h3 mb-2 text-gray-800">Paket Soal</h1>
     <p class="mb-4">Paket-paket yang disiapkan oleh admin untuk persiapan <i>Computer Assisted Test</i>.</p>
 
     <!-- DataTales Example -->
@@ -22,7 +22,7 @@
                             <label for="nama">Mata Pelajaran</label>
                             <select name="mapel_id" class="form-control">
                                 @foreach ($mapel as $val)
-                                    <option value="{{$val->id}}" @if($val->id == $tes->id) {{'selected="selected"'}} @endif>{{$val->mapel}}</option>
+                                    <option value="{{$val->id}}" @if($val->id == $tes->mapel_id) {{'selected="selected"'}} @endif>{{$val->mapel}}</option>
                                 @endforeach
                             </select>
                         </div>
@@ -38,6 +38,10 @@
                             <label for="nama">Waktu Selesai</label>
                             <input type="datetime-local" class="form-control" name="selesai" value="{{$tes->selesai}}" required>
                         </div>
+                        {{-- <div class="form-group">
+                            <label for="nama">Durasi (Dalam Menit)</label>
+                            <input type="number" class="form-control" name="durasi" value="{{ $tes->durasi }}">
+                        </div> --}}
                         <div class="form-group">
                             <label for="nama">Pengajar</label>
                             <select name="pengajar_id" class="form-control">
@@ -57,5 +61,5 @@
 @endsection
 
 @section('js')
-    
+
 @endsection

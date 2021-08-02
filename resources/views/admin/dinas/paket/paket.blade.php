@@ -1,7 +1,7 @@
-@extends('master.master')
+@extends('master.admin')
 
 @section('title')
-    <title>CAT - Kedinasan</title>
+    <title>Computer Assisted Test - Cakra Krisna Manggala</title>
     <link href="{{asset('vendor/datatables/datatables.min.css')}}" rel="stylesheet">
 @endsection
 
@@ -10,7 +10,7 @@
 <div class="container">
 
     <!-- Page Heading -->
-    <h1 class="h3 mb-2 text-gray-800">Paket Soal Kedinasan</h1>
+    <h1 class="h3 mb-2 text-gray-800">Paket Soal</h1>
     <p class="mb-4">Paket-paket yang disiapkan oleh admin untuk persiapan <i>Computer Assisted Test</i>.</p>
 
     <!-- DataTales Example -->
@@ -27,6 +27,7 @@
                           <th style="max-width: 20px">No.</th>
                           <th>Paket Soal</th>
                           <th style="max-width: 60px">Status</th>
+                          <th>Kategori</th>
                           <th style="max-width: 120px">Aksi</th>
                         </tr>
                     </thead>
@@ -41,11 +42,17 @@
                             @if ($item->status == 1)
                             <td>Aktif</td>
                             @else
-                            <td> Tidak Aktif</td>   
+                            <td> Tidak Aktif</td>
                             @endif
+                            <td>{{ $item->kategori }}</td>
                             <td>
                               <a href="{{route('admin.dinas.editpaket', [$item->id])}}" class="btn btn-sm btn-success"><i class="fas fa-feather-alt"></i> Edit</a>
                               <a href="{{route('admin.dinas.lihatpaket', [$item->id])}}"><button type="button" class="btn btn-sm btn-primary"><i class="fas fa-eye"></i> Lihat</button></a>
+                              @if ($item->kategori == "Kedinasan")
+                              <a href="{{ route('admin.dinas.hasildinas', [$item->id]) }}" class="btn btn-sm btn-warning"><i class="fas fa-list-alt"></i> Hasil</a>
+                              @elseif ($item->kategori == "TNI/Polri")
+                              <a href="{{ route('admin.dinas.hasiltnipolri', [$item->id]) }}" class="btn btn-sm btn-warning"><i class="fas fa-list-alt"></i> Hasil</a>
+                              @endif
                               <a href="{{route('admin.dinas.hapuspaket', [$item->id])}}" class="btn btn-sm btn-danger" onclick="return confirm('Anda yakin ingin Menghapus ?')"><i class="fas fa-trash"></i> Hapus</a>
                               </td>
                           </tr>

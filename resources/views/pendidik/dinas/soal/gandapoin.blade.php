@@ -1,7 +1,7 @@
 @extends('master.master')
 
 @section('title')
-    <title>CAT - Kedinasan</title>
+<title>Computer Assisted Test - Cakra Krisna Manggala</title>
     <style>
         p{
             display: inline-block;
@@ -11,7 +11,7 @@
 @endsection
 
 @section('content')
-<div class="container-fluid">
+<div class="container">
     <div class="text-right mr-3 mb-3">
         <a href="{{ route('pendidik.dinas.paket') }}" class="btn btn-sm btn-danger"><i class="fas fa-times"></i></a>
     </div>
@@ -32,6 +32,10 @@
                         @endif
                         <form action="{{route('pendidik.dinas.upsoalgandapoin', [$id])}}" method="POST">
                             @csrf
+                            <div class="form-group">
+                                <label for="nama">Nomor Soal</label>
+                                <input name="nomor_soal" type="number" class="form-control" required>
+                            </div>
                             <div class="form-group">
                                 <label for="nama">Soal</label>
                                 <textarea name="soal" class="ckeditor form-control" id="ckditor" required></textarea>
@@ -80,6 +84,20 @@
                                 <button class="btn btn-warning" type="submit">Simpan</button>
                             </div>
                         </form>
+                        <form action="{{ route('pendidik.dinas.importganda') }}" class="mt-4" method="POST" enctype="multipart/form-data">
+                            @csrf
+                            <div class="form-group">
+                                <label for="file">Import Soal (Opsional)</label>
+                                <input type="file" class="form-control" name="file">
+                            </div>
+                            <div class="form-group">
+                                <label for="file">Kode Tes (Opsional)</label>
+                                <input type="text" class="form-control" readonly value="{{ $id }}">
+                            </div>
+                            <div class="text-center mt-4">
+                                <button class="btn btn-success" type="submit">Import</button>
+                            </div>
+                        </form>
                     </div>
                 </div>
             </div>
@@ -91,12 +109,9 @@
                     <div class="p-3 mt-3">
                         <div>
                             <table>
-                                @php
-                                    $a = 1;
-                                @endphp
                                 @foreach ($soal as $item)
                                 <tr>
-                                    <td style="vertical-align: top;"><b>{{$a++}}</b></td>
+                                    <td style="vertical-align: top;"><b>{{$item->nomor_soal}}</b></td>
                                     <td class="pl-4 pb-4">
                                         <div style="text-align: justify"><b>{!!$item->soal!!}</b></div> <br>
                                         <ol type="A">

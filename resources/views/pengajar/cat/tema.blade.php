@@ -120,6 +120,7 @@
                                         <th>No.</th>
                                         <th>Mata Pelajaran</th>
                                         <th>Judul Tes</th>
+                                        <th>Jumlah Soal</th>
                                         <th>Mulai</th>
                                         <th>Tenggat</th>
                                         <th>Status</th>
@@ -135,6 +136,7 @@
                                           <td>{{$no++}}</td>
                                           <td>{{$item->mapel->mapel}}</td>
                                           <td>{{$item->judul_tes}}</td>
+                                          <td>{{$item->jumlah_soal}}</td>
                                           <td>{{\Carbon\Carbon::parse($item->mulai)->isoFormat('dddd, D MMMM Y HH:mm')}}</td>
                                           <td>{{\Carbon\Carbon::parse($item->tenggat)->isoFormat('dddd, D MMMM Y HH:mm')}}</td>
                                           @if ($item->status == 1)

@@ -1,7 +1,7 @@
 @extends('master.master')
 
 @section('title')
-    <title>CAT - Kedinasan</title>
+<title>Computer Assisted Test - Cakra Krisna Manggala</title>
 @endsection
 
 @section('content')
@@ -12,7 +12,7 @@
     <div class="text-right mr-3">
         <a href="{{ route('pendidik.dinas.paket') }}" class="btn btn-sm btn-danger"><i class="fas fa-times"></i></a>
     </div>
-    <h1 class="h3 mb-2 text-gray-800">Tes Kedinasan</h1>
+    <h1 class="h3 mb-2 text-gray-800">Computer Assisted Test - Cakra Krisna Manggala</h1>
     <p class="mb-4">Perhatikan waktu mulai dan selesai disetiap tes, pastikan soal sudah terisi sebelum waktu tes dimulai.</p>
     <!-- DataTales Example -->
     <div class="card shadow mb-4">
@@ -41,9 +41,9 @@
                                             @else
                                                 <span class="badge badge-warning">Sedang Berlangsung</span>
                                             @endif
-                                        </div> 
+                                        </div>
                                         <a href="{{ route('pendidik.dinas.tipesoal', [$item->id]) }}" class="btn btn-sm btn-warning mt-3"><i class="fas fa-folder-open"></i> Soal</a>
-                                        <a href="" class="btn btn-sm btn-warning mt-3"><i class="fas fa-list-alt"></i> Hasil</a>
+                                        <a href="{{ route('pendidik.dinas.penilaian', [$item->id]) }}" class="btn btn-sm btn-warning mt-3"><i class="fas fa-list-alt"></i> Hasil</a>
                                         </div>
                                     <div class="col-auto">
                                         <i class="fas fa-calendar fa-2x text-gray-300"></i>

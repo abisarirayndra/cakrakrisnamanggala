@@ -8,12 +8,13 @@ use RealRashid\SweetAlert\Facades\Alert;
 use App\TesDinas;
 use App\Mapel;
 use App\User;
+use App\Penilaian;
 
 class TesDinasController extends Controller
 {
     public function tambahTes(Request $request, $id){
         $mapel = $request->mapel_id;
-        $sudah_mapel = TesDinas::where('mapel_id', $mapel)->first();
+        $sudah_mapel = TesDinas::where('mapel_id', $mapel)->where('dn_paket_id', $id)->first();
         if(isset($sudah_mapel)){
             Alert::toast('Mata Pelajaran Sudah Ada','error');
             return redirect()->back();
@@ -27,11 +28,11 @@ class TesDinasController extends Controller
                 'selesai' => $request->selesai,
                 'pengajar_id' => $request->pengajar_id,
             ]);
-    
+
             Alert::toast('Tambah Tes Berhasil','success');
             return redirect()->route('admin.dinas.lihatpaket', $id);
         }
-        
+
     }
 
     public function hapusTes($id){
@@ -58,5 +59,30 @@ class TesDinasController extends Controller
 
         Alert::toast('Update Tes Berhasil','success');
         return redirect()->route('admin.dinas.lihatpaket', $tes->dn_paket_id);
+    }
+
+    //Pendidik
+    public function pendidikTes($id){
+        $user = Auth::user()->nama;
+        $pengajar = Auth::user()->id;
+        $tes = TesDinas::join('mapels','mapels.id','=','dn_tes.mapel_id')
+                    ->select('mapels.mapel','dn_tes.nilai_pokok','dn_tes.mulai','dn_tes.selesai','dn_tes.id')
+                    ->where('dn_tes.dn_paket_id', $id)
+                    ->where('dn_tes.pengajar_id', $pengajar)
+                    ->get();
+
+        return view('pendidik.dinas.tes.tes', compact('user','tes'));
+    }
+
+    //Pelajar
+    public function pelajarTes($id){
+        $user = Auth::user()->nama;
+        $pelajar = Auth::user()->id;
+        $tes = TesDinas::join('mapels','mapels.id','=','dn_tes.mapel_id')
+                        ->select('mapels.mapel','dn_tes.nilai_pokok','dn_tes.mulai','dn_tes.selesai','dn_tes.id')
+                        ->where('dn_tes.dn_paket_id', $id)
+                        ->get();
+
+        return view('pelajar.dinas.tes.tes', compact('user','tes'));
     }
 }

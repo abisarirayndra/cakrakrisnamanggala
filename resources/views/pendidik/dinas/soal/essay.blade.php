@@ -1,7 +1,7 @@
 @extends('master.master')
 
 @section('title')
-    <title>CAT - Kedinasan</title>
+<title>Computer Assisted Test - Cakra Krisna Manggala</title>
 @endsection
 
 @section('content')
@@ -27,6 +27,10 @@
                         <form action="{{route('pendidik.dinas.upsoalessay', [$id])}}" method="POST">
                             @csrf
                             <div class="form-group">
+                                <label for="nama">Nomor Soal</label>
+                                <input name="nomor_soal" type="number" class="form-control" required>
+                            </div>
+                            <div class="form-group">
                                 <label for="nama">Soal</label>
                                 <textarea name="soal" class="ckeditor form-control" id="ckditor" required></textarea>
                             </div>
@@ -45,12 +49,9 @@
                     <div class="p-3 mt-3">
                         <div>
                             <table>
-                                @php
-                                    $a = 1;
-                                @endphp
                                 @foreach ($soal as $item)
                                 <tr>
-                                    <td style="vertical-align: top;"><b>{{$a++}}</b></td>
+                                    <td style="vertical-align: top;"><b>{{$item->nomor_soal}}</b></td>
                                     <td class="pl-4 pb-4">
                                         <div style="text-align: justify"><b>{!!$item->soal!!}</b></div> <br>
                                         <a href="{{route('pendidik.dinas.editsoalessay', [$item->id])}}" class="btn btn-sm btn-success"><i class="fas fa-feather-alt"></i> Edit</a>

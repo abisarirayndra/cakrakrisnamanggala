@@ -15,7 +15,7 @@
   <!-- Page Wrapper -->
   <div id="wrapper">
 
-      
+
 
       <!-- Content Wrapper -->
       <div id="content-wrapper" class="d-flex flex-column">
@@ -59,7 +59,7 @@
 
               <!-- Begin Page Content -->
               <div class="container-fluid">
-                
+
                 <!-- Main Content -->
       <div class="main-content">
         <section class="section">
@@ -74,9 +74,9 @@
                     <form action="{{route('pelajar.cat.soal', [$item->tema_id])}}" method="get">
                       <button type="submit" class="btn btn-outline-warning"><input hidden name="nomor" value="{{$item->nomor_soal}}"><input hidden name="soal" value="{{$item->id}}">{{$item->nomor_soal}}</button>
                     </form>
-                    @endforeach                                  
-                  </div>          
-                  <a href="" class="btn btn-primary mt-3" data-toggle="modal" data-target="#selesaiModal">Selesai</a> 
+                    @endforeach
+                  </div>
+                  <a href="" class="btn btn-primary mt-3" data-toggle="modal" data-target="#selesaiModal">Selesai</a>
             @foreach ($tampil_soal as $item)
             @if (isset($item->foto))
             <div class="row mt-4">
@@ -131,11 +131,11 @@
                 @endif
                 <button type="submit" class="btn btn-success mt-4" id="simpan">Simpan Jawaban</button>
               </div>
-              
+
             </form>
         @endforeach
                 </div>
-                
+
              </div>
 
         </section>
@@ -214,7 +214,7 @@
       </div>
   </div>
 
-    
+
 @endsection
 
 @section('js')
@@ -228,26 +228,26 @@
 
         // Get today's date and time
         var now = new Date().getTime();
-          
+
         // Find the distance between now and the count down date
         var distance = countDownDate - now;
-          
+
         // Time calculations for days, hours, minutes and seconds
         var days = Math.floor(distance / (1000 * 60 * 60 * 24));
         var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
         var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
         var seconds = Math.floor((distance % (1000 * 60)) / 1000);
-          
+
         // Output the result in an element with id="demo"
         document.getElementById("demo").innerHTML = days + "d " + hours + "h "
         + minutes + "m " + seconds + "s ";
-          
-        // If the count down is over, write some text 
+
+        // If the count down is over, write some text
         if (distance < 0) {
           clearInterval(x);
           document.getElementById("demo").innerHTML = "Waktu Habis";
           var id = {!!json_encode($tema_id)!!}
-          window.location = ('http://localhost:8000/pelajar/cat/kumpulkan/'+id);
+          window.location = ('https://cat.cakrakrisnamanggala.com/public/pelajar/cat/kumpulkan/'+id);
         }
       }, 1000);
           </script>
@@ -264,4 +264,4 @@
 
 
 
-      
+

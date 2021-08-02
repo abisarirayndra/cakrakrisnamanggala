@@ -9,6 +9,7 @@ class SoalDinasGandaPoin extends Model
     protected $table = 'dn_soalgandapoin';
     protected $fillable = [
         'dn_tes_id',
+        'nomor_soal',
         'soal',
         'opsi_a',
         'poin_a',
@@ -20,6 +21,6 @@ class SoalDinasGandaPoin extends Model
         'poin_d',
         'opsi_e',
         'poin_e',
-        
+
     ];
 }

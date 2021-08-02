@@ -38,10 +38,10 @@
                     </button>
                     <div class="collapse navbar-collapse" id="navbarResponsive">
                         <ul class="navbar-nav mr-auto bg-warning">
-                            <li class="nav-item"><a class="nav-link text-white" href="">Beranda</a></li>
-                            <li class="nav-item"><a class="nav-link text-white" href="">Polri/TNI</a></li>
-                            <li class="nav-item"><a class="nav-link text-white" href="">Kedinasan</a></li>
-                            <li class="nav-item"><a class="nav-link text-white" href="">Analisis</a></li>
+                            <li class="nav-item"><a class="nav-link text-white" href="{{ route('pendidik.dinas.paket') }}">Beranda</a></li>
+                            {{-- <li class="nav-item"><a class="nav-link text-white" href="">Polri/TNI</a></li>
+                            <li class="nav-item"><a class="nav-link text-white" href="">Kedinasan</a></li> --}}
+                            <li class="nav-item"><a class="nav-link text-white" href="{{ route('pendidik.dinas.analisis') }}">Analisis</a></li>
                             <div class="topbar-divider d-none d-sm-block"></div>
 
                                 <!-- Nav Item - User Information -->
@@ -67,7 +67,7 @@
 
             </nav>
             <!-- End of Topbar -->
-            
+
 @yield('content')
 @include('sweetalert::alert')
 <!-- End of Main Content -->
@@ -105,10 +105,10 @@
     </div>
     </footer>
     <!-- End of Footer -->
-    
+
     </div>
     <!-- End of Content Wrapper -->
-    
+
     </div>
     <!-- End of Page Wrapper -->
     <!-- Bootstrap core JavaScript-->

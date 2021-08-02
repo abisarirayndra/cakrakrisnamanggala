@@ -130,7 +130,7 @@
                                   <td>{{$item->paket->nama_paket}}</td>
                                   <td>{{$item->tema->judul_tes}}</td>
                                   <td>{{$item->total_nilai}}</td>
-                                  <td>{{\Carbon\Carbon::parse($item->kumpul)->isoFormat('dddd, D MMMM Y HH:mm')}}</td>
+                                  <td>{{\Carbon\Carbon::parse($item->created_at)->isoFormat('dddd, D MMMM Y HH:mm')}}</td>
                                   </tr>
                                     @endforeach
                                 </tbody>

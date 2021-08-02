@@ -13,15 +13,8 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-// Route::get('/', function () {
-//     return view('welcome');
-// });
 
-// Route::get('/', function () {
-//     return view('landing');
-// });
-
-Route::get('/','Controller@landing')->middleware('guest')->name('landing');
+Route::get('/','AuthController@tampilLogin')->middleware('guest')->name('landing');
 Route::get('/register','AuthController@tampilRegister')->middleware('guest')->name('auth.register');
 Route::post('/reg','AuthController@register')->middleware('guest')->name('reg');
 Route::get('/login','AuthController@tampilLogin')->middleware('guest')->name('login');
@@ -32,7 +25,7 @@ Route::post('/upreset', 'AuthController@upReset')->name('upreset');
 
 
 Route::group(['middleware' => ['auth','super-role']], function(){
-    
+
 });
 
 Route::group(['middleware' => ['auth','admin-role']], function(){
@@ -49,22 +42,22 @@ Route::group(['middleware' => ['auth','admin-role']], function(){
     Route::get('/admin/cat/hasil/{id}','CatController@hasilAdmin')->name('admin.cat.hasil');
 
     // Kedinasan
-    Route::get('/admin/dinas/paket','PaketDinasController@paket')->name('admin.dinas.paket');
-    Route::get('/admin/dinas/tambahpaket','PaketDinasController@tambah')->name('admin.dinas.tambahpaket');
-    Route::post('/admin/dinas/uppaket','PaketDinasController@up')->name('admin.dinas.uppaket');
-    Route::get('/admin/dinas/lihatpaket/{id}','PaketDinasController@lihat')->name('admin.dinas.lihatpaket');
-    Route::post('/admin/dinas/tambahkelas/{id}','PaketDinasController@tambahKelas')->name('admin.dinas.tambahkelas');
-    Route::get('/admin/dinas/hapuskelas/{id}','PaketDinasController@hapusKelas')->name('admin.dinas.hapuskelas');
-    Route::post('/admin/dinas/tambahtes/{id}','TesDinasController@tambahTes')->name('admin.dinas.tambahtes');
-    Route::get('/admin/dinas/hapustes/{id}','TesDinasController@hapusTes')->name('admin.dinas.hapustes');
-    Route::get('/admin/dinas/edittes/{id}','TesDinasController@editTes')->name('admin.dinas.edittes');
-    Route::post('/admin/dinas/updatetes/{id}','TesDinasController@updateTes')->name('admin.dinas.updatetes');
+    Route::get('/admin/paket','PaketDinasController@paket')->name('admin.dinas.paket');
+    Route::get('/admin/tambahpaket','PaketDinasController@tambah')->name('admin.dinas.tambahpaket');
+    Route::post('/admin/uppaket','PaketDinasController@up')->name('admin.dinas.uppaket');
+    Route::get('/admin/lihatpaket/{id}','PaketDinasController@lihat')->name('admin.dinas.lihatpaket');
+    Route::get('/admin/editpaket/{id}','PaketDinasController@editPaket')->name('admin.dinas.editpaket');
+    Route::post('/admin/updatepaket/{id}','PaketDinasController@updatePaket')->name('admin.dinas.updatepaket');
+    Route::get('/admin/hapuspaket/{id}','PaketDinasController@hapusPaket')->name('admin.dinas.hapuspaket');
 
-
-
-
-
-
+    Route::post('/admin/tambahkelas/{id}','PaketDinasController@tambahKelas')->name('admin.dinas.tambahkelas');
+    Route::get('/admin/hapuskelas/{id}','PaketDinasController@hapusKelas')->name('admin.dinas.hapuskelas');
+    Route::post('/admin/tambahtes/{id}','TesDinasController@tambahTes')->name('admin.dinas.tambahtes');
+    Route::get('/admin/hapustes/{id}','TesDinasController@hapusTes')->name('admin.dinas.hapustes');
+    Route::get('/admin/edittes/{id}','TesDinasController@editTes')->name('admin.dinas.edittes');
+    Route::post('/admin/updatetes/{id}','TesDinasController@updateTes')->name('admin.dinas.updatetes');
+    Route::get('/admin/hasildinas/{id}','HasilDinasController@hasilKedinasanAdmin')->name('admin.dinas.hasildinas');
+    Route::get('/admin/hasiltnipolri/{id}','HasilDinasController@hasilTniPolriAdmin')->name('admin.dinas.hasiltnipolri');
 });
 
 Route::group(['middleware' => ['auth','pengajar-role']], function(){
@@ -88,8 +81,41 @@ Route::group(['middleware' => ['auth','pengajar-role']], function(){
     Route::post('/pengajar/cat/updategambar/{id}','CatController@updateGambar')->name('pengajar.cat.updategambar');
     Route::get('/pengajar/cat/hapusgambar/{id}','CatController@hapusGambar')->name('pengajar.cat.hapusgambar');
 
-
+    // Kedinasan
+    Route::get('/pendidik/paket','PaketDinasController@pendidikPaket')->name('pendidik.dinas.paket');
+    Route::get('/pendidik/tes/{id}','TesDinasController@pendidikTes')->name('pendidik.dinas.tes');
+    Route::get('/pendidik/tipesoal/{id}','SoalDinasController@pendidikPilihTipe')->name('pendidik.dinas.tipesoal');
+    Route::get('/pendidik/hapusganda/{id}','SoalDinasController@pendidikHapusGanda')->name('pendidik.dinas.hapusganda');
+    Route::get('/pendidik/hapusgandapoin/{id}','SoalDinasController@pendidikHapusGandaPoin')->name('pendidik.dinas.hapusgandapoin');
+    Route::get('/pendidik/hapusessay/{id}','SoalDinasController@pendidikHapusEssay')->name('pendidik.dinas.hapusessay');
+    Route::get('/pendidik/soalganda/{id}','SoalDinasController@pendidikSoalGanda')->name('pendidik.dinas.soalganda');
+    Route::post('/pendidik/upsoalganda/{id}','SoalDinasController@pendidikUpSoalGanda')->name('pendidik.dinas.upsoalganda');
+    Route::get('/pendidik/editsoalganda/{id}','SoalDinasController@pendidikEditSoalGanda')->name('pendidik.dinas.editsoalganda');
+    Route::post('/pendidik/updatesoalganda/{id}','SoalDinasController@pendidikUpdateSoalGanda')->name('pendidik.dinas.updatesoalganda');
+    Route::get('/pendidik/soalgandapoin/{id}','SoalDinasController@pendidikSoalGandaPoin')->name('pendidik.dinas.soalgandapoin');
+    Route::post('/pendidik/upsoalgandapoin/{id}','SoalDinasController@pendidikUpSoalGandaPoin')->name('pendidik.dinas.upsoalgandapoin');
+    Route::get('/pendidik/editsoalgandapoin/{id}','SoalDinasController@pendidikEditSoalGandaPoin')->name('pendidik.dinas.editsoalgandapoin');
+    Route::post('/pendidik/updatesoalgandapoin/{id}','SoalDinasController@pendidikUpdateSoalGandaPoin')->name('pendidik.dinas.updatesoalgandapoin');
+    Route::get('/pendidik/soalessay/{id}','SoalDinasController@pendidikSoalEssay')->name('pendidik.dinas.soalessay');
+    Route::post('/pendidik/upsoalessay/{id}','SoalDinasController@pendidikUpSoalEssay')->name('pendidik.dinas.upsoalessay');
+    Route::get('/pendidik/editsoalessay/{id}','SoalDinasController@pendidikEditSoalEssay')->name('pendidik.dinas.editsoalessay');
+    Route::post('/pendidik/updatesoalessay/{id}','SoalDinasController@pendidikUpdateSoalEssay')->name('pendidik.dinas.updatesoalessay');
+    Route::get('/pendidik/hapussoalganda/{id}','SoalDinasController@pendidikHapusSoalGanda')->name('pendidik.dinas.hapussoalganda');
+    Route::get('/pendidik/hapussoalgandapoin/{id}','SoalDinasController@pendidikHapusSoalGandaPoin')->name('pendidik.dinas.hapussoalgandapoin');
+    Route::get('/pendidik/hapussoalessay/{id}','SoalDinasController@pendidikHapusSoalEssay')->name('pendidik.dinas.hapussoalessay');
+    Route::get('/pendidik/penilaian/{id}', 'HasilDinasController@hasilPendidik')->name('pendidik.dinas.penilaian');
+    Route::get('/pendidik/cetak_hasil/{id}', 'HasilDinasController@cetakPdfHasil')->name('pendidik.dinas.cetak_hasil');
+    Route::post('/pendidik/arsipkan/{id}','HasilDinasController@arsipkan')->name('pendidik.dinas.arsipkan');
+    Route::get('/pendidik/analisis','ArsipController@analisis')->name('pendidik.dinas.analisis');
+    Route::get('/pendidik/hasil','ArsipController@hasil')->name('pendidik.dinas.hasil');
+    Route::get('/pendidik/analisispelajar','ArsipController@pelajar')->name('pendidik.dinas.analisispelajar');
+    Route::get('/pendidik/jawabanpelajar','ArsipController@jawabanPelajar')->name('pendidik.dinas.jawabanpelajar');
+    Route::get('/pendidik/analisissoal','ArsipController@soal')->name('pendidik.dinas.analisissoal');
+    Route::post('/pendidik/importganda','SoalDinasController@pendidikImportSoalGanda')->name('pendidik.dinas.importganda');
+    Route::post('/pendidik/importgandapoin','SoalDinasController@pendidikImportSoalGandaPoin')->name('pendidik.dinas.importgandapoin');
 });
+
+
 
 Route::group(['middleware' => ['auth','pelajar-role']], function(){
     Route::get('/pelajar/index','PelajarController@index')->name('pelajar.index');
@@ -104,6 +130,18 @@ Route::group(['middleware' => ['auth','pelajar-role']], function(){
     Route::get('/pelajar/cat/hasil', 'CatController@hasilPelajar')->name('pelajar.cat.hasil');
 
     //Kedinasan
-    Route::get('/pelajar/dinas/index','KedinasanController@index')->name('pelajar.dinas.index');
+    Route::get('/pelajar/paket','PaketDinasController@pelajarPaket')->name('pelajar.dinas.paket');
+    Route::get('/pelajar/tes/{id}','TesDinasController@pelajarTes')->name('pelajar.dinas.tes');
+    Route::get('/pelajar/persiapan/{id}','SoalDinasController@pelajarPersiapan')->name('pelajar.dinas.persiapan');
+    Route::get('/pelajar/soalganda/{id}','SoalDinasController@pelajarSoalGanda')->name('pelajar.dinas.soalganda');
+    Route::post('pelajar/upjawabanganda/{id}','JawabanDinasController@upJawabanGanda')->name('pelajar.dinas.upjawabanganda');
+    Route::get('/pelajar/review/{id}','JawabanDinasController@review')->name('pelajar.dinas.review');
+    Route::post('/pelajar/kumpulkan/{id}','JawabanDinasController@kumpulkan')->name('pelajar.dinas.kumpulkan');
+    Route::get('/pelajar/nilai/{id}','JawabanDinasController@nilai')->name('pelajar.dinas.nilai');
+
+    Route::get('/pelajar/soalgandapoin/{id}','SoalDinasController@pelajarSoalGandaPoin')->name('pelajar.dinas.soalgandapoin');
+    Route::post('pelajar/upjawabangandapoin/{id}','JawabanDinasController@upJawabanGandaPoin')->name('pelajar.dinas.upjawabangandapoin');
+    Route::get('/pelajar/reviewgandapoin/{id}','JawabanDinasController@reviewGandaPoin')->name('pelajar.dinas.reviewgandapoin');
+    Route::post('/pelajar/kumpulkangandapoin/{id}','JawabanDinasController@kumpulkanGandaPoin')->name('pelajar.dinas.kumpulkangandapoin');
 
 });

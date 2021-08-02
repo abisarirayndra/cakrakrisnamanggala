@@ -13,6 +13,7 @@ class TesDinas extends Model
         'nilai_pokok',
         'mulai',
         'selesai',
+        'durasi',
         'pengajar_id',
     ];
 }

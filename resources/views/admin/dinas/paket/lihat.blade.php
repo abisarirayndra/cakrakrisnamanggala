@@ -1,7 +1,7 @@
-@extends('master.master')
+@extends('master.admin')
 
 @section('title')
-    <title>CAT - Kedinasan</title>
+    <title>Computer Assisted Test - Cakra Krisna Manggala</title>
     <link href="{{asset('vendor/datatables/datatables.min.css')}}" rel="stylesheet">
 @endsection
 
@@ -10,7 +10,7 @@
 <div class="container">
 
     <!-- Page Heading -->
-    <h1 class="h3 mb-2 text-gray-800">Paket Soal Kedinasan</h1>
+    <h1 class="h3 mb-2 text-gray-800">Paket Soal</h1>
     <p class="mb-4">Paket-paket yang disiapkan oleh admin untuk persiapan <i>Computer Assisted Test</i>.</p>
 
     <!-- DataTales Example -->
@@ -62,6 +62,7 @@
                           <th style="max-width: 50px">Nilai Pokok/Bobot</th>
                           <th>Mulai</th>
                           <th>Selesai</th>
+                          {{-- <th>Durasi (/Menit)</th> --}}
                           <th>Pengajar</th>
                           <th>Aksi</th>
                         </tr>
@@ -77,6 +78,7 @@
                             <td>{{$item->nilai_pokok}}</td>
                             <td>{{\Carbon\Carbon::parse($item->mulai)->isoFormat('dddd, D MMMM Y HH:mm')}}</td>
                             <td>{{\Carbon\Carbon::parse($item->selesai)->isoFormat('dddd, D MMMM Y HH:mm')}}</td>
+                            {{-- <td>{{$item->durasi}}</td> --}}
                             <td>{{$item->nama}}</td>
                             <td>
                               <a href="{{route('admin.dinas.edittes', [$item->id])}}" class="btn btn-sm btn-success"><i class="fas fa-feather-alt"></i> Edit</a>
@@ -154,6 +156,10 @@
                             <label for="nama">Waktu Selesai</label>
                             <input type="datetime-local" class="form-control" name="selesai" required>
                         </div>
+                        {{-- <div class="form-group">
+                            <label for="nama">Durasi (Dalam Menit)</label>
+                            <input type="number" class="form-control" name="durasi" required>
+                        </div> --}}
                         <div class="form-group">
                             <label for="nama">Pengajar</label>
                             <select name="pengajar_id" class="form-control" required>
@@ -171,7 +177,7 @@
           </div>
         </div>
     </div>
-  
+
 </div>
 
 @endsection

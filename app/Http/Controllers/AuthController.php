@@ -74,15 +74,15 @@ class AuthController extends Controller
             }
             elseif (auth()->user()->role_id == 2) {
                 Alert::success('Selamat datang','Admin');
-                return redirect()->route('admin.cat.paket');
+                return redirect()->route('admin.dinas.paket');
             }
             elseif (auth()->user()->role_id == 3) {
                 Alert::success('Selamat datang','Pendidik Cakra');
-                return redirect()->route('pengajar.cat.paket');
+                return redirect()->route('pendidik.dinas.paket');
             }
             elseif (auth()->user()->role_id == 4) {
                 Alert::success('Selamat datang','Peserta Didik Cakra');
-                return redirect()->route('pelajar.cat.paket');
+                return redirect()->route('pelajar.dinas.paket');
             }
         }
         Alert::error('Akun tidak ditemukan','Gagal');

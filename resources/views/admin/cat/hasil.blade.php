@@ -118,6 +118,7 @@
                                   <tr>
                                     <th>Ranking</th>
                                     <th>Nama</th>
+                                    <th>Kelas</th>
                                     <th>Nilai Matematika</th>
                                     <th>Nilai IPU</th>
                                     <th>Nilai Bahasa Inggris</th>
@@ -133,6 +134,7 @@
                                   <tr>
                                   <td>{{$no++}}</td>
                                   <td>{{$item->user->nama}}</td>
+                                  <td>{{$item->nama_kelas}}</td>
                                   <td>{{$item->nilai_mtk}}</td>
                                   <td>{{$item->nilai_ipu}}</td>
                                   <td>{{$item->nilai_bing}}</td>

@@ -1,7 +1,7 @@
 @extends('master.master')
 
 @section('title')
-    <title>CAT - Kedinasan</title>
+<title>Computer Assisted Test - Cakra Krisna Manggala</title>
 @endsection
 
 @section('content')
@@ -52,7 +52,7 @@
                 </div>
             </div>
     </div>
-    
+
 
 </div>
 @endsection

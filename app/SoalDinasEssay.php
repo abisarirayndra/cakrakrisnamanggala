@@ -8,6 +8,6 @@ class SoalDinasEssay extends Model
 {
     protected $table = 'dn_soalessay';
     protected $fillable = [
-        'dn_tes_id','soal'
+        'dn_tes_id','soal','nomor_soal',
     ];
 }

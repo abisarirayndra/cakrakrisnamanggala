@@ -18,7 +18,7 @@ class PaketDinasController extends Controller
 
     public function paket(){
         $user = Auth::user()->nama;
-        $paket = PaketDinas::all();
+        $paket = PaketDinas::orderBy('id','desc')->get();
 
         return view('admin.dinas.paket.paket', compact('user','paket'));
     }
@@ -46,7 +46,7 @@ class PaketDinasController extends Controller
         // Tes
         $mapel = Mapel::all();
         $pengajar = User::where('role_id', 3)->get();
-        $tes = TesDinas::select('mapels.mapel','dn_tes.nilai_pokok','dn_tes.mulai','dn_tes.selesai','dn_tes.id','users.nama')
+        $tes = TesDinas::select('mapels.mapel','dn_tes.nilai_pokok','dn_tes.mulai','dn_tes.selesai','dn_tes.id','users.nama','dn_tes.durasi')
                         ->join('mapels','mapels.id','=','dn_tes.mapel_id')
                         ->join('users','users.id','=','dn_tes.pengajar_id')
                         ->where('dn_tes.dn_paket_id', $id)
@@ -112,10 +112,12 @@ class PaketDinasController extends Controller
     public function pendidikPaket(){
         $user = Auth::user()->nama;
         $id = Auth::user()->id;
-        $paket = TesDinas::join('dn_pakets','dn_pakets.id','=','dn_tes.id')
+        $paket = TesDinas::select('dn_tes.dn_paket_id','dn_pakets.nama_paket','dn_pakets.id')
+                            ->join('dn_pakets','dn_pakets.id','=','dn_tes.dn_paket_id')
                             ->where('dn_pakets.status', 1)
                             ->where('dn_tes.pengajar_id', $id)
-                            ->distinct('dn_tes.dn_paket_id')
+                            ->orderBy('dn_tes.mulai','asc')
+                            ->distinct()
                             ->get();
 
         // return $paket;
@@ -131,6 +133,7 @@ class PaketDinasController extends Controller
                             ->join('dn_pakets','dn_pakets.id','=','dn_kelas.dn_paket_id')
                             ->where('dn_kelas.kelas_id', $kelas)
                             ->where('dn_pakets.status', 1)
+                            ->orderBy('dn_pakets.id','desc')
                             ->get();
 
 

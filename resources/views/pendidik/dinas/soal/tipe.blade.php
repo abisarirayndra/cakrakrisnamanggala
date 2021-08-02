@@ -1,7 +1,7 @@
 @extends('master.master')
 
 @section('title')
-    <title>CAT - Kedinasan</title>
+<title>Computer Assisted Test - Cakra Krisna Manggala</title>
 @endsection
 
 @section('content')
@@ -60,7 +60,7 @@
                         <div class="text-center mb-4 mt-4">
                             <a href="{{route('pendidik.dinas.soalganda',[$id])}}" class="btn btn-warning">Pilihan Ganda</a>
                             <a href="{{route('pendidik.dinas.soalgandapoin',[$id])}}" class="btn btn-warning">Pilihan Ganda Berpoin</a>
-                            <a href="{{route('pendidik.dinas.soalessay',[$id])}}" class="btn btn-warning">Essay</a>
+                            {{-- <a href="{{route('pendidik.dinas.soalessay',[$id])}}" class="btn btn-warning">Essay</a> --}}
 
                         </div>
                     @endif

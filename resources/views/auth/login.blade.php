@@ -22,7 +22,7 @@
                           <div class="col-lg-6">
                               <div class="p-5">
                                   <div class="text-center">
-                                      <h1 class="h4 text-gray-900 mb-4">Selamat Datang!</h1>
+                                      <h1 class="h4 text-gray-900 mb-4">Selamat Datang di Computer Assisted Test !</h1>
                                   </div>
                                   <form class="user" action="{{route('log')}}" method="post">
                                     @csrf
@@ -47,7 +47,7 @@
                                       </button>
                                   </form>
                                   <hr>
-                                  
+
                                   <div class="text-center">
                                       <div class="row">
                                              <a class="small" href="{{route('auth.register')}}">Belum Punya Akun ?</a>

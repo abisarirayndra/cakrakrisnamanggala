@@ -1,7 +1,7 @@
-@extends('master.master')
+@extends('master.admin')
 
 @section('title')
-    <title>CAT - Kedinasan</title>
+    <title>Computer Assisted Test - Cakra Krisna Manggala</title>
 @endsection
 
 
@@ -9,7 +9,7 @@
 <div class="container">
 
     <!-- Page Heading -->
-    <h1 class="h3 mb-2 text-gray-800">Paket Soal Kedinasan</h1>
+    <h1 class="h3 mb-2 text-gray-800">Paket Soal</h1>
     <p class="mb-4">Paket-paket yang disiapkan oleh admin untuk persiapan <i>Computer Assisted Test</i>.</p>
 
     <!-- DataTales Example -->
@@ -30,7 +30,14 @@
                             <option value="1">Aktif</option>
                             <option value="0">Tidak Aktif</option>
                         </select>
-                </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="nama">Kategori</label>
+                        <select name="kategori" id="" class="form-control" required>
+                            <option value="Kedinasan">Kedinasan</option>
+                            <option value="TNI/Polri">TNI/Polri</option>
+                        </select>
+                    </div>
                     <div class="text-center mt-4">
                         <button class="btn btn-warning" type="submit">Simpan</button>
                     </div>
@@ -43,5 +50,5 @@
 @endsection
 
 @section('js')
-    
+
 @endsection

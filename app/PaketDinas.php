@@ -11,7 +11,8 @@ class PaketDinas extends Model
     protected $fillable = [
         'nama_paket',
         'kelas',
-        'status'
+        'status',
+        'kategori'
     ];
 
     public function kelas(){

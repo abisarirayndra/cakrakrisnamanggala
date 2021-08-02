@@ -95,7 +95,7 @@ class CatController extends Controller
 
 
         return view('admin.cat.edittema', compact('tema','pengajar_id','mapel','selected_mapel','selected_pengajar'));
-        
+
     }
 
     public function updateTemaAdmin($id, Request $request){
@@ -118,11 +118,14 @@ class CatController extends Controller
     public function hasilAdmin($id){
         $user = Auth::user()->nama;
         $paket = PaketSoal::find($id);
-        $hasil = RekapAkademik::where('paket_id', $id)->orderBy('nilai_akademik', 'desc')->get();
-        
+        $hasil = RekapAkademik::select('rekap_akademiks.user_id','kelas.nama as nama_kelas','rekap_akademiks.nilai_mtk','rekap_akademiks.nilai_ipu','rekap_akademiks.nilai_bing','rekap_akademiks.nilai_bi','rekap_akademiks.nilai_akademik')
+                    ->join('users','users.id','=','rekap_akademiks.user_id')
+                    ->join('kelas','kelas.id','=','users.kelas_id')
+                    ->where('paket_id', $id)->orderBy('nilai_akademik', 'desc')->get();
+
         return view('admin.cat.hasil', compact('user','hasil','paket'));
     }
-    
+
     // Pendidik
     public function paketPendidik(){
         $user = Auth::user()->nama;
@@ -163,9 +166,9 @@ class CatController extends Controller
 
         return redirect()->route('pengajar.cat.tema', $paket);
     }
-    
+
     public function hasilPengajar($id, Request $request){
-        $user = Auth::user()->nama;       
+        $user = Auth::user()->nama;
         $tema = Tema::where('id', $id)->first();
         $mapel = $tema->mapel_id;
         $kelas = Kelas::all();
@@ -181,8 +184,8 @@ class CatController extends Controller
                             ->where('paket_soals.kelas_id', $kelas_id)
                             ->orderBy('rekap_nilais.total_nilai', 'desc')
                             ->get();
-           
-        
+
+
         }
         else{
             $rekap = RekapNilai::select('users.nama','rekap_nilais.total_nilai','rekap_nilais.created_at','kelas.nama as kelas','users.nomor_registrasi','kelas.id as kelas_id')
@@ -191,10 +194,10 @@ class CatController extends Controller
                             ->where('rekap_nilais.tema_id', $id)
                             ->orderBy('rekap_nilais.total_nilai', 'desc')
                             ->get();
-            
+
         }
-        
-        return view('pengajar.cat.hasil', compact('user','rekap','tema','kelas','kelas_id'));       
+
+        return view('pengajar.cat.hasil', compact('user','rekap','tema','kelas','kelas_id'));
 
     }
 
@@ -226,7 +229,7 @@ class CatController extends Controller
         $soal = Soal::find($id);
         return view('pengajar.cat.tambahgambar', compact('soal'));
     }
-    
+
     public function upGambar($id, Request $request){
         $soal = Soal::find($id);
         $tema_id = $soal->tema_id;
@@ -238,7 +241,7 @@ class CatController extends Controller
             ]);
             $image->move($path, $images);
 
-            
+
         Alert::toast('Tambah Foto Berhasil', 'success');
 
         return redirect()->route('pengajar.cat.soal', $tema_id);
@@ -249,7 +252,7 @@ class CatController extends Controller
 
         return view('pengajar.cat.editgambar', compact('soal'));
     }
-    
+
     public function updateGambar($id, Request $request){
         $new_photo = $request->file('foto');
         $soal = Soal::find($id);
@@ -263,7 +266,7 @@ class CatController extends Controller
         $soal->update([
             'foto' => $images,
         ]);
-        
+
         Alert::toast('Update Gambar Berhasil', 'success');
 
         return redirect()->route('pengajar.cat.soal', $tema_id);
@@ -275,7 +278,7 @@ class CatController extends Controller
         $soal->update([
             'foto' => null,
         ]);
-        
+
         Alert::toast('Hapus Gambar Berhasil', 'success');
         return redirect()->back();
     }
@@ -332,10 +335,10 @@ class CatController extends Controller
 
         if ($request->hasFile('file')) {
             $file = $request->file('file'); //GET FILE
-            Excel::import(new ImportSoal, $file); //IMPORT FILE 
+            Excel::import(new ImportSoal, $file); //IMPORT FILE
             Alert::toast('Import Berhasil', 'success');
-            return redirect()->back();
-        } 
+            return redirect()->back(); 
+        }
         Alert::toast('Pastikan File Sudah Ada', 'warning');
     }
 
@@ -343,8 +346,11 @@ class CatController extends Controller
     public function paketPelajar(){
         $user = Auth::user()->nama;
         $kelas = Auth::user()->kelas_id;
-        $paket = PaketSoal::where('kelas_id', $kelas)
-                            ->where('status', 1)
+        // $paket = PaketSoal::where('kelas_id', $kelas)
+        //                     ->where('status', 1)
+        //                     ->orderBy('id','desc')
+        //                     ->get();
+        $paket = PaketSoal::where('status', 1)
                             ->orderBy('id','desc')
                             ->get();
 
@@ -371,7 +377,7 @@ class CatController extends Controller
         $user = Auth::user()->nama;
         $user_id = Auth::user()->id;
         $tema_id = $id;
-        $soal = Soal::where('tema_id', $id)->get();       
+        $soal = Soal::where('tema_id', $id)->get();
 
         $nomor = $request->nomor;
         $soal_id = $request->soal;
@@ -380,7 +386,7 @@ class CatController extends Controller
 
         $tampil_soal = Soal::where('tema_id', $id)->where('nomor_soal', $nomor)->get();
         // $tampil_soal = Soal::where('tema_id', $id)->paginate(1);
-        
+
 
         // Lembar Jawaban
         $lembar = LembarJawaban::where('soal_id', $soal_id)->where('user_id', $user_id)->first();
@@ -400,7 +406,7 @@ class CatController extends Controller
         ->where('lembar_jawabans.soal_id', $soal_id)
         ->where('soals.nomor_soal', $nomor)
         ->first();
-        
+
         $tenggat = Tema::select('paket_id','tenggat','jenis')->where('id',$id)->first();
 
         $paket = $tenggat->paket_id;
@@ -414,15 +420,15 @@ class CatController extends Controller
                 'paket_id' => $paket,
                 'user_id' => $user_id,
                 'nilai_akademik' => 0,
-            ]);     
+            ]);
         }
-        
+
 
         return view('pelajar.cat.soal',compact('user','soal','tampil_soal','sudah_jawab','user_id','nomor_soal','tenggat','tema_id'));
     }
 
     public function jawaban(Request $request){
-        
+
         $nomor_soal = $request->nomorsoal;
         $soal_id = $request->soal;
         $user = Auth::user()->id;
@@ -446,7 +452,7 @@ class CatController extends Controller
 
             return redirect()->back();
         }
-  
+
     }
 
     public function reviewJawaban($id, Request $request){
@@ -469,19 +475,19 @@ class CatController extends Controller
                     ->where('soals.tema_id', $id)
                     ->where('lembar_jawabans.user_id', $user_id)
                     ->get();
-        
+
                     $total_skor = [];
                     foreach($total as $item){
                         $total_skor = (int)$item->total;
                     }
-        
+
         $mapel = Tema::select('mapel_id','paket_id')->where('id', $id)->first();
         $paket = $mapel->paket_id;
 
         $akademik = RekapAkademik::where('user_id', $user_id)->where('paket_id', $paket)->first();
 
-        
-        
+
+
         return view('pelajar.cat.kumpulkan', compact('user','jawaban','tema_id','jml_soal','total_skor','mapel','akademik'));
     }
 
@@ -494,7 +500,7 @@ class CatController extends Controller
         $mapel = $request->m;
         $paket = $request->p;
         $akademik = $request->akademik;
-        
+
         $nilai = ($skor/$jml_soal) * 100;
 
         $sudah = RekapNilai::where('user_id',$id_user)->where('tema_id', $id)->first();
@@ -541,9 +547,10 @@ class CatController extends Controller
                 'nilai_akademik' => $bi_akademik,
             ]);
         }
-        
 
-        return redirect()->route('pelajar.cat.hasil');
+        $paket = Tema::select('paket_id')->where('id', $id)->first();
+
+        return redirect()->route('pelajar.cat.tema', $paket->paket_id);
     }
 
     public function hasilPelajar(){
@@ -554,5 +561,5 @@ class CatController extends Controller
         return view('pelajar.cat.hasil', compact('rekap','user'));
     }
 
-    
+
 }
