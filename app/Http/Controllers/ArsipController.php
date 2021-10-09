@@ -14,6 +14,8 @@ use App\SoalDinasEssay;
 use App\JawabanGandaDinas;
 use DB;
 use App\User;
+use Image;
+use PDF;
 
 class ArsipController extends Controller
 {
@@ -126,6 +128,33 @@ class ArsipController extends Controller
             return view('pendidik.dinas.analisis.jawabanpelajar', compact('user','pelajar','jawaban','soal','soal_terjawab','nilai'));
         }
 
+    }
+    public function cetakJawaban(Request $request){
+            $pelajar = User::join('kelas','kelas.id','=','users.kelas_id')
+                            ->select('users.nama as pelajar','kelas.nama as kelas')
+                            ->where('users.id',$request->auth)
+                            ->first();
+            $jawaban = SoalDinasGanda::leftJoin('dn_jawabanganda','dn_soalganda.id','=','dn_jawabanganda.dn_soalganda_id')
+                                            ->where('dn_soalganda.dn_tes_id', $request->tes)
+                                            ->where('dn_jawabanganda.status', $request->token)
+                                            ->where('dn_jawabanganda.pelajar_id', $request->auth)
+                                            ->orderBy('dn_soalganda.nomor_soal', 'asc')
+                                            ->get();
+            $soal = SoalDinasGanda::select('id')->where('dn_tes_id', $request->tes)->count();
+            $soal_terjawab = JawabanGandaDinas::join('dn_soalganda','dn_soalganda.id','=','dn_jawabanganda.dn_soalganda_id')
+                                            ->where('dn_soalganda.dn_tes_id', $request->tes)
+                                            ->where('dn_jawabanganda.pelajar_id', $request->auth)
+                                            ->where('dn_jawabanganda.status', $request->token)
+                                            ->whereNotNull('dn_jawabanganda.jawaban')
+                                            ->count();
+            $nilai = Penilaian::where('dn_penilaians.dn_tes_id', $request->tes)
+                                ->where('dn_penilaians.pelajar_id', $request->auth)
+                                ->where('dn_penilaians.status', $request->token)
+                                ->first();
+
+            $en_logo = (string) Image::make(public_path('img/krisna.png'))->encode('data-url');
+            $pdf = PDF::loadview('pendidik.dinas.analisis.cetakjawaban', ['soal'=>$soal,'logo'=>$en_logo,'pelajar'=>$pelajar,'soal_terjawab'=>$soal_terjawab,'jawaban'=>$jawaban,'nilai'=>$nilai])->setPaper('a4');
+            return $pdf->stream();
     }
 
 }

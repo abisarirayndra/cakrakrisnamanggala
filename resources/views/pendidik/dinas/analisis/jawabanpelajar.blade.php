@@ -12,7 +12,19 @@
     <!-- DataTales Example -->
     <div class="card shadow mb-4">
         <div class="card-body">
-            <h5><b>Analisis Jawaban</b></h5>
+            <div class="row">
+                <div class="col-md-6"> <h5><b>Analisis Jawaban</b></h5></div>
+                <div class="col-md-6">
+                    <div class="float-right">
+                        <form action="{{ route('pendidik.dinas.cetakjawaban') }}" method="get">
+                            <input hidden name="auth" value="{{ $nilai->pelajar_id }}">
+                            <input hidden name="token" value="{{ $nilai->status }}">
+                            <input hidden name="tes" value="{{ $nilai->dn_tes_id }}">
+                            <button type="submit" class="btn btn-sm btn-success" target="_blank"><i class="fas fa-cloud-download-alt"></i> Unduh PDF</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
         </div>
         <div class="row p-3">
             <div class="col-6">

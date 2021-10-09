@@ -113,6 +113,7 @@ Route::group(['middleware' => ['auth','pengajar-role']], function(){
     Route::get('/pendidik/analisissoal','ArsipController@soal')->name('pendidik.dinas.analisissoal');
     Route::post('/pendidik/importganda','SoalDinasController@pendidikImportSoalGanda')->name('pendidik.dinas.importganda');
     Route::post('/pendidik/importgandapoin','SoalDinasController@pendidikImportSoalGandaPoin')->name('pendidik.dinas.importgandapoin');
+    Route::get('/pendidik/cetakjawaban','ArsipController@cetakJawaban')->name('pendidik.dinas.cetakjawaban');
 });
 
 
