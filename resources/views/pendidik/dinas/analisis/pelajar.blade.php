@@ -22,6 +22,7 @@
                       <tr>
                           <th style="max-width: 20px">No.</th>
                         <th>Nama</th>
+                        <th>Kelas</th>
                         <th>Aksi</th>
                       </tr>
                     </thead>
@@ -33,6 +34,7 @@
                       <tr>
                         <td>{{ $no++ }}</td>
                       <td>{{$item->nama}}</td>
+                      <td>{{ $item->kelas }}</td>
                       <td>
                             <form action="{{ route('pendidik.dinas.jawabanpelajar') }}">
                                 <input type="text" name="token" hidden value="{{ $item->status }}">

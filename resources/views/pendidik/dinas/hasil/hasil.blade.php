@@ -29,10 +29,12 @@
                     </div>
                 @endif
                 <div class="row mb-3">
-                    @if ($selected == "")
-                    <button type="button" class="btn btn-sm btn-warning mr-3" data-toggle="modal" data-target="#arsip">
-                        <i class="fas fa-file-archive"></i> Arsipkan
-                    </button>
+                    @if ($tes->selesai < $now)
+                        @if ($selected == "")
+                        <button type="button" class="btn btn-sm btn-warning mr-3" data-toggle="modal" data-target="#arsip">
+                            <i class="fas fa-file-archive"></i> Arsipkan
+                        </button>
+                        @endif
                     @endif
                     <form action="{{ route('pendidik.dinas.cetak_hasil', [$id]) }}" method="GET">
                         <input name="kelas" value="{{ $selected }}" hidden>
@@ -86,7 +88,7 @@
                         <td>{{ $item->kelas }}</td>
                         <td>{{$item->nilai}}</td>
                         <td>{{$item->akumulasi}}</td>
-                        <td>{{\Carbon\Carbon::parse($item->updated_at)->isoFormat('dddd, D MMMM Y HH:mm')}}</td>
+                        <td>{{\Carbon\Carbon::parse($item->created_at)->isoFormat('dddd, D MMMM Y HH:mm')}}</td>
                         </tr>
                           @endforeach
                       </tbody>

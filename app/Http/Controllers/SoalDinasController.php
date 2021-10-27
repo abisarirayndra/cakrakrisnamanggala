@@ -14,10 +14,11 @@ use App\TesDinas;
 use App\Penilaian;
 use App\RekapDinas;
 use App\RekapTniPolri;
-use DB;
 use App\Imports\SoalGandaImport;
 use App\Imports\SoalGandaPoinImport;
 use Maatwebsite\Excel\Facades\Excel;
+use Image;
+use PDF;
 
 class SoalDinasController extends Controller
 {
@@ -58,6 +59,19 @@ class SoalDinasController extends Controller
         $user = Auth::user()->nama;
         $soal = SoalDinasGanda::where('dn_tes_id', $id)->get();
         return view('pendidik.dinas.soal.ganda', compact('user','id','soal'));
+    }
+
+    public function pendidikCetakSoalGanda($id){
+        $soal = SoalDinasGanda::where('dn_tes_id', $id)->get();
+        $data = TesDinas::join('mapels','mapels.id','=','dn_tes.mapel_id')
+                            ->join('users','users.id','=','dn_tes.pengajar_id')
+                            ->select('users.nama','mapels.mapel')
+                            ->where('dn_tes.id', $id)
+                            ->first();
+
+        $en_logo = (string) Image::make(public_path('img/krisna.png'))->encode('data-url');
+        $pdf = PDF::loadview('pendidik.dinas.soal.cetakganda', ['soal'=>$soal,'logo'=>$en_logo,'data'=>$data])->setPaper('a4');
+        return $pdf->stream();
     }
 
     public function pendidikUpSoalGanda($id, Request $request){
@@ -127,6 +141,19 @@ class SoalDinasController extends Controller
         $user = Auth::user()->nama;
         $soal = SoalDinasGandaPoin::where('dn_tes_id', $id)->get();
         return view('pendidik.dinas.soal.gandapoin', compact('user','id','soal'));
+    }
+
+    public function pendidikCetakSoalGandaPoin($id){
+        $soal = SoalDinasGandaPoin::where('dn_tes_id', $id)->get();
+        $data = TesDinas::join('mapels','mapels.id','=','dn_tes.mapel_id')
+                            ->join('users','users.id','=','dn_tes.pengajar_id')
+                            ->select('users.nama','mapels.mapel')
+                            ->where('dn_tes.id', $id)
+                            ->first();
+
+        $en_logo = (string) Image::make(public_path('img/krisna.png'))->encode('data-url');
+        $pdf = PDF::loadview('pendidik.dinas.soal.cetakgandapoin', ['soal'=>$soal,'logo'=>$en_logo,'data'=>$data])->setPaper('a4');
+        return $pdf->stream();
     }
 
     public function pendidikUpSoalGandaPoin($id, Request $request){

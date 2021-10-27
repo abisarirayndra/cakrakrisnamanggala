@@ -39,8 +39,9 @@
                             <h6 class="text-dark">Jumlah Soal : {{ $jumlah_ganda }}</h6>
                         </div>
                         <div class="text-center mb-4 mt-4">
-                            <a href="{{route('pendidik.dinas.soalganda',[$id])}}" class="btn btn-warning">Lihat</a>
-                            <a href="{{route('pendidik.dinas.hapusganda',[$id])}}" onclick="return confirm('Anda yakin ingin Menghapus ?')" class="btn btn-danger">Hapus</a>
+                            <a href="{{route('pendidik.dinas.soalganda',[$id])}}" class="btn btn-warning"><i class="fas fa-eye"></i> Lihat</a>
+                            <a href="{{ route('pendidik.dinas.cetaksoalganda',[$id]) }}" target="_blank" class="btn btn-success"><i class="fas fa-file-download"></i> Cetak Soal</a>
+                            <a href="{{route('pendidik.dinas.hapusganda',[$id])}}" onclick="return confirm('Anda yakin ingin Menghapus ?')" class="btn btn-danger"><i class="fas fa-trash"></i> Hapus</a>
                         </div>
                     @elseif (isset($poin))
                         <div class="text-center mt-4 mb-4">
@@ -50,8 +51,9 @@
                             <h6 class="text-dark">Jumlah Soal : {{ $jumlah_poin }}</h6>
                         </div>
                         <div class="text-center mb-4 mt-4">
-                            <a href="{{route('pendidik.dinas.soalgandapoin',[$id])}}" class="btn btn-warning">Lihat</a>
-                            <a href="{{route('pendidik.dinas.hapusgandapoin',[$id])}}" class="btn btn-danger">Hapus</a>
+                            <a href="{{route('pendidik.dinas.soalgandapoin',[$id])}}" class="btn btn-warning"><i class="fas fa-eye"></i> Lihat</a>
+                            <a href="{{ route('pendidik.dinas.cetaksoalgandapoin',[$id]) }}" target="_blank" class="btn btn-success"><i class="fas fa-file-download"></i> Cetak Soal</a>
+                            <a href="{{route('pendidik.dinas.hapusgandapoin',[$id])}}" class="btn btn-danger"><i class="fas fa-trash"></i> Hapus</a>
                         </div>
                     @else
                         <div class="text-center mt-4 mb-4">

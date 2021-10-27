@@ -18,6 +18,24 @@
             <h5><b>Hasil Penilaian</b></h5>
         </div>
         <div class="row p-3">
+            <div class="col-6">
+                <table>
+                    <tr>
+                       <td><b>Nama Pelajar<b></td>
+                       <td class="pl-3">{{ $pelajar->nama }}</td>
+                    </tr>
+                    <tr>
+                        <td><b>Kelas<b></td>
+                        <td class="pl-3">{{ $kelas->nama }}</td>
+                    </tr>
+                    <tr>
+                        <td><b>Mapel<b></td>
+                        <td class="pl-3">{{ $mapel->mapel }}</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+        <div class="row p-3">
             <!-- Earnings (Monthly) Card Example -->
             <div class="col-xl-3 col-md-6 mb-4">
               <div class="card border-left-primary shadow h-100 py-2">
@@ -34,7 +52,7 @@
                 </div>
               </div>
             </div>
-
+            @if($jenis == 1)
             <!-- Earnings (Monthly) Card Example -->
             <div class="col-xl-3 col-md-6 mb-4">
               <div class="card border-left-success shadow h-100 py-2">
@@ -51,7 +69,7 @@
                 </div>
               </div>
             </div>
-
+            @endif
             <div class="col-xl-3 col-md-6 mb-4">
                 <div class="card border-left-warning shadow h-100 py-2">
                   <div class="card-body">

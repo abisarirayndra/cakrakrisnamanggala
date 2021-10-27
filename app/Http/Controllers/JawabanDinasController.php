@@ -14,6 +14,8 @@ use App\TesDinas;
 use App\Penilaian;
 use App\RekapDinas;
 use App\RekapTniPolri;
+use App\Kelas;
+use App\Mapel;
 
 class JawabanDinasController extends Controller
 {
@@ -68,7 +70,7 @@ class JawabanDinasController extends Controller
                                             ->where('dn_jawabanganda.pelajar_id', $pelajar)
                                             ->whereNotNull('dn_jawabanganda.jawaban')
                                             ->where('status', null)
-                                            ->count(); 
+                                            ->count();
         $penilaian = JawabanGandaDinas::select(DB::raw('SUM(nilai) as total_nilai'))
                                             ->join('dn_soalganda','dn_soalganda.id','=','dn_jawabanganda.dn_soalganda_id')
                                             ->where('dn_jawabanganda.pelajar_id', $pelajar)
@@ -218,19 +220,35 @@ class JawabanDinasController extends Controller
 
     public function nilai($id){
         $user = Auth::user()->nama;
-        $pelajar = Auth::user()->id;
-        $jawab_benar = JawabanGandaDinas::join('dn_soalganda','dn_soalganda.id','=','dn_jawabanganda.dn_soalganda_id')
+        $pelajar = Auth::user();
+        $kelas = Kelas::find($pelajar->kelas_id);
+        $ganda = SoalDinasGanda::where('dn_tes_id', $id)->first();
+        $poin = SoalDinasGandaPoin::where('dn_tes_id', $id)->first();
+        if($ganda){
+            $jawab_benar = JawabanGandaDinas::join('dn_soalganda','dn_soalganda.id','=','dn_jawabanganda.dn_soalganda_id')
                                             ->where('dn_soalganda.dn_tes_id', $id)
-                                            ->where('dn_jawabanganda.pelajar_id', $pelajar)
+                                            ->where('dn_jawabanganda.pelajar_id', $pelajar->id)
                                             ->where('dn_jawabanganda.nilai', 1)
                                             ->where('status', null)
                                             ->count();
+            $soal = SoalDinasGanda::where('dn_tes_id', $id)->count();
+            $jenis = 1;
+        }elseif($poin){
+            $jawab_benar = JawabanGandaPoinDinas::join('dn_soalgandapoin','dn_soalgandapoin.id','=','dn_jawabangandapoin.dn_soalgandapoin_id')
+                                            ->where('dn_soalgandapoin.dn_tes_id', $id)
+                                            ->where('dn_jawabangandapoin.pelajar_id', $pelajar->id)
+                                            ->where('dn_jawabangandapoin.nilai', 1)
+                                            ->where('status', null)
+                                            ->count();
+            $soal = SoalDinasGandaPoin::where('dn_tes_id', $id)->count();
+            $jenis = 2;
+        }
 
-        $soal = SoalDinasGanda::where('dn_tes_id', $id)->count();
-        $nilai = Penilaian::where('pelajar_id', $pelajar)->where('dn_tes_id', $id)->where('status', null)->first();
+        $nilai = Penilaian::where('pelajar_id', $pelajar->id)->where('dn_tes_id', $id)->where('status', null)->first();
         $prosentase = TesDinas::find($id);
+        $mapel = Mapel::find($prosentase->mapel_id);
 
-        return view('pelajar.dinas.soal.nilai', compact('user','jawab_benar','soal','nilai','prosentase'));
+        return view('pelajar.dinas.soal.nilai', compact('user','pelajar','kelas','jawab_benar','soal','nilai','prosentase','jenis','mapel'));
     }
 
     public function upJawabanGandaPoin($id, Request $request){

@@ -12,17 +12,22 @@ use App\TesDinas;
 use Str;
 use App\ArsipNilai;
 use Carbon\Carbon;
-use App\JawabanGandaDinas;
 use Alert;
 use App\RekapDinas;
 use App\RekapTniPolri;
+use App\SoalDinasGanda;
+use App\SoalDinasGandaPoin;
+use App\JawabanGandaDinas;
+use App\JawabanGandaPoinDinas;
 
 class HasilDinasController extends Controller
 {
     public function hasilPendidik($id, Request $request){
         $user = Auth::user()->nama;
         $uniqode = Str::random(6);
-        $nilai = Penilaian::select('users.nama','dn_penilaians.nilai','dn_penilaians.akumulasi','kelas.nama as kelas')
+        $tes = TesDinas::select('selesai')->where('id',$id)->first();
+        $now = Carbon::now();
+        $nilai = Penilaian::select('users.nama','dn_penilaians.nilai','dn_penilaians.akumulasi','kelas.nama as kelas','dn_penilaians.created_at')
                         ->join('users','users.id','=','dn_penilaians.pelajar_id')
                         ->join('dn_tes','dn_tes.id','=','dn_penilaians.dn_tes_id')
                         ->join('kelas','kelas.id','=','users.kelas_id')
@@ -33,7 +38,7 @@ class HasilDinasController extends Controller
                         $selected = "";
         $kelas = Kelas::all();
         if($request->kelas){
-            $nilai = Penilaian::select('users.nama','dn_penilaians.nilai','dn_penilaians.akumulasi','kelas.nama as kelas')
+            $nilai = Penilaian::select('users.nama','dn_penilaians.nilai','dn_penilaians.akumulasi','kelas.nama as kelas','dn_penilaians.created_at')
                         ->join('users','users.id','=','dn_penilaians.pelajar_id')
                         ->join('dn_tes','dn_tes.id','=','dn_penilaians.dn_tes_id')
                         ->join('kelas','kelas.id','=','users.kelas_id')
@@ -45,14 +50,13 @@ class HasilDinasController extends Controller
             $selected = $request->kelas;
         }
 
-        return view('pendidik.dinas.hasil.hasil',  compact('user','nilai','kelas','id','selected','uniqode'));
+        return view('pendidik.dinas.hasil.hasil',  compact('user','nilai','kelas','id','selected','uniqode','tes','now'));
 
     }
 
     public function cetakPdfHasil($id, Request $request){
-
         if ($request->kelas == ""){
-            $nilai = Penilaian::select('users.nama','dn_penilaians.nilai','dn_penilaians.akumulasi','kelas.nama as kelas')
+            $nilai = Penilaian::select('users.nama','dn_penilaians.nilai','dn_penilaians.akumulasi','kelas.nama as kelas', 'dn_penilaians.created_at')
                                 ->join('users','users.id','=','dn_penilaians.pelajar_id')
                                 ->join('dn_tes','dn_tes.id','=','dn_penilaians.dn_tes_id')
                                 ->join('kelas','kelas.id','=','users.kelas_id')
@@ -67,7 +71,7 @@ class HasilDinasController extends Controller
                                     ->first();
         }
         else{
-            $nilai = Penilaian::select('users.nama','dn_penilaians.nilai','dn_penilaians.akumulasi','kelas.nama as kelas')
+            $nilai = Penilaian::select('users.nama','dn_penilaians.nilai','dn_penilaians.akumulasi','kelas.nama as kelas', 'dn_penilaians.created_at')
                         ->join('users','users.id','=','dn_penilaians.pelajar_id')
                         ->join('dn_tes','dn_tes.id','=','dn_penilaians.dn_tes_id')
                         ->join('kelas','kelas.id','=','users.kelas_id')
@@ -102,10 +106,16 @@ class HasilDinasController extends Controller
             'tanggal' => $tanggal,
             'pendidik_id' => $pendidik,
         ]);
-
         Penilaian::where('dn_tes_id', $id)->where('status', null)->update(['status' => $request->kode]);
-        JawabanGandaDinas::join('dn_soalganda','dn_soalganda.id','=','dn_jawabanganda.dn_soalganda_id')
-                           ->where('dn_soalganda.dn_tes_id', $id)->where('status', null)->update(['status' => $request->kode]);
+        $ganda = SoalDinasGanda::where('dn_tes_id', $id)->first();
+        $poin = SoalDinasGandaPoin::where('dn_tes_id', $id)->first();
+        if($ganda){
+            JawabanGandaDinas::join('dn_soalganda','dn_soalganda.id','=','dn_jawabanganda.dn_soalganda_id')
+            ->where('dn_soalganda.dn_tes_id', $id)->where('status', null)->update(['status' => $request->kode]);
+        }elseif($poin){
+            JawabanGandaPoinDinas::join('dn_soalgandapoin','dn_soalgandapoin.id','=','dn_jawabangandapoin.dn_soalgandapoin_id')
+            ->where('dn_soalgandapoin.dn_tes_id', $id)->where('status', null)->update(['status' => $request->kode]);
+        }
 
         Alert::toast('Data Berhasil Diarsipkan','success');
         return redirect()->back();

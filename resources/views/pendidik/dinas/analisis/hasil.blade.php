@@ -19,13 +19,20 @@
         <div class="card-body">
             <h1 class="h3 mb-2 text-gray-800">Hasil Penilaian</h1>
             <div class="p-3">
+                <div class="row mb-3">
+                    <form action="{{ route('pendidik.dinas.cetakhasil') }}" method="GET">
+                        <input name="kelas" value="{{ $selected }}" hidden>
+                        <input name="token" value="{{ $arsip }}" hidden>
+                        <button type="submit" class="btn btn-sm btn-success"><i class="fas fa-file-pdf"></i> Unduh PDF</button>
+                    </form>
+                </div>
                 <div class="mb-3">
                     <form action="{{ route('pendidik.dinas.hasil') }}" method="GET">
                         <div class="form-group">
                             <label for="kelas"><b>Filter Kelas</b></label>
                             <div class="row">
                                 <div class="col-6">
-                                    <input type="text" name="arsip" value="{{ $arsip }}" hidden>
+                                    <input type="text" name="token" value="{{ $arsip }}" hidden>
                                     <select name="kelas" id="" class="form-control">
                                         <option value="" @if($selected == "") {{'selected="selected"'}} @endif >Semua Kelas</option>
                                         @foreach ($kelas as $item)
@@ -67,7 +74,7 @@
                         <td>{{ $item->kelas }}</td>
                         <td>{{$item->nilai}}</td>
                         <td>{{$item->akumulasi}}</td>
-                        <td>{{\Carbon\Carbon::parse($item->updated_at)->isoFormat('dddd, D MMMM Y HH:mm')}}</td>
+                        <td>{{\Carbon\Carbon::parse($item->created_at)->isoFormat('dddd, D MMMM Y HH:mm')}}</td>
                         </tr>
                           @endforeach
                       </tbody>
