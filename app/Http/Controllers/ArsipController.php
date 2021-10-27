@@ -25,6 +25,7 @@ class ArsipController extends Controller
         $arsip = ArsipNilai::select('dn_tes.id','mapels.mapel','dn_arsipnilai.tanggal','dn_arsipnilai.kode')
                             ->join('dn_tes','dn_tes.id','=','dn_arsipnilai.dn_tes_id')
                             ->join('mapels','mapels.id','=','dn_tes.mapel_id')
+                            ->where('dn_arsipnilai.pendidik_id', Auth::user()->id)
                             ->orderBy('tanggal','desc')
                             ->get();
         // return $arsip;
