@@ -27,15 +27,15 @@
                     <div class="form-group">
                         <label for="nama">Nama Paket</label>
                         <select name="status" id="" class="form-control">
-                            <option value="1">Aktif</option>
-                            <option value="0">Tidak Aktif</option>
+                            <option value="1" @if($paket->status == 1) {{'selected="selected"'}} @endif>Aktif</option>
+                            <option value="0" @if($paket->status == 0) {{'selected="selected"'}} @endif>Tidak Aktif</option>
                         </select>
                     </div>
                     <div class="form-group">
                         <label for="nama">Kategori</label>
                         <select name="kategori" id="" class="form-control" required>
-                            <option value="Kedinasan">Kedinasan</option>
-                            <option value="TNI/Polri">TNI/Polri</option>
+                            <option value="Kedinasan" @if($paket->kategori == "Kedinasan") {{'selected="selected"'}} @endif>Kedinasan</option>
+                            <option value="TNI/Polri" @if($paket->kategori == "TNI/Polri") {{'selected="selected"'}} @endif>TNI/Polri</option>
                         </select>
                     </div>
                     <div class="text-center mt-4">
