@@ -19,6 +19,7 @@ use App\SoalDinasGanda;
 use App\SoalDinasGandaPoin;
 use App\JawabanGandaDinas;
 use App\JawabanGandaPoinDinas;
+use App\PaketDinas;
 
 class HasilDinasController extends Controller
 {
@@ -130,7 +131,20 @@ class HasilDinasController extends Controller
                             ->orderBy('dn_rekapdinas.total_nilai','desc')
                             ->where('dn_paket_id', $id)->get();
 
-        return view('admin.dinas.paket.hasildinas', compact('hasil','user'));
+        return view('admin.dinas.paket.hasildinas', compact('hasil','user','id'));
+    }
+
+    public function cetakKedinasanAdmin($id){
+        $hasil = RekapDinas::join('users','users.id','=','dn_rekapdinas.pelajar_id')
+                            ->join('kelas','kelas.id','=','users.kelas_id')
+                            ->select('users.nama','kelas.nama as kelas','dn_rekapdinas.twk','dn_rekapdinas.tiu','dn_rekapdinas.tkp','dn_rekapdinas.total_nilai')
+                            ->orderBy('dn_rekapdinas.total_nilai','desc')
+                            ->where('dn_paket_id', $id)->get();
+        $paket = PaketDinas::select('nama_paket')->find($id);
+
+        $en_logo = (string) Image::make(public_path('img/krisna.png'))->encode('data-url');
+        $pdf = PDF::loadview('admin.dinas.paket.cetakdinas', ['logo'=>$en_logo,'hasil'=>$hasil,'paket'=>$paket])->setPaper('a4','landscape');
+        return $pdf->stream();
     }
 
     public function hasilTniPolriAdmin($id){
@@ -142,6 +156,21 @@ class HasilDinasController extends Controller
                             ->orderBy('dn_rekap_tnipolri.total_nilai','desc')
                             ->get();
 
-        return view('admin.dinas.paket.hasiltnipolri', compact('hasil','user'));
+        return view('admin.dinas.paket.hasiltnipolri', compact('hasil','user','id'));
+    }
+
+    public function cetakTniPolriAdmin($id){
+        $hasil = RekapTniPolri::join('users','users.id','=','dn_rekap_tnipolri.pelajar_id')
+                            ->join('kelas','kelas.id','=','users.kelas_id')
+                            ->select('users.nama','kelas.nama as kelas','dn_rekap_tnipolri.ipu_wk','dn_rekap_tnipolri.mtk','dn_rekap_tnipolri.bin','dn_rekap_tnipolri.bing','dn_rekap_tnipolri.total_nilai')
+                            ->where('dn_paket_id', $id)
+                            ->orderBy('dn_rekap_tnipolri.total_nilai','desc')
+                            ->get();
+
+        $paket = PaketDinas::select('nama_paket')->find($id);
+
+        $en_logo = (string) Image::make(public_path('img/krisna.png'))->encode('data-url');
+        $pdf = PDF::loadview('admin.dinas.paket.cetaktnipolri', ['logo'=>$en_logo,'hasil'=>$hasil,'paket'=>$paket])->setPaper('a4','landscape');
+        return $pdf->stream();
     }
 }

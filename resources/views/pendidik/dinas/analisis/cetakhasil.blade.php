@@ -15,6 +15,16 @@
             color: #000;
 
 		}
+        .table td, .table th {
+            border: 1px solid #000;
+            padding: 8px;
+        }
+        .table th{
+            background-color: orange;
+        }
+        .nilai{
+            background-color: yellow;
+        }
         body{
             color: #000;
         }
@@ -25,13 +35,14 @@
 	<center>
 		<img src="{!!$logo!!}" width="80" alt="">
                 <h5>Cakra Krisna Manggala</h5>
+                <h6>Hasil Penilaian Mata Pelajaran {{ $arsip->mapel }}</h6>
 	</center>
 
     <div class="container-fluid">
-        <table class="table table-bordered">
+        <table class="table">
             <thead>
                 <tr>
-                  <th style="width: 20px">Ranking</th>
+                  <th style="width: 20px;">Ranking</th>
                   <th>Nama Pelajar</th>
                   <th>Kelas</th>
                   <th style="width: 50px">Nilai</th>
@@ -48,8 +59,8 @@
                 <td class="text-center">{{$no++}}</td>
                 <td>{{$item->nama}}</td>
                 <td>{{ $item->kelas }}</td>
-                <td>{{$item->nilai}}</td>
-                <td>{{$item->akumulasi}}</td>
+                <td class="nilai">{{$item->nilai}}</td>
+                <td class="nilai">{{$item->akumulasi}}</td>
                 <td>{{\Carbon\Carbon::parse($item->created_at)->isoFormat('dddd, D MMMM Y HH:mm')}}</td>
                 </tr>
                   @endforeach

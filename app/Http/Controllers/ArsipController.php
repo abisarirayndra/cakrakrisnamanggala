@@ -78,9 +78,13 @@ class ArsipController extends Controller
                         ->orderBy('nilai','desc')
                         ->get();
         }
+        $arsip = ArsipNilai::join('dn_tes','dn_tes.id','=','dn_arsipnilai.dn_tes_id')
+                            ->join('mapels','mapels.id','=','dn_tes.mapel_id')
+                            ->select('mapels.mapel')
+                            ->where('dn_arsipnilai.kode', $request->token)->first();
 
         $en_logo = (string) Image::make(public_path('img/krisna.png'))->encode('data-url');
-        $pdf = PDF::loadview('pendidik.dinas.analisis.cetakhasil', ['nilai'=>$nilai,'logo'=>$en_logo])->setPaper('a4','landscape');
+        $pdf = PDF::loadview('pendidik.dinas.analisis.cetakhasil', ['nilai'=>$nilai,'logo'=>$en_logo,'arsip'=>$arsip])->setPaper('a4','landscape');
         return $pdf->stream();
     }
 

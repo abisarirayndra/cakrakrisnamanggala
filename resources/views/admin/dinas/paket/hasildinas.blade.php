@@ -19,6 +19,9 @@
         <div class="card-body">
             <h1 class="h3 mb-2 text-gray-800">Hasil Akumulasi Penilaian</h1>
             <div class="p-3">
+                <div class="row mb-3">
+                    <a href="{{ route('admin.dinas.cetakhasildinas', [$id]) }}" target="_blank" class="btn btn-sm btn-success"><i class="fas fa-file-pdf"></i> Unduh PDF</a>
+                </div>
                 {{-- @if ($errors->any())
                     <div class="alert alert-danger">
                         <ul>

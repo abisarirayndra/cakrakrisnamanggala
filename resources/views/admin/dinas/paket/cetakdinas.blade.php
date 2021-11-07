@@ -17,12 +17,14 @@
         .table td, .table th {
             border: 1px solid #000;
             padding: 8px;
+            vertical-align: center;
         }
         .table th{
             background-color: orange;
         }
         .nilai{
             background-color: yellow;
+
         }
         body{
             color: #000;
@@ -34,35 +36,36 @@
 	<center>
 		<img src="{!!$logo!!}" width="80" alt="">
                 <h5>Cakra Krisna Manggala</h5>
-                <h6>Hasil Penilaian Mata Pelajaran {{ $data->mapel }}</h6>
-                <p class="mb-3">Pendidik : {{ $data->nama }}</p>
+                <h6>Hasil Rekap {{ $paket->nama_paket }} - Kedinasan</h6>
 	</center>
 
     <div class="container-fluid">
         <table class="table">
             <thead>
                 <tr>
-                  <th style="width: 20px">Ranking</th>
-                  <th>Nama Pelajar</th>
-                  <th>Kelas</th>
-                  <th style="width: 50px">Nilai</th>
-                  <th style="width: 50px">Akumulasi</th>
-                  <th>Waktu Pengumpulan</th>
+                    <th style="width: 20px; text-align: center;">Ranking</th>
+                    <th style="text-align: center;">Nama Pelajar</th>
+                    <th style="text-align: center;">Kelas</th>
+                    <th style="text-align: center;">Tes Wawasan Kebangsaan (TWK)</th>
+                    <th style="text-align: center;">Tes Intelegensi Umum (TIU)</th>
+                    <th style="text-align: center;">Tes Karakteristik Pribasi (TKP)</th>
+                    <th style="width: 100px; text-align: center;">Total Akumulasi</th>
                 </tr>
               </thead>
               <tbody>
                 @php
                 $no = 1;
                 @endphp
-                @foreach ($nilai as $item)
-                <tr>
-                <td class="text-center">{{$no++}}</td>
-                <td>{{$item->nama}}</td>
-                <td>{{ $item->kelas }}</td>
-                <td class="nilai">{{$item->nilai}}</td>
-                <td class="nilai">{{$item->akumulasi}}</td>
-                <td>{{\Carbon\Carbon::parse($item->created_at)->isoFormat('dddd, D MMMM Y HH:mm')}}</td>
-                </tr>
+                @foreach ($hasil as $item)
+                    <tr>
+                        <td style="text-align: center;">{{$no++}}</td>
+                        <td>{{$item->nama}}</td>
+                        <td>{{ $item->kelas }}</td>
+                        <td style="text-align: center;">{{$item->twk}}</td>
+                        <td style="text-align: center;">{{$item->tiu}}</td>
+                        <td style="text-align: center;">{{$item->tkp}}</td>
+                        <td class="nilai" style="text-align: center;">{{$item->total_nilai}}</td>
+                    </tr>
                   @endforeach
               </tbody>
         </table>
