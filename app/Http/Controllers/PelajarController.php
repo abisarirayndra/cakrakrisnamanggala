@@ -16,12 +16,10 @@ class PelajarController extends Controller
      */
     public function index()
     {
+        $id = Auth::user()->id;
         $user = Auth::user()->nama;
-        $kelas = Auth::user()->kelas_id;
-        $paket = PaketSoal::where('kelas_id', $kelas)->count();
-
-
-        return view('pelajar.index', compact('user','paket'));
+        $data = Pelajar::where('pelajar_id',$id)->first();
+        return view('pelajar.beranda', compact('data','user'));
     }
 
     /**

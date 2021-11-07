@@ -54,6 +54,8 @@ Route::group(['middleware' => ['auth','admin-role']], function(){
     Route::post('/admin/updatetes/{id}','TesDinasController@updateTes')->name('admin.dinas.updatetes');
     Route::get('/admin/hasildinas/{id}','HasilDinasController@hasilKedinasanAdmin')->name('admin.dinas.hasildinas');
     Route::get('/admin/hasiltnipolri/{id}','HasilDinasController@hasilTniPolriAdmin')->name('admin.dinas.hasiltnipolri');
+    Route::get('/admin/cetakhasildinas/{id}','HasilDinasController@cetakKedinasanAdmin')->name('admin.dinas.cetakhasildinas');
+    Route::get('/admin/cetaktnipolri/{id}','HasilDinasController@cetakTniPolriAdmin')->name('admin.dinas.cetakhasiltnipolri');
 });
 
 Route::group(['middleware' => ['auth','pengajar-role']], function(){
@@ -119,7 +121,7 @@ Route::group(['middleware' => ['auth','pengajar-role']], function(){
 
 
 Route::group(['middleware' => ['auth','pelajar-role']], function(){
-    Route::get('/pelajar/index','PelajarController@index')->name('pelajar.index');
+
     // Route::get('/pelajar/cat/tema/{id}','CatController@temaSoal')->name('pelajar.cat.tema');
     Route::get('/pelajar/cat/paket','CatController@paketPelajar')->name('pelajar.cat.paket');
     Route::get('/pelajar/cat/tema/{id}','CatController@temaSoal')->name('pelajar.cat.tema');
@@ -131,6 +133,7 @@ Route::group(['middleware' => ['auth','pelajar-role']], function(){
     Route::get('/pelajar/cat/hasil', 'CatController@hasilPelajar')->name('pelajar.cat.hasil');
 
     //Kedinasan
+    Route::get('/pelajar/beranda','PelajarController@index')->name('pelajar.dinas.beranda');
     Route::get('/pelajar/paket','PaketDinasController@pelajarPaket')->name('pelajar.dinas.paket');
     Route::get('/pelajar/tes/{id}','TesDinasController@pelajarTes')->name('pelajar.dinas.tes');
     Route::get('/pelajar/persiapan/{id}','SoalDinasController@pelajarPersiapan')->name('pelajar.dinas.persiapan');

@@ -17,7 +17,7 @@ class AuthController extends Controller
     }
 
     public function register(Request $request){
-       
+
         $email = $request->email;
         $regis = $request->nomor_registrasi;
         $sudah_email = User::where('email', $email)->first();
@@ -46,12 +46,12 @@ class AuthController extends Controller
                 'whatsapp' => $request->whatsapp,
                 'kelas_id' => $request->kelas_id,
             ]);
-    
+
             Alert::success('Registrasi Berhasil');
-    
+
             return redirect()->route('login');
         }
-        
+
     }
 
     public function tampilLogin(){
@@ -67,7 +67,7 @@ class AuthController extends Controller
         ];
 
         if(Auth::attempt($credentials)){
-            
+
             if(auth()->user()->role_id == 1){
                 Alert::success('Selamat datang Admin');
                 return redirect()->route('super.index');
@@ -82,7 +82,7 @@ class AuthController extends Controller
             }
             elseif (auth()->user()->role_id == 4) {
                 Alert::success('Selamat datang','Peserta Didik Cakra');
-                return redirect()->route('pelajar.dinas.paket');
+                return redirect()->route('pelajar.dinas.beranda');
             }
         }
         Alert::error('Akun tidak ditemukan','Gagal');
