@@ -30,7 +30,7 @@
         <div id="content">
 
             <!-- Topbar -->
-            <nav class="navbar navbar-expand-md navbar-light bg-warning topbar mb-4 static-top shadow">
+            <nav class="navbar navbar-expand-md navbar-light bg-warning topbar mb-4 static-top shadow" style="z-index: 1;">
                 <div class="container">
                     <a class="navbar-brand" href="#"><img src="{{asset('assets/img/favicon.ico')}}" width="50" alt=""></a>
                     <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">

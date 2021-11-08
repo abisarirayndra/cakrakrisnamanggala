@@ -2,6 +2,11 @@
 
 @section('title')
     <title>Computer Assisted Test - Cakra Krisna Manggala</title>
+    <style>
+        td{
+            font-size: 80%
+        }
+    </style>
 @endsection
 
 @section('content')
@@ -11,11 +16,10 @@
             <h5><i class="fas fa-hashtag text-warning"></i> Data Diri</h5>
             <div class="p-3 mt-3">
                 <div class="row">
-                    <div class="col-xl-4 col-sm-4 text-center">
-                        <img src="https://cakrakrisnamanggala.com/img/pendaftar/{{$data->foto}}" width="150" alt="">
+                    <div class="col-xl-4 col-sm-4 text-center pb-4">
+                        <img src="https://cakrakrisnamanggala.com/img/pendaftar/{{$data->foto}}" width="120" alt="">
                     </div>
                     <div class="col-xl-8 col-sm-8">
-                        <div class="row">
                             <table>
                                 <tr>
                                     <td><b>Nama</b></td>
@@ -80,13 +84,29 @@
                             </table>
                                 {{-- <a href="{{route('pendaftar.cetak_pdf', [$data->id])}}" target="_blank" class="btn btn-success mt-4"><i class="fas fa-cloud-download-alt"></i> Unduh PDF</a> --}}
                                 {{-- <a href="" class="btn btn-warning mt-4 ml-3"><i class="fas fa-edit"></i> Edit</a> --}}
-                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-
+    <div class="card shadow mb-4">
+        <div class="card-body">
+            <h5><i class="fas fa-hashtag text-warning"></i> Menu</h5>
+            <div class="p-3 mt-3">
+                <div class="row">
+                    <div class="col-xl-3 col-md-3 text-center">
+                        <a href="{{ route('pelajar.dinas.paket') }}">
+                            <span class="fa-stack fa-3x">
+                                <i class="fas fa-circle fa-stack-2x text-warning"></i>
+                                <i class="fas fa-calendar fa-stack-1x fa-inverse"></i>
+                            </span>
+                                <h6 class="my-3 text-dark">Paket Soal</h6>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 @endsection
 
