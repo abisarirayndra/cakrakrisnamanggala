@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use RealRashid\SweetAlert\Facades\Alert;
 use App\Kelas;
+use Cookie;
 
 class AuthController extends Controller
 {
@@ -67,10 +68,9 @@ class AuthController extends Controller
         ];
 
         if(Auth::attempt($credentials)){
-
             if(auth()->user()->role_id == 1){
-                Alert::success('Selamat datang Admin');
-                return redirect()->route('super.index');
+                Alert::success('Selamat datang Super Admin');
+                return redirect()->route('super.beranda');
             }
             elseif (auth()->user()->role_id == 2) {
                 Alert::success('Selamat datang','Admin');
@@ -78,17 +78,19 @@ class AuthController extends Controller
             }
             elseif (auth()->user()->role_id == 3) {
                 Alert::success('Selamat datang','Pendidik Cakra');
-                return redirect()->route('pendidik.dinas.paket');
+                return redirect()->route('pendidik.dinas.beranda');
             }
             elseif (auth()->user()->role_id == 4) {
                 Alert::success('Selamat datang','Peserta Didik Cakra');
                 return redirect()->route('pelajar.dinas.beranda');
             }
+
         }
+
         Alert::error('Akun tidak ditemukan','Gagal');
         return redirect('login');
     }
-    public function logout()
+    public function logout(Request $request)
     {
         Auth::logout();
         Alert::success('Kamu berhasil keluar', 'Selamat tinggal!');

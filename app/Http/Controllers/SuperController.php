@@ -11,8 +11,7 @@ class SuperController extends Controller
     public function index(){
 
         $user = Auth::user()->nama;
-        $data_user = User::where('role_id', 3)->get();
 
-        return view('super.index', compact('user','data_user'));
+        return view('super.beranda', compact('user'));
     }
 }

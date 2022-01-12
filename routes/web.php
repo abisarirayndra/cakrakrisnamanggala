@@ -14,30 +14,50 @@ use Illuminate\Support\Facades\Route;
 */
 
 
-Route::get('/','AuthController@tampilLogin')->middleware('guest')->name('landing');
-Route::get('/register','AuthController@tampilRegister')->middleware('guest')->name('auth.register');
-Route::post('/reg','AuthController@register')->middleware('guest')->name('reg');
-Route::get('/login','AuthController@tampilLogin')->middleware('guest')->name('login');
-Route::post('/log','AuthController@login')->middleware('guest')->name('log');
+Route::get('/','AuthController@tampilLogin')->name('landing');
+Route::get('/register','AuthController@tampilRegister')->name('auth.register');
+Route::post('/reg','AuthController@register')->name('reg');
+Route::get('/login','AuthController@tampilLogin')->name('login');
+Route::post('/log','AuthController@login')->name('log');
 Route::get('/logout', 'AuthController@logout')->name('logout');
 Route::get('/reset', 'AuthController@reset')->name('reset');
 Route::post('/upreset', 'AuthController@upReset')->name('upreset');
 
+Route::group(['prefix' => 'super','middleware' => ['auth','super-role']], function(){
+    Route::get('/beranda','SuperController@index')->name('super.beranda');
+
+    Route::get('/pengguna-pendaftar','PenggunaController@penggunaPendaftar')->name('super.penggunapendaftar');
+    Route::get('/pengguna-pendaftar/lihat/{id}','PenggunaController@lihatPendaftar')->name('super.penggunapendaftar.lihat');
+    Route::post('/pengguna-pendaftar/migrasi/{id}','PenggunaController@migrasiPendaftar')->name('super.penggunapendaftar.migrasi');
+    Route::get('/pengguna-pendaftar/hapus/{id}','PenggunaController@hapusPendaftar')->name('super.penggunapendaftar.hapus');
+
+    Route::get('/pengguna-pelajar','PenggunaController@penggunaPelajar')->name('super.penggunapelajar');
+    Route::get('/pengguna-pelajar/lihat/{id}','PenggunaController@lihatPelajar')->name('super.penggunapelajar.lihat');
+    Route::get('/pengguna-pelajar/edit/{id}','PenggunaController@editPelajar')->name('super.penggunapelajar.edit');
+    Route::post('/pengguna-pelajar/update/{id}','PenggunaController@updatePelajar')->name('super.penggunapelajar.update');
+    Route::get('/pengguna-pelajar/editdata/{id}','PenggunaController@editDataPelajar')->name('super.penggunapelajar.editdata');
+    Route::post('/pengguna-pelajar/updatedata/{id}','PenggunaController@updateDataPelajar')->name('super.penggunapelajar.updatedata');
+    Route::get('/pengguna-pelajar/suspend/{id}','PenggunaController@suspendPelajar')->name('super.penggunapelajar.suspend');
+    Route::get('/pengguna-pelajar/hapus/{id}','PenggunaController@destroyPelajar')->name('super.penggunapelajar.hapus');
+    Route::get('/pengguna-pelajar-suspended','PenggunaController@penggunaPelajarSuspend')->name('super.penggunasuspend');
+    Route::get('/pengguna-pelajar-suspended/lihat/{id}','PenggunaController@lihatSuspended')->name('super.penggunasuspend.lihat');
+    Route::get('/pengguna-pelajar-suspended/cabut-suspend-pelajar/{id}','PenggunaController@cabutSuspendPelajar')->name('super.penggunasuspend.cabutsuspendpelajar');
+
+    Route::get('/pengguna-pendidik','PenggunaController@penggunaPendidik')->name('super.penggunapendidik');
+    Route::post('/pengguna-pendidik/tambah','PenggunaController@tambahPendidik')->name('super.penggunapendidik.tambah');
+
+    Route::get('/pengguna-staf-admin','PenggunaController@penggunaStafAdmin')->name('super.penggunastafadmin');
+    Route::post('/pengguna-staf-admin/tambah','PenggunaController@tambahStafAdmin')->name('super.penggunastafadmin.tambah');
+    Route::get('/pengguna-staf-admin/hapus/{id}','PenggunaController@destroyStafAdmin')->name('super.penggunastafadmin.hapus');
+    Route::get('/pengguna-staf-admin/lihat/{id}','PenggunaController@lihatStafAdmin')->name('super.penggunastafadmin.lihat');
+
+    Route::get('/pengguna-pelajar-suspended','PenggunaController@penggunaPelajarSuspend')->name('super.penggunasuspend');
+    Route::get('/pengguna-pelajar-suspended/lihat/{id}','PenggunaController@lihatSuspended')->name('super.penggunasuspend.lihat');
+    Route::get('/pengguna-pelajar-suspended/cabut-suspend-pelajar/{id}','PenggunaController@cabutSuspendPelajar')->name('super.penggunasuspend.cabutsuspendpelajar');
+
+});
 
 Route::group(['middleware' => ['auth','admin-role']], function(){
-    Route::get('/admin/cat/paket','CatController@paket')->name('admin.cat.paket');
-    Route::post('/admin/cat/buatpaket','CatController@buatPaket')->name('admin.cat.buatpaket');
-    Route::get('/admin/cat/editpaket/{id}','CatController@editPaket')->name('admin.cat.editpaket');
-    Route::post('/admin/cat/updatepaket/{id}','CatController@updatePaket')->name('admin.cat.updatepaket');
-    Route::get('/admin/cat/hapuspaket/{id}','CatController@destroyPaket')->name('admin.cat.hapuspaket');
-    Route::get('/admin/cat/tema/{id}','CatController@daftarTema')->name('admin.cat.tema');
-    Route::post('/admin/cat/buattema','CatController@buatTema')->name('admin.cat.buattema');
-    Route::get('/admin/cat/edittema/{id}','CatController@editTemaAdmin')->name('admin.cat.edittema');
-    Route::post('/admin/cat/updatetema/{id}','CatController@updateTemaAdmin')->name('admin.cat.updatetema');
-    Route::get('/admin/cat/hapustema/{id}','CatController@destroyTemaAdmin')->name('admin.cat.hapustema');
-    Route::get('/admin/cat/hasil/{id}','CatController@hasilAdmin')->name('admin.cat.hasil');
-
-    // Kedinasan
     Route::get('/admin/paket','PaketDinasController@paket')->name('admin.dinas.paket');
     Route::get('/admin/tambahpaket','PaketDinasController@tambah')->name('admin.dinas.tambahpaket');
     Route::post('/admin/uppaket','PaketDinasController@up')->name('admin.dinas.uppaket');
@@ -59,27 +79,10 @@ Route::group(['middleware' => ['auth','admin-role']], function(){
 });
 
 Route::group(['middleware' => ['auth','pengajar-role']], function(){
-    Route::get('/pengajar/cat/index','CatController@index')->name('pengajar.cat.index');
-    Route::get('/pengajar/cat/paket','CatController@paketPendidik')->name('pengajar.cat.paket');
-    Route::get('/pengajar/cat/tema/{id}','CatController@tema')->name('pengajar.cat.tema');
-    Route::post('/pengajar/cat/buattema','CatController@buatTema')->name('pangajar.cat.buattema');
-    Route::get('/pengajar/cat/edit/{id}','CatController@editTema')->name('pengajar.cat.edit');
-    Route::post('/pengajar/cat/updatetema/{id}','CatController@updateTema')->name('pengajar.cat.updatetema');
-    Route::get('/pengajar/cat/hapustema/{id}','CatController@destroyTema')->name('pengajar.cat.hapustema');
-    Route::get('/pengajar/cat/hasil/{id}','CatController@hasilPengajar')->name('pengajar.cat.hasil');
-    Route::get('/pengajar/cat/soal/{id}','CatController@Soal')->name('pengajar.cat.soal');
-    Route::post('/pengajar/cat/upjumlahsoal/{id}','CatController@upJumlahSoal')->name('pengajar.cat.upjumlahsoal');
-    Route::post('/pengajar/cat/importsoal','CatController@importSoal')->name('pengajar.cat.importsoal');
-    Route::get('/pengajar/cat/editsoal/{id}','CatController@editSoal')->name('pengajar.cat.editsoal');
-    Route::post('/pengajar/cat/updatesoal/{id}','CatController@updateSoal')->name('pengajar.cat.updatesoal');
-    Route::get('/pengajar/cat/hapussoal/{id}','CatController@hapusSoal')->name('pengajar.cat.hapussoal');
-    Route::get('/pengajar/cat/tambahgambar/{id}','CatController@tambahGambar')->name('pengajar.cat.tambahgambar');
-    Route::post('/pengajar/cat/upgambar/{id}','CatController@upGambar')->name('pengajar.cat.upgambar');
-    Route::get('/pengajar/cat/editgambar/{id}','CatController@editGambar')->name('pengajar.cat.editgambar');
-    Route::post('/pengajar/cat/updategambar/{id}','CatController@updateGambar')->name('pengajar.cat.updategambar');
-    Route::get('/pengajar/cat/hapusgambar/{id}','CatController@hapusGambar')->name('pengajar.cat.hapusgambar');
-
     // Kedinasan
+    Route::get('/pendidik/beranda','PengajarController@index')->name('pendidik.dinas.beranda');
+    Route::get('/pendidik/edit-profil','PengajarController@edit')->name('pendidik.dinas.edit');
+    Route::post('/pendidik/update-profil','PengajarController@update')->name('pendidik.dinas.updateprofil');
     Route::get('/pendidik/paket','PaketDinasController@pendidikPaket')->name('pendidik.dinas.paket');
     Route::get('/pendidik/tes/{id}','TesDinasController@pendidikTes')->name('pendidik.dinas.tes');
     Route::get('/pendidik/tipesoal/{id}','SoalDinasController@pendidikPilihTipe')->name('pendidik.dinas.tipesoal');
@@ -121,16 +124,6 @@ Route::group(['middleware' => ['auth','pengajar-role']], function(){
 
 
 Route::group(['middleware' => ['auth','pelajar-role']], function(){
-
-    // Route::get('/pelajar/cat/tema/{id}','CatController@temaSoal')->name('pelajar.cat.tema');
-    Route::get('/pelajar/cat/paket','CatController@paketPelajar')->name('pelajar.cat.paket');
-    Route::get('/pelajar/cat/tema/{id}','CatController@temaSoal')->name('pelajar.cat.tema');
-    Route::post('/pengajar/cat/upjawaban','CatController@upJawaban')->name('pelajar.cat.upjawaban');
-    Route::get('/pelajar/cat/soal/{id}','CatController@lembarSoal')->name('pelajar.cat.soal');
-    Route::get('/pelajar/cat/kumpulkan/{id}','CatController@reviewJawaban')->name('pelajar.cat.kumpulkan');
-    Route::get('/pelajar/cat/jawaban', 'CatController@jawaban')->name('pelajar.cat.jawaban');
-    Route::get('/pelajar/cat/skoring/{id}','CatController@skoring')->name('pelajar.cat.skoring');
-    Route::get('/pelajar/cat/hasil', 'CatController@hasilPelajar')->name('pelajar.cat.hasil');
 
     //Kedinasan
     Route::get('/pelajar/beranda','PelajarController@index')->name('pelajar.dinas.beranda');
