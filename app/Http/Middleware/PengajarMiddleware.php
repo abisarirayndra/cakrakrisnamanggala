@@ -20,7 +20,7 @@ class PengajarMiddleware
         if (!$user->isPengajar()) {
            return redirect()->back();
         }
-        
+
         return $next($request);
     }
 }

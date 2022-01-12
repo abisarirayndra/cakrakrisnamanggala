@@ -4,7 +4,11 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\User;
-use Illuminate\Support\Facades\Hash;
+use Auth;
+use App\Pendidik;
+use App\Mapel;
+use Validator;
+use Alert;
 
 class PengajarController extends Controller
 {
@@ -15,7 +19,19 @@ class PengajarController extends Controller
      */
     public function index()
     {
-        //
+        $user = Auth::user()->nama;
+        $id = Auth::user()->id;
+        // return $id;
+        $data = Pendidik::select('users.nama','adm_pendidik.tempat_lahir','adm_pendidik.tanggal_lahir',
+                                'adm_pendidik.alamat','adm_pendidik.nik','adm_pendidik.nip','mapels.mapel',
+                                'adm_pendidik.wa','adm_pendidik.ibu','adm_pendidik.foto','adm_pendidik.cv',
+                                'adm_pendidik.markas','adm_pendidik.status_dapodik')
+                ->join('users','users.id','=','adm_pendidik.pendidik_id')
+                ->join('mapels','mapels.id','=','adm_pendidik.mapel_id')
+                ->where('adm_pendidik.pendidik_id', $id)
+                ->firstOrFail();
+        return $data;
+        return view('pendidik.dinas.beranda', compact('user','data'));
     }
 
     /**
@@ -25,7 +41,7 @@ class PengajarController extends Controller
      */
     public function create()
     {
-       
+
     }
 
     /**
@@ -36,20 +52,7 @@ class PengajarController extends Controller
      */
     public function store(Request $request)
     {
-        $request->validate([
-            'email' => 'unique:users,email',
-            'password' => 'min:8',
-        ]);
-        
-        User::create([
-            'nama' => $request->nama,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
-            'role_id' => 3,
-            'whatsapp' => $request->whatsapp,
-        ]);
 
-        return redirect()->route('super.index');
     }
 
     /**
@@ -69,9 +72,11 @@ class PengajarController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
+    public function edit()
     {
-        //
+        $user = Auth::user()->nama;
+        $mapel = Mapel::select('id','mapel')->get();
+        return view('pendidik.dinas.edit-data', compact('user', 'mapel'));
     }
 
     /**
@@ -81,9 +86,74 @@ class PengajarController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request)
     {
-        //
+        //validate data
+        $validator = Validator::make($request->all(), [
+            'tempat_lahir' => 'required',
+            'tanggal_lahir' => 'required|date',
+            'alamat' => 'required',
+            'nik' => 'required',
+            'mapel_id' => 'required',
+            'wa' => 'required',
+            'ibu' => 'required',
+            'foto' => 'required|mimes:jpg,jpeg,png|size:500',
+            'cv' => 'required|mimes:pdf|size:1000',
+            'markas' => 'required'
+        ],[
+            'tempat_lahir.required' => 'Tempat lahir harus diisi',
+            'tanggal_lahir.required' => 'Tanggal lahir harus diisi',
+            'tanggal_lahir.date' => 'Format harus berupa tanggal',
+            'alamat.required' => 'Alamat harus diisi',
+            'nik.required' => 'NIK harus diisi',
+            'mapel_id.required' => 'Mapel harus diisi',
+            'wa.required' => 'WA harus diisi',
+            'ibu.required' => 'Nama Ibu harus diisi',
+            'foto.required' => 'Foto harus diisi',
+            'cv.required' => 'CV harus disertakan',
+            'foto.mimes' => 'Format foto hanya jpg, jpeg, png !',
+            'foto.size' => 'Ukuran file terlalu besar, max 500 Kb',
+            'cv.mimes' => 'Format cv hanya pdf !',
+            'cv.size' => 'Ukuran file terlalu besar, max 1 Mb',
+            'markas.required' => 'Markas belum dipilih'
+        ]);
+            if ($validator->fails()) {
+                return redirect()->back()->withErrors($validator)->withInput();
+            }else{
+                $id = Auth::user()->id;
+                $data = Pendidik::where('pendidik_id', $id)->firstOrFail();
+
+                $data->update([
+                    'tempat_lahir' => $request->tempat_lahir,
+                    'tanggal_lahir' => $request->tanggal_lahir,
+                    'alamat' => $request->alamat,
+                    'nik' => $request->nik,
+                    'nip' => $request->nip,
+                    'mapel_id' => $request->mapel_id,
+                    'wa' => $request->wa,
+                    'ibu' => $request->ibu,
+                    'foto' => $request->foto,
+                    'cv' => $request->cv,
+                ]);
+
+                if($request->file('cv')){
+                    $cv = $request->file('cv');
+                    $nama_file = 'cv'.$id.'.'.$request->file('cv')->extension();
+                    $path = public_path('pendidik/cv/');
+                    $cv->move($path, $nama_file);
+                }
+                if($request->file('foto')){
+                    $foto = $request->file('foto');
+                    $nama_file = 'pendidik'.$id.'.'.$request->file('foto')->extension();
+                    $path = public_path('pendidik/img/');
+                    $foto->move($path, $nama_file);
+                }
+
+                Alert::toast('Pembaruan data diri berhasil','success');
+                return redirect()->route('pendidik.dinas.beranda');
+            }
+
+
     }
 
     /**
