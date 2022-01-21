@@ -23,6 +23,22 @@ Route::get('/logout', 'AuthController@logout')->name('logout');
 Route::get('/reset', 'AuthController@reset')->name('reset');
 Route::post('/upreset', 'AuthController@upReset')->name('upreset');
 
+// Pendaftaran
+Route::get('/petunjuk-pendaftaran','PendaftarController@petunjuk')->name('petunjuk');
+Route::get('/register-email','PendaftarController@registerEmail')->name('register-email');
+Route::post('/upload-register-email','PendaftarController@uploadRegisterEmail')->name('up-register-email');
+
+Route::group(['prefix' => 'pendaftar','middleware' => ['auth','pendaftar-role']], function () {
+    Route::get('/profil','PendaftarController@profil')->name('pendaftar.profil');
+    Route::post('/up-formulir-pendaftaran','PendaftarController@upFormulirPendaftar')->name('pendaftar.up-formulir-pendaftaran');
+    Route::get('/cetak-formulir/{id}','PendaftarController@cetak')->name('pendaftar.cetak-formulir');
+    Route::get('/cetak-formulir-pdf/{id}','PendaftarController@cetak_pdf')->name('pendaftar.cetak-formulir-pdf');
+    Route::get('/cetak-formulir-pdf/{id}','PendaftarController@cetak_pdf')->name('pendaftar.cetak-formulir-pdf');
+    Route::get('/edit-pendaftar/{id}','PendaftarController@editPendaftar')->name('pendaftar.edit-pendaftar');
+    Route::post('/update-pendaftar/{id}','PendaftarController@updatePendaftar')->name('pendaftar.update-pendaftar');
+
+});
+
 Route::group(['prefix' => 'super','middleware' => ['auth','super-role']], function(){
     Route::get('/beranda','SuperController@index')->name('super.beranda');
 

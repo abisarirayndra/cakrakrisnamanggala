@@ -10,51 +10,9 @@ use RealRashid\SweetAlert\Facades\Alert;
 use App\Kelas;
 use Cookie;
 
+
 class AuthController extends Controller
 {
-    public function tampilRegister(){
-        $kelas = Kelas::all();
-        return view('auth.register', compact('kelas'));
-    }
-
-    public function register(Request $request){
-
-        $email = $request->email;
-        $regis = $request->nomor_registrasi;
-        $sudah_email = User::where('email', $email)->first();
-        $sudah_regis = User::where('nomor_registrasi', $regis)->first();
-        $sudah_semua = User::where('email', $email)->where('nomor_registrasi', $regis)->first();
-
-        if(isset($sudah_email)){
-            Alert::error('Email Sudah Terdaftar','Register Gagal');
-            return redirect()->route('auth.register');
-        }
-        elseif(isset($sudah_regis)){
-            Alert::error('Nomor Registrasi Sudah Terdaftar','Register Gagal');
-            return redirect()->route('auth.register');
-        }
-        elseif(isset($sudah_semua)){
-            Alert::error('Email dan Nomor Registrasi Sudah Terdaftar','Register Gagal');
-            return redirect()->route('auth.register');
-        }
-        else{
-            User::create([
-                'nama' => $request->nama,
-                'nomor_registrasi' => $request->nomor_registrasi,
-                'email' => $request->email,
-                'password' => Hash::make($request->password),
-                'role_id' => $request->role_id,
-                'whatsapp' => $request->whatsapp,
-                'kelas_id' => $request->kelas_id,
-            ]);
-
-            Alert::success('Registrasi Berhasil');
-
-            return redirect()->route('login');
-        }
-
-    }
-
     public function tampilLogin(){
         return view('auth.login');
     }
@@ -84,11 +42,15 @@ class AuthController extends Controller
                 Alert::success('Selamat datang','Peserta Didik Cakra');
                 return redirect()->route('pelajar.dinas.beranda');
             }
+            elseif(auth()->user()->role_id == 5){
+                Alert::toast('Selamat Datang Pendaftar','success');
+                return redirect()->route('pendaftar.profil');
+            }
 
+        }else {
+            return redirect()->route('login')->withErrors(['msg' => 'Akun tidak ditemukan']);
         }
 
-        Alert::error('Akun tidak ditemukan','Gagal');
-        return redirect('login');
     }
     public function logout(Request $request)
     {

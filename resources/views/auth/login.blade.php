@@ -24,34 +24,34 @@
                                   <div class="text-center">
                                       <h1 class="h4 text-gray-900 mb-4">Selamat Datang di Computer Assisted Test !</h1>
                                   </div>
+                                  @if ($errors->any())
+                                        <div class="alert alert-danger">
+                                            <ul>
+                                                <li>{{ $errors->first() }}</li>
+                                            </ul>
+                                        </div>
+                                    @endif
                                   <form class="user" action="{{route('log')}}" method="post">
                                     @csrf
                                       <div class="form-group">
-                                          <input type="text" class="form-control form-control-user"
-                                              id="exampleInputEmail" aria-describedby="emailHelp"
-                                              placeholder="Masukkan Nomor Registrasi" name="email">
+                                          <input type="text" class="form-control form-control-user" placeholder="Masukkan Nomor Registrasi / Email" name="email">
                                       </div>
                                       <div class="form-group">
-                                          <input type="password" class="form-control form-control-user"
-                                              id="exampleInputPassword" placeholder="Password" name="password">
+                                          <input type="password" class="form-control form-control-user" placeholder="Password" name="password">
                                       </div>
                                       <div class="form-group">
                                           <div class="custom-control custom-checkbox small">
-                                              <input type="checkbox" class="custom-control-input" id="customCheck">
-                                              <label class="custom-control-label" for="customCheck">Remember
-                                                  Me</label>
+                                              <input type="checkbox" class="custom-control-input" name="remember">
+                                              <label class="custom-control-label" for="customCheck">Ingat Saya</label>
                                           </div>
                                       </div>
-                                      <button type="submit" class="btn btn-primary btn-user btn-block">
+                                      <button type="submit" class="btn btn-warning btn-user btn-block">
                                           Login
                                       </button>
                                   </form>
                                   <hr>
 
                                   <div class="text-center">
-                                      <div class="row">
-                                             <a class="small" href="{{route('auth.register')}}">Belum Punya Akun ?</a>
-                                      </div>
                                       <div class="row">
                                            <a class="small" href="{{route('reset')}}"> Lupa Password ?</a>
                                       </div>
