@@ -17,7 +17,7 @@
             <div class="p-3 mt-3">
                 <div class="row">
                     <div class="col-xl-4 col-sm-4 text-center pb-4">
-                        <img src="https://cakrakrisnamanggala.com/img/pendaftar/{{$data->foto}}" width="120" alt="">
+                        <img src="{{asset('img/pelajar/'. $data->foto)}}}" width="120" alt="">
                     </div>
                     <div class="col-xl-8 col-sm-8">
                             <table>
@@ -103,6 +103,15 @@
                                 <h6 class="my-3 text-dark">Paket Soal</h6>
                         </a>
                     </div>
+                    {{-- <div class="col-xl-3 col-md-3 text-center">
+                        <a href="{{ route('pelajar.dinas.paket') }}">
+                            <span class="fa-stack fa-3x">
+                                <i class="fas fa-circle fa-stack-2x text-warning"></i>
+                                <i class="fas fa-qrcode fa-stack-1x fa-inverse"></i>
+                            </span>
+                                <h6 class="my-3 text-dark">Absensi</h6>
+                        </a>
+                    </div> --}}
                 </div>
             </div>
         </div>
