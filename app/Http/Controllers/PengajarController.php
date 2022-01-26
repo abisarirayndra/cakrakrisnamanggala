@@ -30,7 +30,6 @@ class PengajarController extends Controller
                 ->join('mapels','mapels.id','=','adm_pendidik.mapel_id')
                 ->where('adm_pendidik.pendidik_id', $id)
                 ->firstOrFail();
-        return $data;
         return view('pendidik.dinas.beranda', compact('user','data'));
     }
 

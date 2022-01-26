@@ -81,7 +81,7 @@
                         <input type="file" class="form-control" name="foto">
                     </div>
                     <div class="text-center mt-4">
-                        <a href="{{ route('admin.penggunapelajar.lihat', [$pelajar->pelajar_id]) }}" class="btn btn-danger">Batal</a>
+                        <a href="{{ route('super.penggunapelajar.lihat', [$pelajar->pelajar_id]) }}" class="btn btn-danger">Batal</a>
                         <button class="btn btn-warning" type="submit">Simpan</button>
                     </div>
                 </form>

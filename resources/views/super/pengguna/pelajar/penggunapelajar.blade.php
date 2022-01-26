@@ -1,7 +1,7 @@
 @extends('master.super')
 
 @section('title')
-    <link href="{{asset('vendor/datatables/datatables.min.css')}}" rel="stylesheet">
+
 @endsection
 
 @section('content')
@@ -18,10 +18,10 @@
                         <tr>
                           <th>No.</th>
                           <th>Nama</th>
-                          <th >Nomor Registrasi</th>
+                          <th>Nomor ID</th>
                           <th>Kelas</th>
                           <th>Email</th>
-                          <th style="max-width: 100px;">Aksi</th>
+                          <th>Aksi</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -40,13 +40,15 @@
                             <td>{{ $item->kelas }}</td>
                             <td>{{ $item->email }}</td>
                             <td>
-                              <a href="{{ route('super.penggunapelajar.lihat', [$item->id]) }}" class="btn btn-sm btn-success"><i class="fas fa-eye"></i> Lihat</a>
-                              <a href="{{ route('super.penggunapelajar.edit', [$item->id]) }}" class="btn btn-sm btn-warning"><i class="fas fa-pen"></i> Edit</a>
+                              <a href="{{ route('super.penggunapelajar.lihat', [$item->id]) }}" class="btn btn-sm btn-success"><i class="fas fa-eye"></i></a>
+                              <a href="{{ route('super.penggunapelajar.edit', [$item->id]) }}" class="btn btn-sm btn-warning"><i class="fas fa-pen"></i></a>
+                              <a href="{{ route('super.penggunapelajar.hapus', [$item->id]) }}" class="btn btn-sm btn-danger" onclick="return confirm('Anda yakin ingin menghapus akun ini ?')"><i class="fas fa-trash"></i></a>
                               </td>
                           </tr>
                         @endforeach
                     </tbody>
                 </table>
+                {{ $pelajar->links() }}
             </div>
         </div>
     </div>
@@ -56,10 +58,5 @@
 @endsection
 
 @section('js')
-    <!-- Page level plugins -->
-    <script src="{{asset('vendor/datatables/jquery.dataTables.min.js')}}"></script>
-    <script src="{{asset('vendor/datatables/datatables.min.js')}}"></script>
 
-    <!-- Page level custom scripts -->
-    <script src="{{asset('js/demo/datatables-demo.js')}}"></script>
 @endsection

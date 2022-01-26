@@ -21,7 +21,7 @@ class PenggunaController extends Controller
         $user = Auth::user()->nama;
         $pendaftar = User::where('role_id', 5)
                     ->orderBy('users.id', 'desc')
-                    ->get();
+                    ->paginate(10);
 
         return view('super.pengguna.pendaftar.penggunapendaftar', compact('user','pendaftar'));
     }
@@ -32,7 +32,7 @@ class PenggunaController extends Controller
                                 ->select('users.nama','users.email','adm_pelajars.pelajar_id','adm_pelajars.tempat_lahir','adm_pelajars.tanggal_lahir','adm_pelajars.alamat','adm_pelajars.sekolah','adm_pelajars.wa',
                                             'adm_pelajars.wali','adm_pelajars.wa_wali','adm_pelajars.foto','adm_pelajars.markas','adm_pelajars.nik','adm_pelajars.nisn','adm_pelajars.ibu')
                                 ->where('adm_pelajars.pelajar_id', $id)
-                                ->first();
+                                ->firstOrFail();
         $kelas = Kelas::all();
 
         return view('super.pengguna.pendaftar.lihat', compact('pendaftar','user','kelas'));
@@ -53,8 +53,13 @@ class PenggunaController extends Controller
 
     public function hapusPendaftar($id){
         $akun = User::find($id);
+        $pendaftar = Pelajar::where('pelajar_id', $id)->first();
+        if($pendaftar){
+            if($pendaftar->foto && file_exists(public_path('img/pelajar/'. $pendaftar->foto))){
+                File::delete(public_path('img/pelajar/'. $pendaftar->foto));
+            }
+        }
         $akun->delete();
-
         Alert::toast('Hapus Pendaftar Berhasil');
         return redirect()->route('super.penggunapendaftar');
     }
@@ -65,7 +70,7 @@ class PenggunaController extends Controller
                     ->select('users.id','users.nama','kelas.nama as kelas','users.nomor_registrasi','users.email','users.updated_at')
                     ->where('role_id', 4)
                     ->orderBy('users.updated_at', 'desc')
-                    ->get();
+                    ->paginate(10);
 
         return view('super.pengguna.pelajar.penggunapelajar', compact('user','pelajar'));
     }
@@ -92,7 +97,14 @@ class PenggunaController extends Controller
     public function updatePelajar($id, Request $request){
         $pelajar = User::find($id);
         if($request->password){
-            $pelajar->update($request->all());
+            $pelajar->update([
+                'nama' => $request->nama,
+                'nomor_registrasi' => $request->nomor_registrasi,
+                'email' => $request->email,
+                'password' => Hash::make($request->password),
+                'kelas_id' => $request->kelas_id,
+                'role_id' => $request->role_id,
+            ]);
             Alert::toast('Update Pelajar Berhasil','success');
             return redirect()->route('super.penggunapelajar');
         }else{
@@ -153,9 +165,15 @@ class PenggunaController extends Controller
     }
 
     public function destroyPelajar($id){
-        $pelajar = User::find($id);
-        $pelajar->delete();
-        Alert::toast('Hapus Pelajar Berhasil','success');
+        $akun = User::find($id);
+        $pendaftar = Pelajar::where('pelajar_id', $id)->first();
+        if($pendaftar){
+            if($pendaftar->foto && file_exists(public_path('img/pelajar/'. $pendaftar->foto))){
+                File::delete(public_path('img/pelajar/'. $pendaftar->foto));
+            }
+        }
+        $akun->delete();
+        Alert::toast('Hapus Pendaftar Berhasil', 'success');
         return redirect()->route('super.penggunapelajar');
     }
 
