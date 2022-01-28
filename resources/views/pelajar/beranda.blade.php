@@ -17,7 +17,7 @@
             <div class="p-3 mt-3">
                 <div class="row">
                     <div class="col-xl-4 col-sm-4 text-center pb-4">
-                        <img src="{{asset('img/pelajar/'. $data->foto)}}}" width="120" alt="">
+                        <img src="{{asset('img/pelajar/'. $data->foto)}}" width="120" alt="">
                     </div>
                     <div class="col-xl-8 col-sm-8">
                             <table>
