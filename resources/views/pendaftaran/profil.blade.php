@@ -32,6 +32,15 @@
                 @else
 
                 <form class="user" class="" action="{{ route('pendaftar.up-formulir-pendaftaran') }}" method="POST" enctype="multipart/form-data">
+                    @if ($errors->any())
+                        <div class="alert alert-danger">
+                            <ul>
+                                @foreach ($errors->all() as $error)
+                                    <li>{{ $error }}</li>
+                                @endforeach
+                            </ul>
+                        </div>
+                    @endif
                     @csrf
                     <div class="form-group row">
                         <div class="col-sm-4 mb-3 mb-sm-0">
