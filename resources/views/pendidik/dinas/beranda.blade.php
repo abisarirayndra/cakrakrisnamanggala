@@ -87,7 +87,7 @@
             <div class="p-3 mt-3">
                 <div class="row">
                     <div class="col-xl-3 col-md-3 text-center">
-                        <a href="{{ route('pelajar.dinas.paket') }}">
+                        <a href="{{ route('pendidik.dinas.paket') }}">
                             <span class="fa-stack fa-3x">
                                 <i class="fas fa-circle fa-stack-2x text-warning"></i>
                                 <i class="fas fa-calendar fa-stack-1x fa-inverse"></i>
