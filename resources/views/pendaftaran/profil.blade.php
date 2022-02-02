@@ -104,6 +104,7 @@
                                 <option value="Genteng">Genteng</option>
                                 <option value="Banyuwangi">Banyuwangi</option>
                                 <option value="Jember">Jember</option>
+                                <option value="PDM Smadatara">PDM Smadatara</option>
                             </select>
                         </div>
                     </div>
