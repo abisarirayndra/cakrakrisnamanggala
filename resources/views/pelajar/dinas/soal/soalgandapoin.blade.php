@@ -3,11 +3,6 @@
 @section('title')
 <title>Computer Assisted Test - Cakra Krisna Manggala</title>
     <style>
-        p{
-            padding: 0;
-            margin: 0;
-            display: inline;
-        }
         .jawaban{
             margin: 20px;
         }
@@ -47,7 +42,12 @@
                     @foreach ($ganda as $item)
                         <div class="card mt-3" style="border: solid 1px rgb(209, 194, 194); padding: 15px;">
                             <div class="text-justify text-dark mt-4 mb-4" style="border-bottom: solid 1px rgb(209, 194, 194);">
-                                <h6 style="display: block">{{ $item->nomor_soal }}. {!! $item->soal !!}</h6>
+                                <tr>
+                                    <td style="vertical-align: top;"><b>{{$item->nomor_soal}}</b></td>
+                                    <td class="pl-4 pb-4">
+                                        {!! $item->soal !!} <br>
+                                    </td>
+                                </tr>
                             </div>
                             <form class="jawaban" action="{{ route('pelajar.dinas.upjawabangandapoin', [$item->id]) }}" method="POST">
                                 @csrf
@@ -131,8 +131,8 @@
           clearInterval(x);
           document.getElementById("demo").innerHTML = "Waktu Habis";
 
-          var id = {!!json_encode($selesai->id)!!}
-          window.location = ('http://localhost:8000/pelajar/dinas/reviewgandapoin/'+id);
+          var id = {!!json_encode($id)!!}
+          window.location = ('https://elearning.cakrakrisnamanggala.com/pelajar/reviewgandapoin/'+id);
         }
       }, 1000);
 </script>
