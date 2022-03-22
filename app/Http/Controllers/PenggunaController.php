@@ -70,7 +70,7 @@ class PenggunaController extends Controller
                     ->select('users.id','users.nama','kelas.nama as kelas','users.nomor_registrasi','users.email','users.updated_at')
                     ->where('role_id', 4)
                     ->orderBy('users.updated_at', 'desc')
-                    ->paginate(10);
+                    ->get();
 
         return view('super.pengguna.pelajar.penggunapelajar', compact('user','pelajar'));
     }

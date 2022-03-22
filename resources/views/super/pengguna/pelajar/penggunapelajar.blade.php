@@ -1,7 +1,7 @@
 @extends('master.super')
 
 @section('title')
-
+<link href="{{asset('vendor/datatables/datatables.min.css')}}" rel="stylesheet">
 @endsection
 
 @section('content')
@@ -48,7 +48,6 @@
                         @endforeach
                     </tbody>
                 </table>
-                {{ $pelajar->links() }}
             </div>
         </div>
     </div>
@@ -58,5 +57,10 @@
 @endsection
 
 @section('js')
+<!-- Page level plugins -->
+<script src="{{asset('vendor/datatables/jquery.dataTables.min.js')}}"></script>
+<script src="{{asset('vendor/datatables/datatables.min.js')}}"></script>
 
+<!-- Page level custom scripts -->
+<script src="{{asset('js/demo/datatables-demo.js')}}"></script>
 @endsection
