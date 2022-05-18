@@ -34,7 +34,11 @@
                             @csrf
                             <div class="form-group">
                                 <label for="nama">Nomor Soal</label>
-                                <input name="nomor_soal" type="number" class="form-control" required>
+                                @if (isset($ada_soal))
+                                    <input name="nomor_soal" type="number" class="form-control" value="{{ $ada_soal->nomor_soal + 1 }}" required>
+                                @else
+                                    <input name="nomor_soal" type="number" class="form-control" required>
+                                @endif
                             </div>
                             <div class="form-group">
                                 <label for="nama">Soal</label>
@@ -44,41 +48,57 @@
                                 <label for="nama">Opsi A</label>
                                 <textarea name="opsi_a" class="ckeditor form-control" id="ckditor" required></textarea>
                             </div>
-                            <div class="form-group">
-                                <label for="kunci">Poin Opsi A</label>
-                                <input type="number" name="poin_a" class="form-control" placeholder="" required>
-                            </div>
+
                             <div class="form-group">
                                 <label for="nama">Opsi B</label>
                                 <textarea name="opsi_b" class="ckeditor form-control" id="ckditor" required></textarea>
                             </div>
-                            <div class="form-group">
-                                <label for="kunci">Poin Opsi B</label>
-                                <input type="number" name="poin_b" class="form-control" placeholder="" required>
-                            </div>
+
                             <div class="form-group">
                                 <label for="nama">Opsi C</label>
                                 <textarea name="opsi_c" class="ckeditor form-control" id="ckditor" required></textarea>
                             </div>
-                            <div class="form-group">
-                                <label for="kunci">Poin Opsi C</label>
-                                <input type="number" name="poin_c" class="form-control" placeholder="" required>
-                            </div>
+
                             <div class="form-group">
                                 <label for="nama">Opsi D</label>
                                 <textarea name="opsi_d" class="ckeditor form-control" id="ckditor" required></textarea>
                             </div>
-                            <div class="form-group">
-                                <label for="kunci">Poin Opsi D</label>
-                                <input type="number" name="poin_d" class="form-control" placeholder="" required>
-                            </div>
+
                             <div class="form-group">
                                 <label for="nama">Opsi E (Opsional)</label>
                                 <textarea name="opsi_e" class="ckeditor form-control" id="ckditor"></textarea>
                             </div>
-                            <div class="form-group">
-                                <label for="kunci">Poin Opsi E</label>
-                                <input type="number" name="poin_e" class="form-control" placeholder="">
+                            <div class="row">
+                                <div class="col-2">
+                                    <div class="form-group">
+                                        <label for="kunci">Poin A</label>
+                                        <input type="number" name="poin_a" class="form-control" placeholder="" required>
+                                    </div>
+                                </div>
+                                <div class="col-2">
+                                    <div class="form-group">
+                                        <label for="kunci">Poin B</label>
+                                        <input type="number" name="poin_b" class="form-control" placeholder="" required>
+                                    </div>
+                                </div>
+                                <div class="col-2">
+                                    <div class="form-group">
+                                        <label for="kunci">Poin C</label>
+                                        <input type="number" name="poin_c" class="form-control" placeholder="" required>
+                                    </div>
+                                </div>
+                                <div class="col-2">
+                                    <div class="form-group">
+                                        <label for="kunci">Poin D</label>
+                                        <input type="number" name="poin_d" class="form-control" placeholder="" required>
+                                    </div>
+                                </div>
+                                <div class="col-2">
+                                    <div class="form-group">
+                                        <label for="kunci">Poin E</label>
+                                        <input type="number" name="poin_e" class="form-control" placeholder="">
+                                    </div>
+                                </div>
                             </div>
                             <div class="text-center mt-4">
                                 <button class="btn btn-warning" type="submit">Simpan</button>

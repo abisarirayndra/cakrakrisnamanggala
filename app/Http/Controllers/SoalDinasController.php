@@ -58,7 +58,8 @@ class SoalDinasController extends Controller
     public function pendidikSoalGanda($id){
         $user = Auth::user()->nama;
         $soal = SoalDinasGanda::where('dn_tes_id', $id)->get();
-        return view('pendidik.dinas.soal.ganda', compact('user','id','soal'));
+        $ada_soal = SoalDinasGanda::where('dn_tes_id', $id)->orderBy('id','desc')->first();
+        return view('pendidik.dinas.soal.ganda', compact('user','id','soal','ada_soal'));
     }
 
     public function pendidikCetakSoalGanda($id){
@@ -102,9 +103,12 @@ class SoalDinasController extends Controller
             'kunci' => $request->kunci,
         ]);
 
+
         Alert::toast('Tambah Soal Berhasil','success');
 
-        return redirect()->back();
+        return redirect()->back()
+        // ->with(['nomor_lanjut => $nomor_lanjut'])
+        ;
     }
 
     public function pendidikImportSoalGanda(Request $request){
@@ -140,7 +144,8 @@ class SoalDinasController extends Controller
     public function pendidikSoalGandaPoin($id){
         $user = Auth::user()->nama;
         $soal = SoalDinasGandaPoin::where('dn_tes_id', $id)->get();
-        return view('pendidik.dinas.soal.gandapoin', compact('user','id','soal'));
+        $ada_soal = SoalDinasGandaPoin::where('dn_tes_id', $id)->orderBy('id','desc')->first();
+        return view('pendidik.dinas.soal.gandapoin', compact('user','id','soal','ada_soal'));
     }
 
     public function pendidikCetakSoalGandaPoin($id){
@@ -171,7 +176,7 @@ class SoalDinasController extends Controller
 
         ]);
 
-        if(SoalDinasGanda::where('dn_tes_id', $id)->where('nomor_soal', $request->nomor_soal)->first()){
+        if(SoalDinasGandaPoin::where('dn_tes_id', $id)->where('nomor_soal', $request->nomor_soal)->first()){
             Alert::toast('Nomor Sudah Digunakan', 'error');
             return redirect()->back();
         }

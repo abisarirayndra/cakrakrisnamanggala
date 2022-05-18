@@ -16,6 +16,10 @@
                         <form action="{{route('pendidik.dinas.updatesoalgandapoin', [$id])}}" method="POST">
                             @csrf
                             <div class="form-group">
+                                <label>Nomor Soal</label>
+                                <input type="text" name="nomor_soal" class="form-control" value="{{$soal->nomor_soal}}" required>
+                            </div>
+                            <div class="form-group">
                                 <label for="nama">Soal</label>
                                 <textarea name="soal" class="ckeditor form-control" id="ckditor">{{$soal->soal}}</textarea>
                             </div>
@@ -24,40 +28,52 @@
                                 <textarea name="opsi_a" class="ckeditor form-control" id="ckditor">{{$soal->opsi_a}}</textarea>
                             </div>
                             <div class="form-group">
-                                <label for="kunci">Poin Opsi A</label>
-                                <input type="text" name="poin_a" class="form-control" value="{{$soal->poin_a}}" required>
-                            </div>
-                            <div class="form-group">
                                 <label for="nama">Opsi B</label>
                                 <textarea name="opsi_b" class="ckeditor form-control" id="ckditor">{{$soal->opsi_b}}</textarea>
-                            </div>
-                            <div class="form-group">
-                                <label for="kunci">Poin Opsi B</label>
-                                <input type="text" name="poin_b" class="form-control" value="{{$soal->poin_b}}" required>
                             </div>
                             <div class="form-group">
                                 <label for="nama">Opsi C</label>
                                 <textarea name="opsi_c" class="ckeditor form-control" id="ckditor">{{$soal->opsi_c}}</textarea>
                             </div>
                             <div class="form-group">
-                                <label for="kunci">Poin Opsi C</label>
-                                <input type="text" name="poin_c" class="form-control" value="{{$soal->poin_c}}" required>
-                            </div>
-                            <div class="form-group">
                                 <label for="nama">Opsi D</label>
                                 <textarea name="opsi_d" class="ckeditor form-control" id="ckditor">{{$soal->opsi_d}}</textarea>
-                            </div>
-                            <div class="form-group">
-                                <label for="kunci">Poin Opsi D</label>
-                                <input type="text" name="poin_d" class="form-control" value="{{$soal->poin_d}}" required>
                             </div>
                             <div class="form-group">
                                 <label for="nama">Opsi E</label>
                                 <textarea name="opsi_e" class="ckeditor form-control" id="ckditor">{{$soal->opsi_e}}</textarea>
                             </div>
-                            <div class="form-group">
-                                <label for="kunci">Poin Opsi E</label>
-                                <input type="text" name="poin_e" class="form-control" value="{{$soal->poin_e}}" required>
+                            <div class="row">
+                                <div class="col-2">
+                                    <div class="form-group">
+                                        <label for="kunci">Poin A</label>
+                                        <input type="number" name="poin_a" class="form-control" value="{{$soal->poin_a}}"required>
+                                    </div>
+                                </div>
+                                <div class="col-2">
+                                    <div class="form-group">
+                                        <label for="kunci">Poin B</label>
+                                        <input type="number" name="poin_b" class="form-control" value="{{$soal->poin_b}}" required>
+                                    </div>
+                                </div>
+                                <div class="col-2">
+                                    <div class="form-group">
+                                        <label for="kunci">Poin C</label>
+                                        <input type="number" name="poin_c" class="form-control" value="{{$soal->poin_c}}" required>
+                                    </div>
+                                </div>
+                                <div class="col-2">
+                                    <div class="form-group">
+                                        <label for="kunci">Poin D</label>
+                                        <input type="number" name="poin_d" class="form-control" value="{{$soal->poin_d}}" required>
+                                    </div>
+                                </div>
+                                <div class="col-2">
+                                    <div class="form-group">
+                                        <label for="kunci">Poin E</label>
+                                        <input type="number" name="poin_e" class="form-control" value="{{$soal->poin_e}}">
+                                    </div>
+                                </div>
                             </div>
                             <div class="text-center mt-4">
                                 <a href="{{route('pendidik.dinas.soalganda', [$soal->dn_tes_id])}}" class="btn btn-danger" onclick="return confirm('Anda yakin ingin membatalkan proses edit ?')">Batal</a>

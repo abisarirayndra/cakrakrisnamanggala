@@ -16,6 +16,10 @@
                         <form action="{{route('pendidik.dinas.updatesoalganda', [$id])}}" method="POST">
                             @csrf
                             <div class="form-group">
+                                <label>Nomor Soal</label>
+                                <input type="text" name="nomor_soal" class="form-control" value="{{$soal->nomor_soal}}" required>
+                            </div>
+                            <div class="form-group">
                                 <label for="nama">Soal</label>
                                 <textarea name="soal" class="ckeditor form-control" id="ckditor">{{$soal->soal}}</textarea>
                             </div>
@@ -41,7 +45,26 @@
                             </div>
                             <div class="form-group">
                                 <label for="kunci">Kunci</label>
-                                <input type="text" name="kunci" class="form-control" value="{{$soal->kunci}}" placeholder="Abjad Jawaban">
+                                <div class="form-check">
+                                    <input type="radio" name="kunci" class="form-check-input" value="A" @if($soal->kunci == "A") {{'checked="checked"'}} @endif>
+                                    <label for="A" class="form-check-label"> A </label>
+                                </div>
+                                <div class="form-check">
+                                    <input type="radio" name="kunci" class="form-check-input" value="B" @if($soal->kunci == "B") {{'checked="checked"'}} @endif>
+                                    <label for="A" class="form-check-label"> B </label>
+                                </div>
+                                <div class="form-check">
+                                    <input type="radio" name="kunci" class="form-check-input" value="C" @if($soal->kunci == "C") {{'checked="checked"'}} @endif>
+                                    <label for="A" class="form-check-label"> C </label>
+                                </div>
+                                <div class="form-check">
+                                    <input type="radio" name="kunci" class="form-check-input" value="D" @if($soal->kunci == "D") {{'checked="checked"'}} @endif>
+                                    <label for="A" class="form-check-label"> D </label>
+                                </div>
+                                <div class="form-check">
+                                    <input type="radio" name="kunci" class="form-check-input" value="E" @if($soal->kunci == "E") {{'checked="checked"'}} @endif>
+                                    <label for="A" class="form-check-label"> E </label>
+                                </div>
                             </div>
                             <div class="text-center mt-4">
                                 <a href="{{route('pendidik.dinas.soalganda', [$soal->dn_tes_id])}}" class="btn btn-danger" onclick="return confirm('Anda yakin ingin membatalkan proses edit ?')">Batal</a>

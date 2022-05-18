@@ -29,7 +29,11 @@
                             @csrf
                             <div class="form-group">
                                 <label for="nama">Nomor Soal</label>
-                                <input name="nomor_soal" type="number" class="form-control" required>
+                                @if (isset($ada_soal))
+                                    <input name="nomor_soal" type="number" class="form-control" value="{{ $ada_soal->nomor_soal + 1 }}" required>
+                                @else
+                                    <input name="nomor_soal" type="number" class="form-control" required>
+                                @endif
                             </div>
                             <div class="form-group">
                                 <label for="nama">Soal</label>
@@ -57,7 +61,27 @@
                             </div>
                             <div class="form-group">
                                 <label for="kunci">Kunci</label>
-                                <input type="text" name="kunci" class="form-control" placeholder="Abjad Jawaban">
+                                {{-- <input type="text" name="kunci" class="form-control" placeholder="Abjad Jawaban"> --}}
+                                <div class="form-check">
+                                    <input type="radio" name="kunci" class="form-check-input" value="A">
+                                    <label for="A" class="form-check-label"> A </label>
+                                </div>
+                                <div class="form-check">
+                                    <input type="radio" name="kunci" class="form-check-input" value="B">
+                                    <label for="A" class="form-check-label"> B </label>
+                                </div>
+                                <div class="form-check">
+                                    <input type="radio" name="kunci" class="form-check-input" value="C">
+                                    <label for="A" class="form-check-label"> C </label>
+                                </div>
+                                <div class="form-check">
+                                    <input type="radio" name="kunci" class="form-check-input" value="D">
+                                    <label for="A" class="form-check-label"> D </label>
+                                </div>
+                                <div class="form-check">
+                                    <input type="radio" name="kunci" class="form-check-input" value="E">
+                                    <label for="A" class="form-check-label"> E </label>
+                                </div>
                             </div>
                             <div class="text-center mt-4">
                                 <button class="btn btn-warning" type="submit">Simpan</button>
