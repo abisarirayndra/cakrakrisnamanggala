@@ -19,6 +19,7 @@ use App\Imports\SoalGandaPoinImport;
 use Maatwebsite\Excel\Facades\Excel;
 use Image;
 use PDF;
+use DB;
 
 class SoalDinasController extends Controller
 {
@@ -366,14 +367,32 @@ class SoalDinasController extends Controller
             }
         }
 
-        return view('pelajar.dinas.soal.soalganda', compact('nomor','user','ganda','sudah_jawab','selesai','id'));
+        $review_belum = JawabanGandaDinas::select('dn_soalganda.nomor_soal')
+                                    ->join('dn_soalganda','dn_soalganda.id','=','dn_jawabanganda.dn_soalganda_id')
+                                    ->where('dn_jawabanganda.pelajar_id', $pelajar)
+                                    ->where('dn_soalganda.dn_tes_id', $id)
+                                    ->where('status', null)
+                                    ->where('jawaban', null)
+                                    ->orderBy('nomor_soal', 'asc')
+                                    ->get();
+
+        $review_sudah = JawabanGandaDinas::select('dn_soalganda.nomor_soal')
+                                    ->join('dn_soalganda','dn_soalganda.id','=','dn_jawabanganda.dn_soalganda_id')
+                                    ->where('dn_jawabanganda.pelajar_id', $pelajar)
+                                    ->where('dn_soalganda.dn_tes_id', $id)
+                                    ->where('status', null)
+                                    ->whereNotNull('jawaban')
+                                    ->orderBy('nomor_soal', 'asc')
+                                    ->get();
+
+        return view('pelajar.dinas.soal.soalganda', compact('nomor','user','ganda','sudah_jawab','selesai','id','review_sudah','review_belum'));
     }
 
     public function pelajarSoalGandaPoin($id, Request $request){
         $user = Auth::user()->nama;
         $pelajar = Auth::user()->id;
         $selesai = TesDinas::find($id);
-        $nomor = SoalDinasGandaPoin::select('id','dn_tes_id')->where('dn_tes_id', $id)->get();
+        $nomor = SoalDinasGandaPoin::select('id','dn_tes_id','nomor_soal')->where('dn_tes_id', $id)->get();
         $ganda = SoalDinasGandaPoin::where('dn_tes_id', $id)->where('id', $request->q)->get();
         $sudah = JawabanGandaPoinDinas::where('dn_soalgandapoin_id', $request->q)
                 ->where('pelajar_id', $pelajar)
@@ -421,6 +440,68 @@ class SoalDinasController extends Controller
                 ]);
             }
         }
-        return view('pelajar.dinas.soal.soalgandapoin', compact('nomor','user','ganda','sudah_jawab','selesai','id'));
+
+        $review_belum = JawabanGandaPoinDinas::select('dn_soalgandapoin.nomor_soal')
+                                    ->join('dn_soalgandapoin','dn_soalgandapoin.id','=','dn_jawabangandapoin.dn_soalgandapoin_id')
+                                    ->where('dn_jawabangandapoin.pelajar_id', $pelajar)
+                                    ->where('dn_soalgandapoin.dn_tes_id', $id)
+                                    ->where('status', null)
+                                    ->where('jawaban', null)
+                                    ->orderBy('nomor_soal', 'asc')
+                                    ->get();
+
+        $review_sudah = JawabanGandaPoinDinas::select('dn_soalgandapoin.nomor_soal')
+                                    ->join('dn_soalgandapoin','dn_soalgandapoin.id','=','dn_jawabangandapoin.dn_soalgandapoin_id')
+                                    ->where('dn_jawabangandapoin.pelajar_id', $pelajar)
+                                    ->where('dn_soalgandapoin.dn_tes_id', $id)
+                                    ->where('status', null)
+                                    ->whereNotNull('jawaban')
+                                    ->orderBy('nomor_soal', 'asc')
+                                    ->get();
+
+        // $belum = JawabanGandaPoinDinas::
+        //                             // select('dn_soalgandapoin.nomor_soal')
+        //                             leftJoin('dn_soalgandapoin','dn_soalgandapoin.id','=','dn_jawabangandapoin.dn_soalgandapoin_id')
+        //                             ->where('dn_jawabangandapoin.pelajar_id', $pelajar)
+        //                             ->where('dn_soalgandapoin.dn_tes_id', $id)
+        //                             ->where('status', null)
+        //                             ->whereNull('jawaban')
+        //                             ->orderBy('nomor_soal', 'asc')
+        //                             ->get();
+
+        // $belum = SoalDinasGandaPoin::leftJoin('dn_jawabangandapoin', function($join)
+        //                             {
+        //                                 $join->on('dn_soalgandapoin.id','=','dn_jawabangandapoin.dn_soalgandapoin_id');
+
+        //                             })
+        //                             ->where('dn_jawabangandapoin.pelajar_id', $pelajar)
+        //                             ->where('dn_soalgandapoin.dn_tes_id', $id)
+        //                             ->where('dn_jawabangandapoin.status', null)
+        //                             ->whereNull('dn_jawabangandapoin.jawaban')
+        //                             ->orderBy('dn_soalgandapoin.nomor_soal', 'asc')
+        //                             ->get();
+        // return $belum;
+
+        // $soal = SoalDinasGandaPoin::select('nomor_soal')->where('dn_tes_id', $id)->get();
+        // $jumlah_soal = SoalDinasGandaPoin::select('nomor_soal')->where('dn_tes_id', $id)->count();
+
+        // $slice = $jumlah_soal - $jumlah_sudah;
+        // $soal_belum = array_slice($soal, $slice - 1);
+
+        // for($a = 0; $a < $ulangi; $a++){
+        //     $soal_belum = $soal[$a];
+        // }
+
+        // return $soal_belum;
+
+        // $data = collect();
+        // $data->push($review_sudah, $soal);
+        // $review = $data->collapse()->values()->all();
+
+        // return $belum;
+
+
+        return view('pelajar.dinas.soal.soalgandapoin', compact('nomor','user','ganda','sudah_jawab','selesai','id','review_belum',
+        'review_sudah'));
     }
 }

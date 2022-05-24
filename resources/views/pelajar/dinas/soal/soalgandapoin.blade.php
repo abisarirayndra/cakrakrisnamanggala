@@ -18,11 +18,11 @@
 <div class="container">
 
     <!-- Page Heading -->
-    <p class="mb-4">Perhatikan waktu mulai dan selesai disetiap tes, soal akan dibuka dan ditutup sesuai waktu yang tertera.</p>
+    {{-- <p class="mb-4">Perhatikan waktu mulai dan selesai disetiap tes, soal akan dibuka dan ditutup sesuai waktu yang tertera.</p> --}}
     <!-- DataTales Example -->
     <div class="card shadow mb-4">
         <div class="card-body">
-            <div>Waktu yang tersisa adalah <b><span id="demo"> </span></b></div>
+            <div>Waktu yang tersisa <b><span id="demo"> </span></b></div>
             <div class="p-3 mt-1">
                 @php
                     $a = 1;
@@ -31,10 +31,11 @@
                     @foreach ($nomor as $item)
                         <form action="{{ route('pelajar.dinas.soalgandapoin', [$item->dn_tes_id]) }}">
                             <input type="text" hidden name="q" value="{{ $item->id }}">
-                            <button type="submit" class="btn btn-outline-warning">{{ $a++ }}</button>
+                            <button type="submit" class="btn btn-outline-warning">{{ $item->nomor_soal }}</button>
                         </form>
                     @endforeach
                     <div class="float-right">
+                        <button class="btn btn-sm btn-warning ml-3" data-toggle="modal" data-target="#ceksoal"> Cek Jawaban</button>
                         <a href="{{ route('pelajar.dinas.reviewgandapoin', [$id]) }}" class="btn btn-sm btn-danger ml-3" onclick="return confirm('Anda yakin ingin selesai sekarang ?')"><i class="fas fa-cloud-upload-alt"></i> Selesai</a>
                     </div>
                 </div>
@@ -95,7 +96,32 @@
             </div>
         </div>
     </div>
-
+    <div class="modal fade" id="ceksoal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="exampleModalLongTitle">Cek Jawaban</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+                Belum Tersimpan:
+                @foreach ($review_belum as $item)
+                    <span class="badge badge-danger">{{ $item->nomor_soal }}</span>
+                @endforeach
+                <hr>
+                Tersimpan
+                @foreach ($review_sudah as $item)
+                    <span class="badge badge-success">{{ $item->nomor_soal }}</span>
+                @endforeach
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+            </div>
+          </div>
+        </div>
+      </div>
 </div>
 
 

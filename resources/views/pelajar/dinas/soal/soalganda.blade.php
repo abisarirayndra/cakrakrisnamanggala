@@ -35,6 +35,7 @@
                         </form>
                     @endforeach
                     <div class="float-right">
+                        <button class="btn btn-sm btn-warning ml-3" data-toggle="modal" data-target="#ceksoal"> Cek Jawaban</button>
                         <a href="{{ route('pelajar.dinas.review', [$id]) }}" class="btn btn-sm btn-danger ml-3" onclick="return confirm('Anda yakin ingin selesai sekarang ?')"><i class="fas fa-cloud-upload-alt"></i> Selesai</a>
                     </div>
                 </div>
@@ -91,7 +92,32 @@
             </div>
         </div>
     </div>
-
+    <div class="modal fade" id="ceksoal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="exampleModalLongTitle">Cek Jawaban</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+                Belum Tersimpan:
+                @foreach ($review_belum as $item)
+                    <span class="badge badge-danger">{{ $item->nomor_soal }}</span>
+                @endforeach
+                <hr>
+                Tersimpan
+                @foreach ($review_sudah as $item)
+                    <span class="badge badge-success">{{ $item->nomor_soal }}</span>
+                @endforeach
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+            </div>
+          </div>
+        </div>
+      </div>
 </div>
 
 
