@@ -67,4 +67,10 @@ class User extends Authenticatable
         }
         return false;
     }
+    public function isStafAdmin(){
+        if($this->role_id == 7){
+            return true;
+        }
+        return false;
+    }
 }

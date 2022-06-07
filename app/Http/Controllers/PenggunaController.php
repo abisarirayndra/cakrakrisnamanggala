@@ -13,6 +13,7 @@ use App\Role;
 use File;
 use Hash;
 use App\Pendidik;
+use Str;
 
 class PenggunaController extends Controller
 {
@@ -232,12 +233,17 @@ class PenggunaController extends Controller
             'nomor_registrasi' => 'required|unique:users',
         ]);
 
-        User::create([
+        $userMake = User::create([
             'nama' => $request->nama,
-            'nomor_registrasi' => $request->nomor_registrasi,
+            'nomor_registrasi' => Str::random(6),
             'email' => $request->email,
             'password' => Hash::make($request->password),
             'role_id' => 7,
+        ]);
+
+        Pendidik::create([
+            'pendidik_id' => $userMake->id,
+            'mapel_id' => 10,
         ]);
 
         Alert::toast('Tambah Staf Admin Berhasil','success');

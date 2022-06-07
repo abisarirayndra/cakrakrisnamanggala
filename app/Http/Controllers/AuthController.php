@@ -46,6 +46,10 @@ class AuthController extends Controller
                 Alert::toast('Selamat Datang Pendaftar','success');
                 return redirect()->route('pendaftar.profil');
             }
+            elseif(auth()->user()->role_id == 7 ){
+                Alert::toast('Selamat Datang Staf Admin','success');
+                return redirect()->route('staf-admin.beranda');
+            }
 
         }else {
             return redirect()->route('login')->withErrors(['msg' => 'Akun tidak ditemukan']);
