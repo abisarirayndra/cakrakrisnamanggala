@@ -18,7 +18,7 @@
                 </div>
             <h5><i class="fas fa-hashtag text-warning"></i> Revisi Jadwal</h5>
             <div class="p-3 mt-3">
-                <form action="{{ route('staf-admin.jadwal.tambah') }}" method="post">
+                <form action="{{ route('staf-admin.jadwal.update', [$jadwal->id]) }}" method="post">
                     @csrf
                     <div class="form-group">
                         <label>Mata Pelajaran</label>
