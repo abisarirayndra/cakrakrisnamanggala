@@ -197,6 +197,8 @@ class JadwalAbsensiController extends Controller
                 return redirect()->back();
             }
     }
+
+    // Pendidik
     public function scanAbsensiPendidik(){
         $user = Auth::user()->nama;
         $token = Auth::user()->nomor_registrasi;
@@ -268,5 +270,51 @@ class JadwalAbsensiController extends Controller
         return view('pendidik.absensi.histori',compact('mapel','kelas','jadwal','kelas_id','bulan','tahun','user'));
     }
 
+    // Pelajar
+    public function scanAbsensiPelajar(){
+        $user = Auth::user()->nama;
+        $token = Auth::user()->nomor_registrasi;
+        $jadwal = AbsensiPelajar::select('adm_absensi_pelajar.id','mapels.mapel','kelas.nama as kelas','adm_jadwal.mulai',
+                                'adm_jadwal.selesai','adm_absensi_pelajar.status','adm_absensi_pelajar.datang')
+                                    ->join('adm_jadwal','adm_jadwal.id','=','adm_absensi_pelajar.jadwal_id')
+                                    ->join('mapels','mapels.id','=','adm_jadwal.mapel_id')
+                                    ->join('kelas','kelas.id','=','adm_jadwal.kelas_id')
+                                    ->where('adm_absensi_pelajar.pelajar_id', Auth::user()->id)
+                                    ->where('adm_absensi_pelajar.pulang', null)
+                                    ->orderBy('adm_absensi_pelajar.id', 'desc')
+                                    ->get();
+
+        return view('pelajar.absensi.index', compact('user','token','jadwal'));
+    }
+
+    public function selesaiPelajar($id, Request $request){
+        $absensi = AbsensiPelajar::findOrFail($id);
+        $absensi->update([
+            'pulang' => $request->pulang,
+        ]);
+        Alert::toast('Pembelajaran Selesai', 'success');
+        return redirect()->route('pelajar.absensi');
+    }
+    public function historiPelajar(Request $request){
+        $user = Auth::user()->nama;
+        $id = Auth::user()->id;
+        $jadwal = AbsensiPelajar::select('mapels.mapel','kelas.nama as kelas','adm_jadwal.mulai','adm_jadwal.selesai',
+                                'adm_absensi_pelajar.datang','adm_absensi_pelajar.pulang','adm_absensi_pelajar.status')
+                            ->join('users','users.id','=','adm_absensi_pelajar.pelajar_id')
+                            ->join('adm_jadwal','adm_jadwal.id','=','adm_absensi_pelajar.pelajar_id')
+                            ->join('mapels','mapels.id','=','adm_jadwal.mapel_id')
+                            ->join('kelas','kelas.id','=','adm_jadwal.kelas_id')
+                            ->where('adm_absensi_pelajar.pelajar_id', $id)
+                            ->whereMonth('adm_jadwal.mulai', $request->bulan)
+                            ->whereYear('adm_jadwal.mulai', $request->tahun)
+                            ->whereNotNull('adm_absensi_pelajar.pulang')
+                            ->orderBy('adm_jadwal.mulai', 'desc')
+                            ->get();
+
+        $bulan = $request->bulan;
+        $tahun = $request->tahun;
+
+        return view('pelajar.absensi.histori', compact('user','jadwal','bulan','tahun'));
+    }
 
 }

@@ -154,23 +154,26 @@ Route::group(['prefix' => 'pendidik','middleware' => ['auth','pengajar-role']], 
 
 
 
-Route::group(['middleware' => ['auth','pelajar-role']], function(){
+Route::group(['prefix' => 'pelajar','middleware' => ['auth','pelajar-role']], function(){
 
     //Kedinasan
-    Route::get('/pelajar/beranda','PelajarController@index')->name('pelajar.dinas.beranda');
-    Route::get('/pelajar/paket','PaketDinasController@pelajarPaket')->name('pelajar.dinas.paket');
-    Route::get('/pelajar/tes/{id}','TesDinasController@pelajarTes')->name('pelajar.dinas.tes');
-    Route::get('/pelajar/persiapan/{id}','SoalDinasController@pelajarPersiapan')->name('pelajar.dinas.persiapan');
-    Route::get('/pelajar/soalganda/{id}','SoalDinasController@pelajarSoalGanda')->name('pelajar.dinas.soalganda');
+    Route::get('/beranda','PelajarController@index')->name('pelajar.dinas.beranda');
+    Route::get('/paket','PaketDinasController@pelajarPaket')->name('pelajar.dinas.paket');
+    Route::get('/tes/{id}','TesDinasController@pelajarTes')->name('pelajar.dinas.tes');
+    Route::get('/persiapan/{id}','SoalDinasController@pelajarPersiapan')->name('pelajar.dinas.persiapan');
+    Route::get('/soalganda/{id}','SoalDinasController@pelajarSoalGanda')->name('pelajar.dinas.soalganda');
     Route::post('pelajar/upjawabanganda/{id}','JawabanDinasController@upJawabanGanda')->name('pelajar.dinas.upjawabanganda');
-    Route::get('/pelajar/review/{id}','JawabanDinasController@review')->name('pelajar.dinas.review');
-    Route::post('/pelajar/kumpulkan/{id}','JawabanDinasController@kumpulkan')->name('pelajar.dinas.kumpulkan');
-    Route::get('/pelajar/nilai/{id}','JawabanDinasController@nilai')->name('pelajar.dinas.nilai');
+    Route::get('/review/{id}','JawabanDinasController@review')->name('pelajar.dinas.review');
+    Route::post('/kumpulkan/{id}','JawabanDinasController@kumpulkan')->name('pelajar.dinas.kumpulkan');
+    Route::get('/nilai/{id}','JawabanDinasController@nilai')->name('pelajar.dinas.nilai');
+    Route::get('/soalgandapoin/{id}','SoalDinasController@pelajarSoalGandaPoin')->name('pelajar.dinas.soalgandapoin');
+    Route::post('/upjawabangandapoin/{id}','JawabanDinasController@upJawabanGandaPoin')->name('pelajar.dinas.upjawabangandapoin');
+    Route::get('/reviewgandapoin/{id}','JawabanDinasController@reviewGandaPoin')->name('pelajar.dinas.reviewgandapoin');
+    Route::post('/kumpulkangandapoin/{id}','JawabanDinasController@kumpulkanGandaPoin')->name('pelajar.dinas.kumpulkangandapoin');
 
-    Route::get('/pelajar/soalgandapoin/{id}','SoalDinasController@pelajarSoalGandaPoin')->name('pelajar.dinas.soalgandapoin');
-    Route::post('pelajar/upjawabangandapoin/{id}','JawabanDinasController@upJawabanGandaPoin')->name('pelajar.dinas.upjawabangandapoin');
-    Route::get('/pelajar/reviewgandapoin/{id}','JawabanDinasController@reviewGandaPoin')->name('pelajar.dinas.reviewgandapoin');
-    Route::post('/pelajar/kumpulkangandapoin/{id}','JawabanDinasController@kumpulkanGandaPoin')->name('pelajar.dinas.kumpulkangandapoin');
+    Route::get('/absensi','JadwalAbsensiController@scanAbsensiPelajar')->name('pelajar.absensi');
+    Route::post('/absensi/selesai/{id}','JadwalAbsensiController@selesaiPelajar')->name('pelajar.absensi.selesai');
+    Route::get('/absensi/histori-pembelajaran','JadwalAbsensiController@historiPelajar')->name('pelajar.absensi.histori-pembelajaran');
 
 });
 
