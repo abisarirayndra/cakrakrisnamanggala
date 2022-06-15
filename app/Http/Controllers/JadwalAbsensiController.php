@@ -316,5 +316,48 @@ class JadwalAbsensiController extends Controller
 
         return view('pelajar.absensi.histori', compact('user','jadwal','bulan','tahun'));
     }
+    public function rekapAbsensiPembelajaran(Request $request){
+        $user = Auth::user()->nama;
+        $admin = Auth::user()->id;
+        $markas = Pendidik::select('markas_id')->where('pendidik_id', $admin)->first();
+        $kelas = Kelas::where('markas_id', $markas->markas_id)->orderBy('nama','asc')->get();
+        $jadwal = Jadwal::select('adm_jadwal.id','mapels.mapel','kelas.nama as kelas','users.nama','adm_jadwal.mulai','adm_jadwal.selesai')
+                            ->join('users','users.id','=','adm_jadwal.pendidik_id')
+                            ->join('mapels','mapels.id','=','adm_jadwal.mapel_id')
+                            ->join('kelas','kelas.id','=','adm_jadwal.kelas_id')
+                            ->where('adm_jadwal.staf_id', $admin)
+                            ->where('adm_jadwal.kelas_id', $request->kelas)
+                            ->whereMonth('adm_jadwal.mulai', $request->bulan)
+                            ->whereYear('adm_jadwal.mulai', $request->tahun)
+                            ->orderBy('adm_jadwal.mulai', 'asc')
+                            ->get();
+        $bulan = $request->bulan;
+        $tahun = $request->tahun;
+        $kelas_id = $request->kelas;
+
+        return view('staf-admin.absensi.rekap', compact('user','kelas','jadwal','bulan','tahun','kelas_id'));
+    }
+    public function lihatRekapAbsensiPembelajaran($id){
+        $user = Auth::user()->nama;
+        $jadwal = Jadwal::select('mapels.mapel','kelas.nama as kelas','users.nama','adm_jadwal.mulai','adm_jadwal.selesai')
+                        ->join('users','users.id','=','adm_jadwal.pendidik_id')
+                        ->join('mapels','mapels.id','=','adm_jadwal.mapel_id')
+                        ->join('kelas','kelas.id','=','adm_jadwal.kelas_id')
+                        ->where('adm_jadwal.id', $id)
+                        ->firstOrFail();
+        $pendidik = AbsensiPendidik::select('users.nama','adm_absensi_pendidik.jurnal','adm_absensi_pendidik.datang','adm_absensi_pendidik.pulang','adm_absensi_pendidik.status')
+                        ->join('users','users.id','=','adm_absensi_pendidik.pendidik_id')
+                        ->where('adm_absensi_pendidik.jadwal_id', $id)
+                        ->orderBy('adm_absensi_pendidik.datang', 'asc')
+                        ->get();
+        $pelajar = AbsensiPelajar::select('users.nama','adm_absensi_pelajar.datang','adm_absensi_pelajar.pulang','adm_absensi_pelajar.status')
+                        ->join('users','users.id','=','adm_absensi_pelajar.pelajar_id')
+                        ->where('adm_absensi_pelajar.jadwal_id', $id)
+                        ->orderBy('adm_absensi_pelajar.datang', 'asc')
+                        ->get();
+
+        return view('staf-admin.absensi.lihat-rekap', compact('user','pendidik','pelajar','jadwal'));
+
+    }
 
 }

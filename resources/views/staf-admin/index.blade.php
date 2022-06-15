@@ -119,6 +119,26 @@
                         </a>
                     </div>
                     <div class="col-xl-3 col-md-3 text-center">
+                        <form action="{{ route('staf-admin.absensi.rekap-pembelajaran') }}" method="GET">
+                            @if ($data->markas_id == 1)
+                                <input type="text" value="1" name="kelas" hidden>
+                            @elseif ($data->markas_id == 2)
+                                <input type="text" value="4" name="kelas" hidden>
+                            @elseif ($data->markas_id == 3)
+                                <input type="text" value="9" name="kelas" hidden>
+                            @endif
+                            <input type="text" value="{{ $sekarang->format('m') }}" hidden name="bulan">
+                            <input type="text" value="{{ $sekarang->format('Y') }}" hidden name="tahun">
+                            <button style="background-color: transparent; border: 0px">
+                                <span class="fa-stack fa-3x">
+                                    <i class="fas fa-circle fa-stack-2x text-warning"></i>
+                                    <i class="fas fa-list fa-stack-1x fa-inverse"></i>
+                                </span>
+                                    <h6 class="my-3 text-dark">Rekap Absensi Pembelajaran</h6>
+                            </button>
+                        </form>
+                    </div>
+                    <div class="col-xl-3 col-md-3 text-center">
                         <a href="{{ route('staf-admin.absen.staf') }}">
                             <span class="fa-stack fa-3x">
                                 <i class="fas fa-circle fa-stack-2x text-warning"></i>
@@ -127,6 +147,7 @@
                                 <h6 class="my-3 text-dark">Absensi Staf</h6>
                         </a>
                     </div>
+
                 </div>
             </div>
         </div>
