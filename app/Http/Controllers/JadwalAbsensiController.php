@@ -14,6 +14,8 @@ use Carbon\Carbon;
 use App\AbsensiPendidik;
 use App\AbsensiPelajar;
 use App\AbsensiStaf;
+use Image;
+use PDF;
 
 class JadwalAbsensiController extends Controller
 {
@@ -116,8 +118,9 @@ class JadwalAbsensiController extends Controller
         $now = Carbon::today()->format('Y-m-d');
         // return $now;
         $markas = Pendidik::select('markas_id')->where('pendidik_id', $id_staf)->first();
-        $staf = AbsensiStaf::select('users.nama','adm_pendidik.foto','adm_absensi_staf.datang','adm_absensi_staf.pulang','adm_absensi_staf.status')
+        $staf = AbsensiStaf::select('roles.role','users.nama','adm_pendidik.foto','adm_absensi_staf.datang','adm_absensi_staf.pulang','adm_absensi_staf.status')
                             ->join('users','users.id','=','adm_absensi_staf.staf_id')
+                            ->join('roles','roles.id','=','users.role_id')
                             ->join('adm_pendidik','adm_pendidik.pendidik_id','=','users.id')
                             ->where('adm_pendidik.markas_id', $markas->markas_id)
                             ->whereDate('datang', $now)
@@ -339,7 +342,7 @@ class JadwalAbsensiController extends Controller
     }
     public function lihatRekapAbsensiPembelajaran($id){
         $user = Auth::user()->nama;
-        $jadwal = Jadwal::select('mapels.mapel','kelas.nama as kelas','users.nama','adm_jadwal.mulai','adm_jadwal.selesai')
+        $jadwal = Jadwal::select('adm_jadwal.id','mapels.mapel','kelas.nama as kelas','users.nama','adm_jadwal.mulai','adm_jadwal.selesai')
                         ->join('users','users.id','=','adm_jadwal.pendidik_id')
                         ->join('mapels','mapels.id','=','adm_jadwal.mapel_id')
                         ->join('kelas','kelas.id','=','adm_jadwal.kelas_id')
@@ -357,7 +360,76 @@ class JadwalAbsensiController extends Controller
                         ->get();
 
         return view('staf-admin.absensi.lihat-rekap', compact('user','pendidik','pelajar','jadwal'));
+    }
+    public function cetakJurnalHarian($id){
+        $user = Auth::user()->nama;
+        $markas = Pendidik::select('markas_id')->where('pendidik_id', Auth::user()->id)->first();
+        $jadwal = Jadwal::select('mapels.mapel','kelas.nama as kelas','users.nama','adm_jadwal.mulai','adm_jadwal.selesai')
+                        ->join('users','users.id','=','adm_jadwal.pendidik_id')
+                        ->join('mapels','mapels.id','=','adm_jadwal.mapel_id')
+                        ->join('kelas','kelas.id','=','adm_jadwal.kelas_id')
+                        ->where('adm_jadwal.id', $id)
+                        ->firstOrFail();
+        $pendidik = AbsensiPendidik::select('users.nama','adm_absensi_pendidik.jurnal','adm_absensi_pendidik.datang','adm_absensi_pendidik.pulang','adm_absensi_pendidik.status')
+                        ->join('users','users.id','=','adm_absensi_pendidik.pendidik_id')
+                        ->where('adm_absensi_pendidik.jadwal_id', $id)
+                        ->orderBy('adm_absensi_pendidik.datang', 'asc')
+                        ->get();
+        $pelajar = AbsensiPelajar::select('users.nama','adm_absensi_pelajar.datang','adm_absensi_pelajar.pulang','adm_absensi_pelajar.status')
+                        ->join('users','users.id','=','adm_absensi_pelajar.pelajar_id')
+                        ->where('adm_absensi_pelajar.jadwal_id', $id)
+                        ->orderBy('adm_absensi_pelajar.datang', 'asc')
+                        ->get();
 
+        $en_logo = (string) Image::make(public_path('img/krisna.png'))->encode('data-url');
+        $pdf = PDF::loadview('staf-admin.absensi.cetak-jurnal', ['logo'=>$en_logo,
+                                'jadwal'=>$jadwal,
+                                'pelajar'=>$pelajar,
+                                'pendidik'=>$pendidik,
+                                'user' => $user,
+                                'markas' => $markas])->setPaper('a4','landscape');
+        return $pdf->stream();
+    }
+    public function rekapAbsensiStaf(Request $request){
+        $bulan = $request->bulan;
+        $tahun = $request->tahun;
+        $user = Auth::user()->nama;
+        $admin = Auth::user()->id;
+        $markas = Pendidik::select('markas_id')->where('pendidik_id', $admin)->first();
+        $staf = AbsensiStaf::select('roles.role','users.nama','adm_absensi_staf.datang','adm_absensi_staf.pulang','adm_absensi_staf.status','adm_absensi_staf.jurnal')
+                            ->join('users','users.id','=','adm_absensi_staf.staf_id')
+                            ->join('adm_pendidik','adm_pendidik.pendidik_id','=','users.id')
+                            ->join('roles','roles.id','=','users.role_id')
+                            ->where('adm_pendidik.markas_id', $markas->markas_id)
+                            ->whereMonth('adm_absensi_staf.datang', $bulan)
+                            ->whereYear('adm_absensi_staf.datang', $tahun)
+                            ->orderBy('adm_absensi_staf.id', 'desc')
+                            ->get();
+        return view('staf-admin.absensi.rekap-staf', compact('bulan','tahun','user','staf'));
+    }
+    public function cetakJurnalStaf(Request $request){
+        $bulan = $request->bulan;
+        $tahun = $request->tahun;
+        $user = Auth::user()->nama;
+        $admin = Auth::user()->id;
+        $markas = Pendidik::select('markas_id')->where('pendidik_id', $admin)->first();
+        $staf = AbsensiStaf::select('roles.role','users.nama','adm_absensi_staf.datang','adm_absensi_staf.pulang','adm_absensi_staf.status','adm_absensi_staf.jurnal')
+                            ->join('users','users.id','=','adm_absensi_staf.staf_id')
+                            ->join('adm_pendidik','adm_pendidik.pendidik_id','=','users.id')
+                            ->join('roles','roles.id','=','users.role_id')
+                            ->where('adm_pendidik.markas_id', $markas->markas_id)
+                            ->whereMonth('adm_absensi_staf.datang', $bulan)
+                            ->whereYear('adm_absensi_staf.datang', $tahun)
+                            ->orderBy('adm_absensi_staf.id', 'desc')
+                            ->get();
+        $en_logo = (string) Image::make(public_path('img/krisna.png'))->encode('data-url');
+        $pdf = PDF::loadview('staf-admin.absensi.cetak-jurnal-staf', ['logo'=>$en_logo,
+                                'staf'=> $staf,
+                                'bulan'=>$bulan,
+                                'tahun'=>$tahun,
+                                'user' => $user,
+                                'markas' => $markas])->setPaper('a4','landscape');
+        return $pdf->stream();
     }
 
 }

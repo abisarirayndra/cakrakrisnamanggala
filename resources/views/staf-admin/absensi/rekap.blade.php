@@ -33,7 +33,6 @@
                         </div>
                         <div class="form-group">
                             <button class="btn btn-sm btn-warning" type="submit"><i class="fas fa-filter"></i> Filter</button>
-                            <a href="" class="btn btn-sm btn-warning"><i class="fas fa-print"></i> Cetak Bulan Ini</a>
                         </div>
                     </form>
 

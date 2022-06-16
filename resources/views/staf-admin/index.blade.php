@@ -147,7 +147,19 @@
                                 <h6 class="my-3 text-dark">Absensi Staf</h6>
                         </a>
                     </div>
-
+                    <div class="col-xl-3 col-md-3 text-center">
+                        <form action="{{ route('staf-admin.absensi.rekap-staf') }}" method="GET">
+                            <input type="text" value="{{ $sekarang->format('m') }}" hidden name="bulan">
+                            <input type="text" value="{{ $sekarang->format('Y') }}" hidden name="tahun">
+                            <button style="background-color: transparent; border: 0px">
+                                <span class="fa-stack fa-3x">
+                                    <i class="fas fa-circle fa-stack-2x text-warning"></i>
+                                    <i class="fas fa-list fa-stack-1x fa-inverse"></i>
+                                </span>
+                                    <h6 class="my-3 text-dark">Rekap Absensi Staf</h6>
+                            </button>
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>

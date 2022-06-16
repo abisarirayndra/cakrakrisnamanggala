@@ -54,6 +54,7 @@
                                 </div>
                                 <div class="text-center mt-2">
                                     <p><b>{{Str::limit($item->nama, 10)}}</b></p>
+                                    <p><b>{{$item->role}}</b></p>
                                 </div>
                             </div>
                         </div>

@@ -192,5 +192,8 @@ Route::group(['prefix' => 'staf-admin', 'middleware' => ['auth','stafadmin-role'
     Route::post('/absensi/upload-absensi/staf','JadwalAbsensiController@uploadAbsensiStaf')->name('staf-admin.absensi.upload-absensi.staf');
     Route::get('/absen/rekap-pembelajaran/','JadwalAbsensiController@rekapAbsensiPembelajaran')->name('staf-admin.absensi.rekap-pembelajaran');
     Route::get('/absen/rekap-pembelajaran/lihat/{id}','JadwalAbsensiController@lihatRekapAbsensiPembelajaran')->name('staf-admin.absensi.rekap-pembelajaran.lihat');
+    Route::get('/absen/rekap-pembelajaran/cetak/{id}','JadwalAbsensiController@cetakJurnalHarian')->name('staf-admin.absensi.rekap-pembelajaran.cetak');
+    Route::get('/absen/rekap-staf/','JadwalAbsensiController@rekapAbsensiStaf')->name('staf-admin.absensi.rekap-staf');
+    Route::get('/absen/rekap-staf/cetak-jurnal','JadwalAbsensiController@cetakJurnalStaf')->name('staf-admin.absensi.rekap-staf.cetak');
 
 });

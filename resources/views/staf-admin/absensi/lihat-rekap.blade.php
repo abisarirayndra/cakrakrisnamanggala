@@ -14,25 +14,28 @@
                 <table>
                     <tr>
                         <td>Mapel</td>
-                        <td><b>{{ $jadwal->mapel }}</b></td>
+                        <td class="pl-2"><b>{{ $jadwal->mapel }}</b></td>
                     </tr>
                     <tr>
                         <td>Kelas</td>
-                        <td><b>{{ $jadwal->kelas }}</b></td>
+                        <td class="pl-2"><b>{{ $jadwal->kelas }}</b></td>
                     </tr>
                     <tr>
                         <td>Pendidik</td>
-                        <td><b>{{ $jadwal->nama }}</b></td>
+                        <td class="pl-2"><b>{{ $jadwal->nama }}</b></td>
                     </tr>
                     <tr>
                         <td>Tanggal</td>
-                        <td><b>{{\Carbon\Carbon::parse($jadwal->mulai)->isoFormat('dddd, D MMMM Y')}}</b></td>
+                        <td class="pl-2"><b>{{\Carbon\Carbon::parse($jadwal->mulai)->isoFormat('dddd, D MMMM Y')}}</b></td>
                     </tr>
                     <tr>
                         <td>Waktu</td>
-                        <td><b>{{\Carbon\Carbon::parse($jadwal->mulai)->isoFormat('HH:mm')}} - {{ \Carbon\Carbon::parse($jadwal->selesai)->isoFormat('HH:mm') }} </b></td>
+                        <td class="pl-2"><b>{{\Carbon\Carbon::parse($jadwal->mulai)->isoFormat('HH:mm')}} - {{ \Carbon\Carbon::parse($jadwal->selesai)->isoFormat('HH:mm') }} </b></td>
                     </tr>
                 </table>
+                <div class="mt-2">
+                    <a href="{{ route('staf-admin.absensi.rekap-pembelajaran.cetak', [$jadwal->id]) }}" class="btn btn-sm btn-warning" target="_blank"><i class="fas fa-print"></i> Cetak Bulan Ini</a>
+                </div>
                 <div class="row mt-4">
                     <h5><i class="fas fa-hashtag text-warning"></i> Pendidik</h5>
                     <table class="table table-bordered">
@@ -50,6 +53,7 @@
                         <tr>
                             <td>{{ $no++ }}</td>
                             <td>{{ $item->nama }}</td>
+
                             <td>
                                 @if ($item->pulang ==  null)
                                     {{\Carbon\Carbon::parse($item->datang)->isoFormat('HH:mm')}} - ????</td>
