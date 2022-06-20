@@ -16,41 +16,16 @@ class StafAdminController extends Controller
         $token = Auth::user()->nomor_registrasi;
         $data = Pendidik::where('pendidik_id', Auth::user()->id)->firstOrFail();
         $sekarang = Carbon::now();
+        // $staf = AbsensiStaf::select('roles.role','users.nama','adm_pendidik.foto','adm_absensi_staf.datang','adm_absensi_staf.pulang','adm_absensi_staf.status','adm_absensi_staf.jurnal')
+        //                     ->join('users','users.id','=','adm_absensi_staf.staf_id')
+        //                     ->join('roles','roles.id','=','users.role_id')
+        //                     ->join('adm_pendidik','adm_pendidik.pendidik_id','=','users.id')
+        //                     ->whereDate('datang', $sekarang)
+        //                     ->where('staf_id', Auth::user()->id)
+        //                     ->first();
         return view('staf-admin.index', compact('user','data','token','sekarang'));
     }
     public function update($id, Request $request){
-        // //validate data
-        // $validator = Validator::make($request->all(), [
-        //     'tempat_lahir' => 'required',
-        //     'tanggal_lahir' => 'required|date',
-        //     'alamat' => 'required',
-        //     'nik' => 'required',
-        //     'mapel_id' => 'required',
-        //     'wa' => 'required',
-        //     'ibu' => 'required',
-        //     'foto' => 'required|mimes:jpg,jpeg,png|size:500',
-        //     'cv' => 'required|mimes:pdf|size:1000',
-        //     'markas' => 'required'
-        // ],[
-        //     'tempat_lahir.required' => 'Tempat lahir harus diisi',
-        //     'tanggal_lahir.required' => 'Tanggal lahir harus diisi',
-        //     'tanggal_lahir.date' => 'Format harus berupa tanggal',
-        //     'alamat.required' => 'Alamat harus diisi',
-        //     'nik.required' => 'NIK harus diisi',
-        //     'mapel_id.required' => 'Mapel harus diisi',
-        //     'wa.required' => 'WA harus diisi',
-        //     'ibu.required' => 'Nama Ibu harus diisi',
-        //     'foto.required' => 'Foto harus diisi',
-        //     'cv.required' => 'CV harus disertakan',
-        //     'foto.mimes' => 'Format foto hanya jpg, jpeg, png !',
-        //     'foto.size' => 'Ukuran file terlalu besar, max 500 Kb',
-        //     'cv.mimes' => 'Format cv hanya pdf !',
-        //     'cv.size' => 'Ukuran file terlalu besar, max 1 Mb',
-        //     'markas.required' => 'Markas belum dipilih'
-        // ]);
-        //     if ($validator->fails()) {
-        //         return redirect()->back()->withErrors($validator)->withInput();
-        //     }else{
                 $id = Auth::user()->id;
                 $data = Pendidik::where('pendidik_id', $id)->firstOrFail();
                 if($request->file('cv')){

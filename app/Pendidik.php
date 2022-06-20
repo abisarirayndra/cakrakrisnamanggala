@@ -20,6 +20,6 @@ class Pendidik extends Model
         'foto',
         'cv',
         'status_dapodik',
-        'markas'
+        'markas_id'
     ];
 }

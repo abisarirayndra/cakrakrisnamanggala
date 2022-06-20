@@ -72,8 +72,12 @@
                             <input type="text" class="form-control" name="nama" required>
                         </div>
                         <div class="form-group">
-                            <label>Nomor ID</label>
-                            <input type="text" class="form-control" name="nomor_registrasi" required>
+                            <label>Markas</label>
+                            <select name="markas_id" class="form-control">
+                                @foreach ($markas as $item)
+                                    <option value="{{ $item->id }}">{{ $item->markas }}</option>
+                                @endforeach
+                            </select>
                         </div>
                         <div class="form-group">
                             <label>Email</label>

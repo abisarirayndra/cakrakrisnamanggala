@@ -96,8 +96,8 @@ class PengajarController extends Controller
             'mapel_id' => 'required',
             'wa' => 'required',
             'ibu' => 'required',
-            'foto' => 'required|mimes:jpg,jpeg,png|size:500',
-            'cv' => 'required|mimes:pdf|size:1000',
+            'foto' => 'required|mimes:jpg,jpeg,png|max:512',
+            'cv' => 'required|mimes:pdf|max:1012',
             'markas' => 'required'
         ],[
             'tempat_lahir.required' => 'Tempat lahir harus diisi',
@@ -111,9 +111,9 @@ class PengajarController extends Controller
             'foto.required' => 'Foto harus diisi',
             'cv.required' => 'CV harus disertakan',
             'foto.mimes' => 'Format foto hanya jpg, jpeg, png !',
-            'foto.size' => 'Ukuran file terlalu besar, max 500 Kb',
+            'foto.max' => 'Ukuran file terlalu besar, max 500 Kb',
             'cv.mimes' => 'Format cv hanya pdf !',
-            'cv.size' => 'Ukuran file terlalu besar, max 1 Mb',
+            'cv.max' => 'Ukuran file terlalu besar, max 1 Mb',
             'markas.required' => 'Markas belum dipilih'
         ]);
             if ($validator->fails()) {
@@ -121,7 +121,18 @@ class PengajarController extends Controller
             }else{
                 $id = Auth::user()->id;
                 $data = Pendidik::where('pendidik_id', $id)->firstOrFail();
-
+                if($request->file('cv')){
+                    $cv = $request->file('cv');
+                    $nama_file = 'cv'.$id.'.'.$request->file('cv')->extension();
+                    $path = public_path('pendidik/cv/');
+                    $cv->move($path, $nama_file);
+                }
+                if($request->file('foto')){
+                    $foto = $request->file('foto');
+                    $nama_foto = 'pendidik'.$id.'.'.$request->file('foto')->extension();
+                    $path = public_path('pendidik/img/');
+                    $foto->move($path, $nama_foto);
+                }
                 $data->update([
                     'tempat_lahir' => $request->tempat_lahir,
                     'tanggal_lahir' => $request->tanggal_lahir,
@@ -131,22 +142,11 @@ class PengajarController extends Controller
                     'mapel_id' => $request->mapel_id,
                     'wa' => $request->wa,
                     'ibu' => $request->ibu,
-                    'foto' => $request->foto,
-                    'cv' => $request->cv,
+                    'foto' => $nama_foto,
+                    'cv' => $nama_file,
                 ]);
 
-                if($request->file('cv')){
-                    $cv = $request->file('cv');
-                    $nama_file = 'cv'.$id.'.'.$request->file('cv')->extension();
-                    $path = public_path('pendidik/cv/');
-                    $cv->move($path, $nama_file);
-                }
-                if($request->file('foto')){
-                    $foto = $request->file('foto');
-                    $nama_file = 'pendidik'.$id.'.'.$request->file('foto')->extension();
-                    $path = public_path('pendidik/img/');
-                    $foto->move($path, $nama_file);
-                }
+
 
                 Alert::toast('Pembaruan data diri berhasil','success');
                 return redirect()->route('pendidik.dinas.beranda');

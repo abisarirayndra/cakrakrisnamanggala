@@ -28,12 +28,12 @@
                         <div class="text-center mt-4 mb-4">
                             <h4 class="text-dark"><i class="fas fa-hashtag text-warning"></i> Petunjuk</h4>
                         </div>
-                        <ul>
-                            <li>Kerjakan dengan teliti</li>
-                            <li>Dilarang browsing, membuka catatan selama tes berlangsung</li>
-                            <li>Tes akan berakhir pada waktu yang sudah tertera</li>
-                            <li>Soal berbentuk <b>Essay</b> </li>
-                        </ul>
+                            <ul>
+                                <li>Kerjakan dengan teliti</li>
+                                <li>Dilarang browsing, membuka catatan selama tes berlangsung</li>
+                                <li>Tes akan berakhir pada waktu yang sudah tertera</li>
+                                <li>Soal berbentuk <b>Essay</b> </li>
+                            </ul>
                         <div class="text-center mb-4 mt-4">
                             <a href="{{route('pendidik.dinas.soalessay',[$id])}}" class="btn btn-warning btn-sm">Mulai</a>
                         </div>

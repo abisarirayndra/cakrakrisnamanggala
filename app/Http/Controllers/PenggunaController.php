@@ -14,6 +14,7 @@ use File;
 use Hash;
 use App\Pendidik;
 use Str;
+use App\Markas;
 
 class PenggunaController extends Controller
 {
@@ -184,19 +185,15 @@ class PenggunaController extends Controller
         $pendidik = User::where('role_id', 3)
                     ->orderBy('users.id', 'desc')
                     ->get();
+        $markas = Markas::all();
 
-        return view('super.pengguna.pendidik.penggunapendidik', compact('user','pendidik'));
+        return view('super.pengguna.pendidik.penggunapendidik', compact('user','pendidik','markas'));
     }
 
     public function tambahPendidik(Request $request){
-        $request->validate([
-            'email' => 'required|unique:users',
-            'nomor_registrasi' => 'required|unique:users',
-        ]);
-
         $buat = User::create([
             'nama' => $request->nama,
-            'nomor_registrasi' => $request->nomor_registrasi,
+            'nomor_registrasi' => Str::random(6),
             'email' => $request->email,
             'password' => Hash::make($request->password),
             'role_id' => 3,
@@ -205,6 +202,7 @@ class PenggunaController extends Controller
         Pendidik::create([
             'pendidik_id' => $buat->id,
             'mapel_id' => 10,
+            'markas_id' => $request->markas_id,
         ]);
 
         Alert::toast('Tambah Pendidik Berhasil','success');
