@@ -48,6 +48,7 @@ Route::group(['prefix' => 'super','middleware' => ['auth','super-role']], functi
     Route::get('/pengguna-pendaftar/hapus/{id}','PenggunaController@hapusPendaftar')->name('super.penggunapendaftar.hapus');
 
     Route::get('/pengguna-pelajar','PenggunaController@penggunaPelajar')->name('super.penggunapelajar');
+    Route::get('/pengguna-pelajar/cetak','PenggunaController@cetakPenggunaPelajar')->name('super.penggunapelajar.cetak');
     Route::get('/pengguna-pelajar/lihat/{id}','PenggunaController@lihatPelajar')->name('super.penggunapelajar.lihat');
     Route::get('/pengguna-pelajar/edit/{id}','PenggunaController@editPelajar')->name('super.penggunapelajar.edit');
     Route::post('/pengguna-pelajar/update/{id}','PenggunaController@updatePelajar')->name('super.penggunapelajar.update');

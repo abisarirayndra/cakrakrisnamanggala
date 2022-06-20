@@ -15,6 +15,8 @@ use Hash;
 use App\Pendidik;
 use Str;
 use App\Markas;
+use Image;
+use App\Exports\SiswaExport;
 
 class PenggunaController extends Controller
 {
@@ -75,6 +77,10 @@ class PenggunaController extends Controller
                     ->get();
 
         return view('super.pengguna.pelajar.penggunapelajar', compact('user','pelajar'));
+    }
+
+    public function cetakPenggunaPelajar(){
+        return (new SiswaExport)->download('peserta-didik.xlsx');
     }
 
     public function lihatPelajar($id){

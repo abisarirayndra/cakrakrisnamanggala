@@ -13,6 +13,7 @@
         <div class="card-body">
             <h5><i class="fas fa-hashtag text-warning"></i> Daftar Pengguna Pelajar</h5>
             <div class="p-3 mt-3">
+                <a href="{{ route('super.penggunapelajar.cetak') }}" class="btn btn-sm btn-warning mb-4" target="_blank"><i class="fas fa-print"></i> Cetak</a>
                 <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                     <thead>
                         <tr>
