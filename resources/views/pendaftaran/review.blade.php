@@ -74,10 +74,6 @@
                                         <td class="pl-4">{{$data->wa_wali}}</td>
                                     </tr>
                                     <tr>
-                                        <td><b>Markas Yang Dipilih</b></td>
-                                        <td class="pl-4">{{$data->markas}}</td>
-                                    </tr>
-                                    <tr>
                                         <td><b>Markas</b></td>
                                         <td class="pl-4">{{$data->markas}}</td>
                                     </tr>
