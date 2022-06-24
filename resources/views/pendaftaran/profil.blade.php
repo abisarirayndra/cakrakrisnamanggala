@@ -30,23 +30,22 @@
                         <a href="{{route('pendaftar.cetak-formulir', [$ada->id])}}" class="btn btn-success mt-4">Cetak</a>
                     </div>
                 @else
-
-                <form class="user" class="" action="{{ route('pendaftar.up-formulir-pendaftaran') }}" method="POST" enctype="multipart/form-data">
                     @if ($errors->any())
-                        <div class="alert alert-danger">
-                            <ul>
-                                @foreach ($errors->all() as $error)
-                                    <li>{{ $error }}</li>
-                                @endforeach
-                            </ul>
-                        </div>
+                    <div class="alert alert-danger">
+                        <ul>
+                            @foreach ($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
                     @endif
+                <form class="user" class="" action="{{ route('pendaftar.up-formulir-pendaftaran') }}" method="POST" enctype="multipart/form-data">
                     @csrf
                     <div class="form-group row">
                         <div class="col-sm-4 mb-3 mb-sm-0">
                             <label for="nama">Nama</label>
-                            <input type="text" class="form-control form-control-user" id="exampleFirstName"
-                                placeholder="Nama Lengkap" name="nama" value="{{$user}}" readonly>
+                            <input type="text" class="form-control form-control-user"
+                                placeholder="Nama Lengkap" name="nama" value="{{$user}}">
                         </div>
                         <div class="col-sm-4">
                             <label for="tempat">Tempat Lahir</label>
@@ -97,23 +96,29 @@
                             <label for="wa-wali">No. Telepon/Whatsapp Wali</label>
                             <input type="number" class="form-control form-control-user" name="wa_wali" placeholder="Nomor Telepon/Whatsapp Wali" required>
                         </div>
-                        <div class="col-sm-4">
-                            <label for="markas">Markas Yang Dituju</label>
-                            <select name="markas" class="form-control form-control-user" required>
-                                <option>--Pilih Salah Satu--</option>
-                                <option value="Genteng">Genteng</option>
-                                <option value="Banyuwangi">Banyuwangi</option>
-                                <option value="Jember">Jember</option>
-                                <option value="PDM Smadatara">PDM Smadatara</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="form-group row">
                         <div class="col-sm-4 mb-3 mb-sm-0">
                             <label for="foto">Foto Diri (3x4) <div class="text-danger">Maksimal 500 Kb</div> </label>
                                 <input type="file" id="foto"
                                 name="foto" required>
                         </div>
+                    </div>
+                    <div class="form-group row">
+                        <div class="col-sm-4">
+                            <label for="status">Status Sekolah</label>
+                            <select name="status_sekolah" class="form-control">
+                                <option value="0">Belum Lulus</option>
+                                <option value="1">Lulus</option>
+                            </select>
+                        </div>
+                        <div class="col-sm-4">
+                            <label for="markas">Markas Yang Dituju</label>
+                            <select name="markas_id" class="form-control">
+                                @foreach ($markas as $item)
+                                    <option value="{{ $item->id }}">{{ $item->markas }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+
                     </div>
                     <div class="text-center mt-4">
                         <button class="btn btn-warning" type="submit">Simpan</button>

@@ -62,6 +62,14 @@
                                 <tr>
                                     <td><b>Asal Sekolah</b></td>
                                     <td class="pl-4">{{$data->sekolah}}</td>
+                                </tr> 
+                                <tr>
+                                    <td><b>Status Sekolah</b></td>
+                                    @if ($data->status_sekolah == 0)
+                                        <td class="pl-4">Belum Lulus</td>
+                                    @elseif ($data->status_sekolah  == 1)
+                                        <td class="pl-4">Lulus</td>
+                                    @endif
                                 </tr>
                                 <tr>
                                     <td><b>No. Telpon/WhatsApp</b></td>
@@ -88,12 +96,20 @@
                                     @endif
                                 </tr>
                                 <tr>
+                                    <td><b>Markas</b></td>
+                                    <td class="pl-4">{{$data->markas}}</td>
+                                </tr>
+                                <tr>
                                     <td><b>Tanggal Daftar</b></td>
                                     <td class="pl-4">{{\Carbon\Carbon::parse($data->created_at)->isoFormat('dddd, D MMMM Y HH:mm')}}</td>
                                 </tr>
                             </table>
-                                <a href="{{route('pendaftar.cetak-formulir-pdf', [$data->id])}}" target="_blank" class="btn btn-success mt-4"><i class="fas fa-cloud-download-alt"></i> Unduh PDF</a>
-                                <a href="{{route('pendaftar.edit-pendaftar', [$data->id])}}" class="btn btn-warning mt-4 ml-3"><i class="fas fa-edit"></i> Edit</a>
+
+
+                        </div>
+                        <div class="row">
+                            <a href="{{route('pendaftar.cetak-formulir-pdf', [$data->id])}}" target="_blank" class="btn btn-success mt-4"><i class="fas fa-cloud-download-alt"></i> Unduh PDF</a>
+                            <a href="{{route('pendaftar.edit-pendaftar', [$data->id])}}" class="btn btn-warning mt-4 ml-3"><i class="fas fa-edit"></i> Edit</a>
                         </div>
                     </div>
                 </div>

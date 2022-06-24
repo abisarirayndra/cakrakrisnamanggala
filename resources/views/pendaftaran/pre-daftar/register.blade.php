@@ -24,8 +24,7 @@
                                   <div class="text-center">
                                       <h1 class="h4 text-gray-900 mb-4">Daftarkan diri anda</h1>
                                   </div>
-                                  <form class="user" action="{{ route('up-register-email') }}" method="post">
-                                    @if ($errors->any())
+                                  @if ($errors->any())
                                         <div class="alert alert-danger">
                                             <ul>
                                                 @foreach ($errors->all() as $error)
@@ -34,6 +33,7 @@
                                             </ul>
                                         </div>
                                     @endif
+                                  <form class="user" action="{{ route('up-register-email') }}" method="post">
                                     @csrf
                                     <div class="form-group">
                                         <input type="text" class="form-control form-control-user" placeholder="Nama Lengkap" name="nama" required>

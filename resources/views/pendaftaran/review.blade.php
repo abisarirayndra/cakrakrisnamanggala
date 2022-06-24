@@ -54,6 +54,14 @@
                                         <td class="pl-4">{{$data->sekolah}}</td>
                                     </tr>
                                     <tr>
+                                        <td><b>Status Sekolah</b></td>
+                                        @if ($data->status_sekolah == 0)
+                                            <td class="pl-4">Belum Lulus</td>
+                                        @elseif ($data->status_sekolah  == 1)
+                                            <td class="pl-4">Lulus</td>
+                                        @endif
+                                    </tr>
+                                    <tr>
                                         <td><b>No. Telepon/WhatsApp</b></td>
                                         <td class="pl-4">{{$data->wa}}</td>
                                     </tr>
@@ -67,6 +75,10 @@
                                     </tr>
                                     <tr>
                                         <td><b>Markas Yang Dipilih</b></td>
+                                        <td class="pl-4">{{$data->markas}}</td>
+                                    </tr>
+                                    <tr>
+                                        <td><b>Markas</b></td>
                                         <td class="pl-4">{{$data->markas}}</td>
                                     </tr>
                                     <tr>

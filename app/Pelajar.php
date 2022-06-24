@@ -16,10 +16,11 @@ class Pelajar extends Model
         'wa',
         'wali',
         'foto',
-        'markas',
+        'markas_id',
         'nik',
         'nisn',
         'ibu',
-        'wa_wali'
+        'wa_wali',
+        'status_sekolah',
 ];
 }

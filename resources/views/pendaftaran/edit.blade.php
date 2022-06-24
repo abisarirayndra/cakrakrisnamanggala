@@ -18,13 +18,22 @@
         <div class="card-body">
             <h5><i class="fas fa-hashtag text-warning"></i> Edit Data</h5>
             <div class="p-3 mt-3">
+                @if ($errors->any())
+                        <div class="alert alert-danger">
+                            <ul>
+                                @foreach ($errors->all() as $error)
+                                    <li>{{ $error }}</li>
+                                @endforeach
+                            </ul>
+                        </div>
+                    @endif
                 <form class="user" class="" action="{{route('pendaftar.update-pendaftar', [$data->id])}}" method="POST" enctype="multipart/form-data">
                     @csrf
                     <div class="form-group row">
                         <div class="col-sm-4 mb-3 mb-sm-0">
                             <label for="nama">Nama</label>
                             <input type="text" class="form-control form-control-user" id="exampleFirstName"
-                                placeholder="Nama Lengkap" name="nama" value="{{$user}}" readonly>
+                                placeholder="Nama Lengkap" name="nama" value="{{$user}}">
                         </div>
                         <div class="col-sm-4">
                             <label for="tempat">Tempat Lahir</label>
@@ -75,21 +84,28 @@
                             <label for="wa-wali">No. Telepon/Whatsapp Wali</label>
                             <input type="number" class="form-control form-control-user" name="wa_wali" value="{{$data->wa_wali}}" placeholder="Nomor Telepon/Whatsapp Wali" required>
                         </div>
-                        <div class="col-sm-4">
-                            <label for="markas">Markas Yang Dituju</label>
-                            <select name="markas" class="form-control form-control-user" required>
-                                <option value="Genteng" @if($data->markas == "Genteng") {{'selected="selected"'}} @endif>Genteng</option>
-                                <option value="Banyuwangi" @if($data->markas == "Banyuwangi") {{'selected="selected"'}} @endif>Banyuwangi</option>
-                                <option value="Jember" @if($data->markas == "Jember") {{'selected="selected"'}} @endif>Jember</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="form-group row">
                         <div class="col-sm-4 mb-3 mb-sm-0">
                             <img src="{{asset('img/pelajar/'. $data->foto)}}" width="50" alt="" class="m-3">
                             <label for="foto">Foto Diri (3x4) <div class="text-danger">Maksimal 500 Kb</div> </label>
                                 <input type="file" id="foto"
                                 name="foto">
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <div class="col-sm-4">
+                            <label for="status">Status Sekolah</label>
+                            <select name="status_sekolah" class="form-control">
+                                <option value="0" @if($data->status_sekolah == 0) {{'selected="selected"'}} @endif>Belum Lulus</option>
+                                <option value="1" @if($data->status_sekolah == 1) {{'selected="selected"'}} @endif>Lulus</option>
+                            </select>
+                        </div>
+                        <div class="col-sm-4">
+                            <label for="markas">Markas Yang Dituju</label>
+                            <select name="markas_id" class="form-control">
+                                @foreach ($markas as $item)
+                                    <option value="{{ $item->id }}" @if($item->id == $data->markas_id) {{'selected="selected"'}} @endif>{{ $item->markas }}</option>
+                                @endforeach
+                            </select>
                         </div>
                     </div>
                     <div class="text-center mt-4">
