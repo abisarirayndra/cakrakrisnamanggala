@@ -39,11 +39,15 @@ class PendaftarController extends Controller
         if ($validator->fails()) {
             return redirect()->back()->withErrors($validator)->withInput();
         }else{
-            User::create([
+            $userMake = User::create([
                 'nama' => $request->nama,
                 'email' => $request->email,
                 'password' => Hash::make($request->password),
                 'role_id' => 5,
+            ]);
+
+            Pelajar::create([
+                'pelajar_id' => $userMake->id,
             ]);
 
             $credentials = [
