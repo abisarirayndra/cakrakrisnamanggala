@@ -46,7 +46,7 @@ class PenggunaController extends Controller
         $akun = User::find($id);
         $akun->update([
             'kelas_id' => $request->kelas_id,
-            'nomor_registrasi' => $request->nomor_registrasi,
+            'nomor_registrasi' => Str::random(6),
             'role_id' => 4,
         ]);
 
@@ -86,8 +86,9 @@ class PenggunaController extends Controller
     public function lihatPelajar($id){
         $user = Auth::user()->nama;
         $pelajar = Pelajar::join('users','users.id','=','adm_pelajars.pelajar_id')
+                                ->join('adm_markas','adm_markas.id','=','adm_pelajars.markas_id')
                                 ->select('users.id','users.nama','users.email', 'adm_pelajars.nik','adm_pelajars.nisn','adm_pelajars.ibu','adm_pelajars.tempat_lahir','adm_pelajars.tanggal_lahir','adm_pelajars.alamat','adm_pelajars.sekolah','adm_pelajars.wa',
-                                            'adm_pelajars.wali','adm_pelajars.wa_wali','adm_pelajars.foto','adm_pelajars.markas')
+                                            'adm_pelajars.wali','adm_pelajars.wa_wali','adm_pelajars.foto','adm_markas.markas')
                                 ->where('adm_pelajars.pelajar_id', $id)
                                 ->first();
 

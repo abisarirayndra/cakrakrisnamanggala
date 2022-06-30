@@ -101,10 +101,6 @@
                                 @endforeach
                             </select>
                         </div>
-                        <div class="form-group">
-                            <label for="nama">Nomor ID</label>
-                            <input type="text" class="form-control" name="nomor_registrasi" required>
-                        </div>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-danger" data-dismiss="modal">Keluar</button>
