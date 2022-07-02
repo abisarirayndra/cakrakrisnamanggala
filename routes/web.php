@@ -52,6 +52,7 @@ Route::group(['prefix' => 'super','middleware' => ['auth','super-role']], functi
     Route::get('/pengguna-pelajar/lihat/{id}','PenggunaController@lihatPelajar')->name('super.penggunapelajar.lihat');
     Route::get('/pengguna-pelajar/edit/{id}','PenggunaController@editPelajar')->name('super.penggunapelajar.edit');
     Route::post('/pengguna-pelajar/update/{id}','PenggunaController@updatePelajar')->name('super.penggunapelajar.update');
+    Route::get('/pengguna-pelajar/cetak-pdf/{id}','PenggunaController@cetakPdfPelajar')->name('super.penggunapelajar.cetak-pdf');
     Route::get('/pengguna-pelajar/editdata/{id}','PenggunaController@editDataPelajar')->name('super.penggunapelajar.editdata');
     Route::post('/pengguna-pelajar/updatedata/{id}','PenggunaController@updateDataPelajar')->name('super.penggunapelajar.updatedata');
     Route::get('/pengguna-pelajar/suspend/{id}','PenggunaController@suspendPelajar')->name('super.penggunapelajar.suspend');

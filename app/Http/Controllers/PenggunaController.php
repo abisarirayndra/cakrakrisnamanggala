@@ -17,6 +17,7 @@ use Str;
 use App\Markas;
 use Image;
 use App\Exports\SiswaExport;
+use PDF;
 
 class PenggunaController extends Controller
 {
@@ -33,8 +34,9 @@ class PenggunaController extends Controller
     public function lihatPendaftar($id){
         $user = Auth::user()->nama;
         $pendaftar = Pelajar::join('users','users.id','=','adm_pelajars.pelajar_id')
+                                ->join('adm_markas','adm_markas.id','=','adm_pelajars.markas_id')
                                 ->select('users.nama','users.email','adm_pelajars.pelajar_id','adm_pelajars.tempat_lahir','adm_pelajars.tanggal_lahir','adm_pelajars.alamat','adm_pelajars.sekolah','adm_pelajars.wa',
-                                            'adm_pelajars.wali','adm_pelajars.wa_wali','adm_pelajars.foto','adm_pelajars.markas','adm_pelajars.nik','adm_pelajars.nisn','adm_pelajars.ibu')
+                                            'adm_pelajars.wali','adm_pelajars.wa_wali','adm_pelajars.foto','adm_markas.markas','adm_pelajars.nik','adm_pelajars.nisn','adm_pelajars.ibu')
                                 ->where('adm_pelajars.pelajar_id', $id)
                                 ->firstOrFail();
         $kelas = Kelas::all();
@@ -75,6 +77,7 @@ class PenggunaController extends Controller
                     ->where('role_id', 4)
                     ->orderBy('users.updated_at', 'desc')
                     ->get();
+        // return $pelajar;
 
         return view('super.pengguna.pelajar.penggunapelajar', compact('user','pelajar'));
     }
@@ -86,13 +89,29 @@ class PenggunaController extends Controller
     public function lihatPelajar($id){
         $user = Auth::user()->nama;
         $pelajar = Pelajar::join('users','users.id','=','adm_pelajars.pelajar_id')
-                                ->join('adm_markas','adm_markas.id','=','adm_pelajars.markas_id')
-                                ->select('users.id','users.nama','users.email', 'adm_pelajars.nik','adm_pelajars.nisn','adm_pelajars.ibu','adm_pelajars.tempat_lahir','adm_pelajars.tanggal_lahir','adm_pelajars.alamat','adm_pelajars.sekolah','adm_pelajars.wa',
-                                            'adm_pelajars.wali','adm_pelajars.wa_wali','adm_pelajars.foto','adm_markas.markas')
-                                ->where('adm_pelajars.pelajar_id', $id)
-                                ->first();
+                            // ->join('adm_markas','adm_markas.id','=','adm_pelajars.markas_id')
+                            ->select('users.id','users.nama','users.email','adm_pelajars.pelajar_id','adm_pelajars.tempat_lahir','adm_pelajars.tanggal_lahir','adm_pelajars.alamat','adm_pelajars.sekolah','adm_pelajars.wa',
+                                        'adm_pelajars.wali','adm_pelajars.wa_wali','adm_pelajars.foto','adm_pelajars.nik','adm_pelajars.nisn','adm_pelajars.ibu')
+                            ->where('adm_pelajars.pelajar_id', $id)
+                            ->firstOrFail();
+        // return $pelajar;
 
         return view('super.pengguna.pelajar.lihat', compact('pelajar','user'));
+    }
+
+    public function cetakPdfPelajar($id){
+
+        $pendaftar = Pelajar::join('users','users.id','=','adm_pelajars.pelajar_id')
+        // ->join('adm_markas','adm_markas.id','=','adm_pelajars.markas_id')
+                ->select('users.id','users.nama','users.email','adm_pelajars.pelajar_id','adm_pelajars.tempat_lahir','adm_pelajars.tanggal_lahir','adm_pelajars.alamat','adm_pelajars.sekolah','adm_pelajars.wa',
+                    'adm_pelajars.wali','adm_pelajars.wa_wali','adm_pelajars.foto','adm_pelajars.nik','adm_pelajars.nisn','adm_pelajars.ibu')
+                ->where('adm_pelajars.pelajar_id', $id)
+                ->firstOrFail();
+        $user = $pendaftar->nama;
+        $en_foto = (string) Image::make(public_path('img/pelajar/'. $pendaftar->foto))->encode('data-url');
+        $en_logo = (string) Image::make(public_path('img/krisna.png'))->encode('data-url');
+        $pdf = PDF::loadview('pendaftaran.review', ['data' => $pendaftar, 'user' => $user,'foto' => $en_foto, 'logo' => $en_logo])->setPaper('a4');
+        return $pdf->stream();
     }
 
     public function editPelajar($id){

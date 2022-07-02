@@ -74,7 +74,8 @@
                         </div>
                         <div class="row">
                             <a href="{{ route('super.penggunapelajar.editdata', [$pelajar->id]) }}" class="btn btn-success mt-4"><i class="fas fa-pen"></i> Edit Data</a>
-                            <a href="{{ route('super.penggunapelajar.suspend', [$pelajar->id]) }}" class="btn btn-warning mt-4 ml-3" onclick="return confirm('Anda yakin ingin suspend akun ini ?')"><i class="fas fa-ban"></i> Suspend</a>
+                            <a href="{{ route('super.penggunapelajar.cetak-pdf', [$pelajar->id]) }}" class="btn btn-warning mt-4 ml-3"><i class="fas fa-print"></i> Cetak</a>
+                            <a href="{{ route('super.penggunapelajar.suspend', [$pelajar->id]) }}" class="btn btn-danger mt-4 ml-3" onclick="return confirm('Anda yakin ingin suspend akun ini ?')"><i class="fas fa-ban"></i> Suspend</a>
                             <a href="{{ route('super.penggunapelajar.hapus', [$pelajar->id]) }}" class="btn btn-danger mt-4 ml-3" onclick="return confirm('Anda yakin ingin menghapus akun ini ?')"><i class="fas fa-trash"></i> Hapus Data</a>
                         </div>
                     </div>
