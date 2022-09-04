@@ -97,7 +97,6 @@ class PengajarController extends Controller
             'wa' => 'required',
             'ibu' => 'required',
             'foto' => 'required|mimes:jpg,jpeg,png|max:512',
-            'cv' => 'required|mimes:pdf|max:1012',
             'markas' => 'required'
         ],[
             'tempat_lahir.required' => 'Tempat lahir harus diisi',
@@ -109,24 +108,21 @@ class PengajarController extends Controller
             'wa.required' => 'WA harus diisi',
             'ibu.required' => 'Nama Ibu harus diisi',
             'foto.required' => 'Foto harus diisi',
-            'cv.required' => 'CV harus disertakan',
             'foto.mimes' => 'Format foto hanya jpg, jpeg, png !',
             'foto.max' => 'Ukuran file terlalu besar, max 500 Kb',
-            'cv.mimes' => 'Format cv hanya pdf !',
-            'cv.max' => 'Ukuran file terlalu besar, max 1 Mb',
             'markas.required' => 'Markas belum dipilih'
         ]);
             if ($validator->fails()) {
                 return redirect()->back()->withErrors($validator)->withInput();
             }else{
                 $id = Auth::user()->id;
-                $data = Pendidik::where('pendidik_id', $id)->firstOrFail();
-                if($request->file('cv')){
-                    $cv = $request->file('cv');
-                    $nama_file = 'cv'.$id.'.'.$request->file('cv')->extension();
-                    $path = public_path('pendidik/cv/');
-                    $cv->move($path, $nama_file);
-                }
+                $data = Pendidik::where('pendidik_id', $id)->first();
+                // if($request->file('cv')){
+                //     $cv = $request->file('cv');
+                //     $nama_file = 'cv'.$id.'.'.$request->file('cv')->extension();
+                //     $path = public_path('pendidik/cv/');
+                //     $cv->move($path, $nama_file);
+                // }
                 if($request->file('foto')){
                     $foto = $request->file('foto');
                     $nama_foto = 'pendidik'.$id.'.'.$request->file('foto')->extension();
@@ -143,7 +139,7 @@ class PengajarController extends Controller
                     'wa' => $request->wa,
                     'ibu' => $request->ibu,
                     'foto' => $nama_foto,
-                    'cv' => $nama_file,
+                    // 'cv' => $nama_file,
                 ]);
 
 

@@ -96,11 +96,11 @@
                                 <input type="file" id="foto"
                                 name="foto" >
                         </div>
-                        <div class="col-sm-4">
+                        {{-- <div class="col-sm-4">
                             <label for="cv"><i>Curriculum Vitae </i><div class="text-danger">Maksimal 1 Mb</div> </label>
                             <input type="file" id="cv"
                             name="cv" >
-                        </div>
+                        </div> --}}
                     </div>
                     <div class="text-center mt-4">
                         <button class="btn btn-warning" type="submit">Simpan</button>
