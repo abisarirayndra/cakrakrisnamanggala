@@ -26,7 +26,7 @@ class PenggunaController extends Controller
         $user = Auth::user()->nama;
         $pendaftar = User::where('role_id', 5)
                     ->orderBy('users.id', 'desc')
-                    ->paginate(10);
+                    ->get();
 
         return view('super.pengguna.pendaftar.penggunapendaftar', compact('user','pendaftar'));
     }

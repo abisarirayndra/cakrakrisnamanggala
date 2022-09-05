@@ -41,7 +41,7 @@
                         @endforeach
                     </tbody>
                 </table>
-                {{ $pendaftar->links() }}
+                
             </div>
         </div>
     </div>
