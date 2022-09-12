@@ -29,6 +29,13 @@
             </div>
 
             <div class="p-3 mt-3">
+                @if ($errors->any())
+                                        <div class="alert alert-danger">
+                                            <ul>
+                                                <li>{{ $errors->first() }}</li>
+                                            </ul>
+                                        </div>
+                                    @endif
                 <div class="row">
                     @foreach ($jadwal as $item)
                     <div class="col-sm-3">

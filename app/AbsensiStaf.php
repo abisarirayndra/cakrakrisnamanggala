@@ -8,6 +8,6 @@ class AbsensiStaf extends Model
 {
    protected $table = 'adm_absensi_staf';
    protected $fillable = [
-    'staf_id','datang','pulang','status','jurnal'
+    'staf_id','datang','pulang','status','jurnal','keterangan'
    ];
 }

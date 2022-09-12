@@ -192,6 +192,13 @@ Route::group(['prefix' => 'staf-admin', 'middleware' => ['auth','stafadmin-role'
     Route::get('/absen/staf','JadwalAbsensiController@absenStaf')->name('staf-admin.absen.staf');
     Route::post('/absensi/upload-absensi','JadwalAbsensiController@uploadAbsensi')->name('staf-admin.absensi.upload-absensi');
     Route::post('/absensi/upload-absensi/staf','JadwalAbsensiController@uploadAbsensiStaf')->name('staf-admin.absensi.upload-absensi.staf');
+    Route::post('/absensi/upload-absensi/izin-staf','JadwalAbsensiController@uploadAbsensiIzinStaf')->name('staf-admin.absensi.upload-izin-staf');
+    Route::get('/absensi/hapus/izin-staf/{id}','JadwalAbsensiController@hapusIzinStaf')->name('staf-admin.absensi.hapus-izin-staf');
+
+    Route::get('/absensi/hapus/izin-pelajar/{id}','JadwalAbsensiController@hapusIzinPelajar')->name('staf-admin.absensi.hapus-izin-pelajar');
+    Route::post('/absensi/upload-absensi/izin-pelajar','JadwalAbsensiController@uploadAbsensiIzinPelajar')->name('staf-admin.absensi.upload-izin-pelajar');
+    Route::post('/absensi/upload-absensi/izin-pendidik','JadwalAbsensiController@uploadAbsensiIzinPendidik')->name('staf-admin.absensi.upload-izin-pendidik');
+    Route::get('/absensi/hapus/izin-pendidik/{id}','JadwalAbsensiController@hapusIzinPendidik')->name('staf-admin.absensi.hapus-izin-pendidik');
     Route::get('/absen/rekap-pembelajaran/','JadwalAbsensiController@rekapAbsensiPembelajaran')->name('staf-admin.absensi.rekap-pembelajaran');
     Route::get('/absen/rekap-pembelajaran/lihat/{id}','JadwalAbsensiController@lihatRekapAbsensiPembelajaran')->name('staf-admin.absensi.rekap-pembelajaran.lihat');
     Route::get('/absen/rekap-pembelajaran/cetak/{id}','JadwalAbsensiController@cetakJurnalHarian')->name('staf-admin.absensi.rekap-pembelajaran.cetak');

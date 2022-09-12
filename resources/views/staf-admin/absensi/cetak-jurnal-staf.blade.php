@@ -81,6 +81,28 @@
         </tr>
         @endforeach
       </table>
+      <div style="margin-top: 10px">
+        <p>Izin Tidak Masuk</p>
+        </div>
+      <table class="tabel" style="margin-top:5px">
+        <tr>
+            <th class="sel-head">No</th>
+            <th class="sel-head">Nama</th>
+            <th class="sel-head">Role</th>
+            <th class="sel-head">Keterangan</th>
+        </tr>
+        @php
+        $no = 1;
+        @endphp
+        @foreach ($izin_staf as $item)
+        <tr>
+            <td class="sel">{{ $no++ }}</td>
+            <td class="sel">{{ $item->nama }}</td>
+            <td class="sel">{{ $item->role }}</td>
+            <td class="sel">{{ $item->keterangan }}</td>
+        </tr>
+        @endforeach
+      </table>
       <div style="margin-top: 15px">
         <p>Dibuat Oleh : <b>{{ $user }}</b> </p>
         @if ($markas->markas_id == 1)

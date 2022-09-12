@@ -86,6 +86,34 @@
                         @endforeach
                     </table>
                 </div>
+                <h5><i class="fas fa-hashtag text-warning"></i> Izin Tidak Masuk</h5>
+                <div class="card mb-4 border-bottom-warning">
+                    <div class="card-body">
+                        <table class="table table-bordered dataTable" id="dataTable" width="100%" cellspacing="0">
+                            <thead>
+                                <tr>
+                                  <th>No.</th>
+                                  <th>Nama</th>
+                                  <th>Role</th>
+                                  <th>Keterangan</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                    @php
+                                        $no = 1;
+                                    @endphp
+                                    @foreach ($izin_staf as $item)
+                                    <tr>
+                                        <td>{{$no++}}</td>
+                                        <td>{{$item->nama}}</td>
+                                        <td>{{ $item->role }}</td>
+                                        <td>{{ $item->keterangan }}</td>
+                                    </tr>
+                                    @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
 
             </div>
         </div>
