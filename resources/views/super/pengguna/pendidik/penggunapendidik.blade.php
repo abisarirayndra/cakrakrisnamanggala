@@ -45,7 +45,7 @@
                             <td>{{ $item->email }}</td>
                             <td>{{ \Carbon\Carbon::parse($item->updated_at)->isoFormat('dddd, D MMMM YYYY HH:mm') }}</td>
                             <td>
-                              <a href="" class="btn btn-sm btn-success"><i class="fas fa-eye"></i></a>
+                              <a href="{{ route('super.penggunapendidik.lihat', [$item->id]) }}" class="btn btn-sm btn-success"><i class="fas fa-eye"></i></a>
                               <a href="" onclick="return confirm('Anda yakin ingin menghapus akun ini ?')" class="btn btn-sm btn-danger"><i class="fas fa-trash"></i></a>
                             </td>
                           </tr>

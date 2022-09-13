@@ -12,6 +12,8 @@ use Alert;
 use Image;
 use PDF;
 use App\Markas;
+use App\Mapel;
+use App\Pendidik;
 use File;
 
 class PendaftarController extends Controller
@@ -292,5 +294,76 @@ class PendaftarController extends Controller
         }
 
         return redirect()->route('pendaftar.cetak-formulir', $id);
+    }
+
+    public function registerPendidik(Request $request){
+        $markas = Markas::all();
+        $mapel = Mapel::all();
+        return view('pendaftaran.pre-daftar.registrasi-pendidik', compact('markas','mapel'));
+    }
+
+    public function upRegisterPendidik(Request $request){
+        $validator = Validator::make($request->all(), [
+            'nama' => 'required',
+            'email' => 'required|email|unique:users',
+            'password' => 'required',
+            'tempat_lahir' => 'required',
+            'tanggal_lahir' => 'required|date',
+            'alamat' => 'required',
+            'nik' => 'required',
+            'wa' => 'required',
+            'ibu' => 'required',
+            'mapel_id' => 'required',
+            'markas_id' => 'required',
+            'foto' => 'mimes:jpeg,jpg,png'
+        ],[
+            'nama.required' => 'Nama harus diisi',
+            'email.required' => 'Email harus diisi',
+            'email.email' => 'Format email salah ex. johndoe@gmail.com',
+            'email.users' => 'Email sudah terdaftar, coba login atau daftar dengan email lain',
+            'password.required' => 'password harus diisi',
+            'tempat_lahir.required' => 'Tempat lahir harus diisi',
+            'tanggal_lahir.required' => 'Tanggal lahir harus diisi',
+            'tanggal_lahir.date' => 'Format harus berupa tanggal',
+            'alamat.required' => 'Alamat harus diisi',
+            'nik.required' => 'NIK harus diisi',
+            'wa.required' => 'WA harus diisi',
+            'wali.required' => 'Nama wali harus diisi',
+            'ibu.required' => 'Nama Ibu harus diisi',
+            'markas_id.required' => 'Markas belum dipilih',
+            'mapel_id.required' => 'Mapel belum dipilih',
+            'foto.mimes' => 'Format foto harus .jpg, .png, .jpeg'
+        ]);
+        if ($validator->fails()) {
+            return redirect()->back()->withErrors($validator)->withInput();
+        }else{
+           $userMake = User::create([
+                'nama' => $request->nama,
+                'email' => $request->email,
+                'password' => Hash::make($request->password),
+                'role_id' =>  3,
+            ]);
+
+            $image_name = 'Pendidik-'.$userMake->id.'.'.$request->file('foto')->extension();
+            Pendidik::create([
+                'pendidik_id' => $userMake->id,
+                'tempat_lahir' => $request->tempat_lahir,
+                'tanggal_lahir' => $request->tanggal_lahir,
+                'alamat' => $request->alamat,
+                'wa' => $request->wa,
+                'foto' => $image_name,
+                'markas_id' => $request->markas_id,
+                'mapel_id' => $request->mapel_id,
+                'nik' => $request->nik,
+                'nip' => $request->nip,
+                'ibu' =>  $request->ibu,
+            ]);
+
+        $image = $request->file('foto');
+        $path = public_path('pendidik/img/');
+        $image->move($path, $image_name);
+        Alert::toast('Silakan Login, Daftar Berhasil','success');
+        return redirect()->route('login');
+        }
     }
 }

@@ -27,6 +27,8 @@ Route::post('/upreset', 'AuthController@upReset')->name('upreset');
 Route::get('/petunjuk-pendaftaran','PendaftarController@petunjuk')->name('petunjuk');
 Route::get('/register-email','PendaftarController@registerEmail')->name('register-email');
 Route::post('/upload-register-email','PendaftarController@uploadRegisterEmail')->name('up-register-email');
+Route::get('/register-pendidik','PendaftarController@registerPendidik')->name('register-pendidik');
+Route::post('/upload-register-pendidik','PendaftarController@upRegisterPendidik')->name('register-pendidik.upload');
 
 Route::group(['prefix' => 'pendaftar','middleware' => ['auth','pendaftar-role']], function () {
     Route::get('/profil','PendaftarController@profil')->name('pendaftar.profil');
@@ -63,6 +65,7 @@ Route::group(['prefix' => 'super','middleware' => ['auth','super-role']], functi
 
     Route::get('/pengguna-pendidik','PenggunaController@penggunaPendidik')->name('super.penggunapendidik');
     Route::post('/pengguna-pendidik/tambah','PenggunaController@tambahPendidik')->name('super.penggunapendidik.tambah');
+    Route::get('/pengguna-pendidik/lihat/{id}','PenggunaController@lihatPendidik')->name('super.penggunapendidik.lihat');
 
     Route::get('/pengguna-staf-admin','PenggunaController@penggunaStafAdmin')->name('super.penggunastafadmin');
     Route::post('/pengguna-staf-admin/tambah','PenggunaController@tambahStafAdmin')->name('super.penggunastafadmin.tambah');

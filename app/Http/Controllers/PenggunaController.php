@@ -235,6 +235,19 @@ class PenggunaController extends Controller
         return redirect()->back();
     }
 
+    public function lihatPendidik($id){
+        $user = Auth::user()->nama;
+        $pendidik = Pendidik::join('users','users.id','=','adm_pendidik.pendidik_id')
+                            ->join('adm_markas','adm_markas.id','=','adm_pendidik.markas_id')
+                            ->select('users.id','users.nama','users.email','adm_pendidik.pendidik_id','adm_pendidik.tempat_lahir','adm_pendidik.tanggal_lahir','adm_pendidik.nik',
+                                        'adm_pendidik.foto','adm_pendidik.nip','adm_pendidik.ibu','adm_markas.markas')
+                            ->where('adm_pendidik.pendidik_id', $id)
+                            ->firstOrFail();
+        // return $pelajar;
+
+        return view('super.pengguna.pendidik.lihatpendidik', compact('pendidik','user'));
+    }
+
     public function hapusPendidik($id){
         $pendidik = User::find($id);
 
