@@ -242,7 +242,7 @@ class PenggunaController extends Controller
                             ->select('users.id','users.nama','users.email','adm_pendidik.pendidik_id','adm_pendidik.tempat_lahir','adm_pendidik.tanggal_lahir','adm_pendidik.nik',
                                         'adm_pendidik.foto','adm_pendidik.nip','adm_pendidik.ibu','adm_markas.markas')
                             ->where('adm_pendidik.pendidik_id', $id)
-                            ->firstOrFail();
+                            ->first();
         // return $pelajar;
 
         return view('super.pengguna.pendidik.lihatpendidik', compact('pendidik','user'));
