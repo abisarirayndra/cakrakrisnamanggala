@@ -252,9 +252,16 @@ class PenggunaController extends Controller
     }
 
     public function hapusPendidik($id){
-        $pendidik = User::find($id);
-
-        $pendidik->delete();
+        $user = User::find($id);
+        $pendidik = Pendidik::where('pendidik_id', $id)->first();
+        if($pendidik){
+            if($pendidik->foto && file_exists(public_path('pendidik/img/'. $pendidik->foto))){
+                File::delete(public_path('pendidik/img'. $pendidik->foto));
+            }
+        }
+        $user->delete();
+        Alert::toast('Hapus Pendidik Berhasil','success');
+        return redirect()->back();
     }
 
 //Staf Admin
