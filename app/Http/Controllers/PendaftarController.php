@@ -15,6 +15,7 @@ use App\Markas;
 use App\Mapel;
 use App\Pendidik;
 use File;
+use Str;
 
 class PendaftarController extends Controller
 {
@@ -339,6 +340,7 @@ class PendaftarController extends Controller
         }else{
            $userMake = User::create([
                 'nama' => $request->nama,
+                'nomor_registrasi' => Str::random(6),
                 'email' => $request->email,
                 'password' => Hash::make($request->password),
                 'role_id' =>  3,
@@ -362,8 +364,16 @@ class PendaftarController extends Controller
         $image = $request->file('foto');
         $path = public_path('pendidik/img/');
         $image->move($path, $image_name);
-        Alert::toast('Silakan Login, Daftar Berhasil','success');
-        return redirect()->route('login');
+        $credentials = [
+            'email' => $request->email,
+            'password' => $request->password,
+        ];
+            if(Auth::attempt($credentials)){
+                if (auth()->user()->role_id == 3) {
+                    Alert::success('Selamat datang','Pendidik Cakra');
+                    return redirect()->route('pendidik.dinas.beranda');
+                }
+            }
         }
     }
 }
