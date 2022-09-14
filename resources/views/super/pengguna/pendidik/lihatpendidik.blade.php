@@ -18,7 +18,7 @@
                             <table>
                                 <tr>
                                     <td><b>Nama</b></td>
-                                    <td class="pl-4">{{$pendidik->nama}}</td>
+                                    <td class="pl-4">{{$pendidik->nama}}</td> 
                                 </tr>
                                 <tr>
                                     <td><b>Email</b></td>
