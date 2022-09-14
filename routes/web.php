@@ -66,6 +66,7 @@ Route::group(['prefix' => 'super','middleware' => ['auth','super-role']], functi
     Route::get('/pengguna-pendidik','PenggunaController@penggunaPendidik')->name('super.penggunapendidik');
     Route::post('/pengguna-pendidik/tambah','PenggunaController@tambahPendidik')->name('super.penggunapendidik.tambah');
     Route::get('/pengguna-pendidik/lihat/{id}','PenggunaController@lihatPendidik')->name('super.penggunapendidik.lihat');
+    Route::get('/pengguna-pendidik/hapus/{id}','PenggunaController@hapusPendidik')->name('super.penggunapendidik.hapus');
 
     Route::get('/pengguna-staf-admin','PenggunaController@penggunaStafAdmin')->name('super.penggunastafadmin');
     Route::post('/pengguna-staf-admin/tambah','PenggunaController@tambahStafAdmin')->name('super.penggunastafadmin.tambah');
