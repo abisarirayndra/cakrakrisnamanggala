@@ -9,10 +9,10 @@
 <div class="container">
     <div class="card shadow mb-4">
         <div class="card-body">
-            <h5><i class="fas fa-hashtag text-warning"></i> Absensi Kehadiran</h5>
+            <h5><i class="fas fa-hashtag text-warning"></i> Absensi Kepulangan</h5>
             <div class="p-3 mt-3">
                 <div class="row">
-                    <div class="col-sm-4">
+                    <div class="col-sm-6">
                         <div class="card mb-4">
                             <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between bg-warning">
                                 <h6 class="m-0 font-weight-bold text-white">{{\Carbon\Carbon::parse($jadwal->mulai)->isoFormat('dddd, D MMMM Y')}}</h6>
@@ -25,53 +25,30 @@
                             </div>
                         </div>
                     </div>
-                    <div class="col-sm-4">
+                    <div class="col-sm-6">
                         <div class="card mb-4">
                             <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between bg-warning">
-                                <h6 class="m-0 font-weight-bold text-white">Scan Token</h6>
+                                <h6 class="m-0 font-weight-bold text-white">Scan Token Pelajar</h6>
                             </div>
                             <div class="card-body">
-                                <form action="{{ route('staf-admin.absensi.upload-absensi') }}" method="POST">
+                                <form action="{{ route('staf-admin.absen-pulang.selesai') }}" method="POST">
                                     @csrf
                                     <div class="form-group ml-7">
                                         <input type="text" class="form-control" name="token" autofocus required placeholder="Masukkan Token" autocomplete="off"/>
                                         <input type="text" name="jadwal_id" value="{{ $jadwal->id }}" readonly hidden>
-                                        <input type="text" name="datang" value="{{ \Carbon\Carbon::now() }}" readonly hidden>
-                                        @php
-                                            $now = \Carbon\Carbon::now();
-                                        @endphp
-                                        @if ($now < $jadwal->mulai)
-                                            <input type="text" name="status" value="1" readonly hidden>
-                                        @elseif($now > $jadwal->mulai)
-                                            <input type="text" name="status" value="0" readonly hidden>
-                                        @endif
+                                        <input type="text" name="pulang" value="{{ \Carbon\Carbon::now() }}" readonly hidden>
                                     </div>
                                     <div class="form-group">
-                                        <button class="btn btn-sm btn-warning" type="submit"><i class="fas fa-pen"></i> Absensi</button>
+                                        <button class="btn btn-sm btn-danger" type="submit"><i class="fas fa-pen"></i> Pulang</button>
                                     </div>
                                 </form>
                             </div>
                         </div>
                     </div>
-                    <div class="col-sm-4">
-                        <div class="card mb-4">
-                            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between bg-warning">
-                                <h6 class="m-0 font-weight-bold text-white">Izin/Tanpa Keterangan</h6>
-                            </div>
-                            <div class="card-body">
-                                <button class="btn btn-sm btn-danger" data-toggle="modal" data-target="#tambahdata"><i class="fas fa-pen"></i> Pelajar</button>
-                                <button class="btn btn-sm btn-danger" data-toggle="modal" data-target="#tambahpendidik"><i class="fas fa-pen"></i> Pendidik</button>
-                            </div>
-                        </div>
-                    </div>
                 </div>
                 <hr>
-                    <div class="float-right">
-                        <button class="btn btn-sm btn-danger"><i class="fas fa-pen"></i> Manual</button>
-                    </div>
-                    <h5><i class="fas fa-hashtag text-warning"></i> Pendidik</h5>
-
-                        <div class="card mb-4 border-bottom-warning mt-3">
+                <h5><i class="fas fa-hashtag text-warning"></i> Pendidik</h5>
+                        <div class="card mb-4 border-bottom-warning">
                             <div class="card-body">
                                 <table class="table table-bordered dataTable" id="dataTable" width="100%" cellspacing="0">
                                     <thead>
@@ -272,7 +249,6 @@
           </div>
         </div>
     </div>
-
 
 </div>
 @endsection

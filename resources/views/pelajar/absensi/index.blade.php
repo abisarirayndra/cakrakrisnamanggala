@@ -53,16 +53,6 @@
                                 <p class="text-s mb-0">Mapel <b>{{ $item->mapel }}</b></p>
                                 <p class="text-s mb-0">Kelas <b>{{ $item->kelas }}</b></p>
                                 <p class="text-s mb-0"><b>{{\Carbon\Carbon::parse($item->mulai)->isoFormat('HH:mm')}} - {{ \Carbon\Carbon::parse($item->selesai)->isoFormat('HH:mm') }}</b></p>
-                                <div class="mt-3">
-                                        <form action="{{ route('pelajar.absensi.selesai', [$item->id]) }}" method="post">
-                                            @csrf
-                                            @php
-                                                $now = \Carbon\Carbon::now();
-                                            @endphp
-                                            <input type="datetime" value="{{ $now }}" name="pulang" hidden>
-                                            <button type="submit" class="btn btn-sm btn-success"><i class="fas fa-check-circle"></i> Selesai</button>
-                                        </form>
-                                </div>
                             </div>
                         </div>
                     </div>

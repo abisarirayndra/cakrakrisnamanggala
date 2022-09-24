@@ -178,7 +178,6 @@ Route::group(['prefix' => 'pelajar','middleware' => ['auth','pelajar-role']], fu
     Route::post('/kumpulkangandapoin/{id}','JawabanDinasController@kumpulkanGandaPoin')->name('pelajar.dinas.kumpulkangandapoin');
 
     Route::get('/absensi','JadwalAbsensiController@scanAbsensiPelajar')->name('pelajar.absensi');
-    Route::post('/absensi/selesai/{id}','JadwalAbsensiController@selesaiPelajar')->name('pelajar.absensi.selesai');
     Route::get('/absensi/histori-pembelajaran','JadwalAbsensiController@historiPelajar')->name('pelajar.absensi.histori-pembelajaran');
 
 });
@@ -193,6 +192,8 @@ Route::group(['prefix' => 'staf-admin', 'middleware' => ['auth','stafadmin-role'
     Route::post('/jadwal/update/{id}','JadwalAbsensiController@updateJadwal')->name('staf-admin.jadwal.update');
     Route::get('/absensi/beranda','JadwalAbsensiController@berandaAbsensi')->name('staf-admin.absensi.beranda');
     Route::get('/absensi/{id}','JadwalAbsensiController@absensi')->name('staf-admin.absen');
+    Route::get('/absensi-pulang/{id}','JadwalAbsensiController@absensiPulang')->name('staf-admin.absen-pulang');
+    Route::post('/absensi-pulang/selesai','JadwalAbsensiController@selesaiPelajar')->name('staf-admin.absen-pulang.selesai');
     Route::get('/absen/staf','JadwalAbsensiController@absenStaf')->name('staf-admin.absen.staf');
     Route::post('/absensi/upload-absensi','JadwalAbsensiController@uploadAbsensi')->name('staf-admin.absensi.upload-absensi');
     Route::post('/absensi/upload-absensi/staf','JadwalAbsensiController@uploadAbsensiStaf')->name('staf-admin.absensi.upload-absensi.staf');

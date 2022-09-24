@@ -22,7 +22,8 @@
                                 <p class="text-s mb-0">Kelas <b>{{ $item->kelas }}</b></p>
                                 <p class="text-s mb-0">{{ $item->nama }}</p>
                                 <p class="text-s mb-0"><b>{{\Carbon\Carbon::parse($item->mulai)->isoFormat('HH:mm')}} - {{ \Carbon\Carbon::parse($item->selesai)->isoFormat('HH:mm') }}</b></p>
-                                <a href="{{ route('staf-admin.absen', [$item->id]) }}" class="btn btn-sm btn-warning mt-2">Pilih</a>
+                                <a href="{{ route('staf-admin.absen', [$item->id]) }}" class="btn btn-sm btn-success mt-2">Datang</a>
+                                <a href="{{ route('staf-admin.absen-pulang', [$item->id]) }}" class="btn btn-sm btn-danger mt-2">Pulang</a>
                             </div>
                         </div>
                     </div>
