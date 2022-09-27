@@ -66,16 +66,16 @@
                                         <a href="{{ route('pendidik.absensi.jurnal', [$item->id]) }}" class="btn btn-sm btn-warning mr-2"><i class="fas fa-eye"></i> Lihat</a>
                                         <form action="{{ route('pendidik.absensi.selesai', [$item->id]) }}" method="post">
                                             @csrf
-                                            @php 
+                                            @php
                                                 $now = \Carbon\Carbon::now();
                                             @endphp
                                             <input type="datetime" value="{{ $now }}" name="pulang" hidden>
-                                            <button type="submit" class="btn btn-sm btn-success"><i class="fas fa-check-circle"></i> Selesai</button>
+                                            <button type="submit" class="btn btn-sm btn-success"><i class="fas fa-check-circle"></i> Pulang</button>
                                         </form>
                                     </div>
 
                                     @else
-                                    <a href="{{ route('pendidik.absensi.jurnal', [$item->id]) }}" class="btn btn-sm btn-warning"><i class="fas fa-pen"></i> Isi</a>
+                                    <a href="{{ route('pendidik.absensi.jurnal', [$item->id]) }}" class="btn btn-sm btn-warning"><i class="fas fa-pen"></i> Isi Jurnal</a>
                                     <button class="btn btn-sm btn-success" disabled><i class="fas fa-check-circle"></i> Selesai</button>
                                     @endif
                                 </div>

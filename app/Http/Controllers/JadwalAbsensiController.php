@@ -445,12 +445,7 @@ class JadwalAbsensiController extends Controller
         return redirect()->route('pendidik.absensi');
     }
     public function selesaiPendidik($id, Request $request){
-        $absensi = AbsensiPendidik::join('adm_jadwal','adm_jadwal.id','=','adm_absensi_pendidik.jadwal_id')
-                                    ->where('adm_absensi_pendidik.id', $id)
-                                    ->firstOrFail();
-        if($absensi->selesai > $request->pulang){
-            return redirect()->back()->withErrors(['msg' => 'Pembelajaran Belum Selesai']);
-        }
+        $absensi = AbsensiPendidik::find($id);
         $absensi->update([
             'pulang' => $request->pulang,
         ]);
