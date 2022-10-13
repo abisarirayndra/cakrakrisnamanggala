@@ -198,7 +198,7 @@ class JadwalAbsensiController extends Controller
                 if($pelajar_belum_pulang->pulang == null){
                     $pelajar_absen_pulang = AbsensiPelajar::where('pelajar_id', $pengguna->id)->where('jadwal_id', $request->jadwal_id)->where('pulang', null)->first();
                     $pelajar_absen_pulang->update([
-                        'pulang' => $request->pulang,
+                        'pulang' => Carbon::now(),
                     ]);
                     Alert::success("Hai $pelajar_absen_pulang->nama !",'Selesai mengikuti pembelajaran');
                     return redirect()->back();
@@ -269,7 +269,7 @@ class JadwalAbsensiController extends Controller
                             AbsensiPendidik::create([
                                 'jadwal_id' => $request->jadwal_id,
                                 'pendidik_id' => $pengguna->id,
-                                'datang' => $request->datang,
+                                'datang' => Carbon::now(),
                                 'status' => $request->status,
                             ]);
                             $pendidik = AbsensiPendidik::join('users','users.id','=','adm_absensi_pendidik.pendidik_id')->where('pendidik_id', $pengguna->id)->where('jadwal_id', $request->jadwal_id)->first();
@@ -287,7 +287,7 @@ class JadwalAbsensiController extends Controller
                         AbsensiPelajar::create([
                             'jadwal_id' => $request->jadwal_id,
                             'pelajar_id' => $pengguna->id,
-                            'datang' => $request->datang,
+                            'datang' => Carbon::now(),
                             'status' => $request->status,
                         ]);
                         $pelajar = AbsensiPelajar::join('users','users.id','=','adm_absensi_pelajar.pelajar_id')->where('pelajar_id', $pengguna->id)->where('jadwal_id', $request->jadwal_id)->first();
@@ -389,7 +389,7 @@ class JadwalAbsensiController extends Controller
                     }else{
                         AbsensiStaf::create([
                             'staf_id' => $pengguna->id,
-                            'datang' => $request->datang,
+                            'datang' => Carbon::now(),
                             'status' => $request->status,
                         ]);
                         Alert::toast('Absensi Berhasil','success');
@@ -447,7 +447,7 @@ class JadwalAbsensiController extends Controller
     public function selesaiPendidik($id, Request $request){
         $absensi = AbsensiPendidik::find($id);
         $absensi->update([
-            'pulang' => $request->pulang,
+            'pulang' => Carbon::now(),
         ]);
         Alert::toast('Pembelajaran Selesai', 'success');
         return redirect()->route('pendidik.absensi');

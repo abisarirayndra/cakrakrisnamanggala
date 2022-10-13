@@ -31,12 +31,13 @@
                                 <h6 class="m-0 font-weight-bold text-white">Scan Token</h6>
                             </div>
                             <div class="card-body">
+                                Waktu :  <b><h7 id="jam"></h7></b>
                                 <form action="{{ route('staf-admin.absensi.upload-absensi') }}" method="POST">
                                     @csrf
                                     <div class="form-group ml-7">
                                         <input type="text" class="form-control" name="token" autofocus required placeholder="Masukkan Token" autocomplete="off"/>
                                         <input type="text" name="jadwal_id" value="{{ $jadwal->id }}" readonly hidden>
-                                        <input type="text" name="datang" value="{{ \Carbon\Carbon::now() }}" readonly hidden>
+                                        {{-- <input type="text" name="datang" id="jam"> --}}
                                         @php
                                             $now = \Carbon\Carbon::now();
                                         @endphp
@@ -289,4 +290,27 @@
     $('.dataTable').DataTable();
     });
 </script>
+<script type="text/javascript">
+    window.onload = function() { jam(); }
+
+    function jam() {
+     var e = document.getElementById("jam"),
+     d = new Date(), h, m, s;
+     h = d.getHours();
+     m = set(d.getMinutes());
+     s = set(d.getSeconds());
+
+     e.innerHTML = h +':'+ m +':'+ s;
+
+     setTimeout('jam()', 1000);
+
+
+    }
+
+    function set(e) {
+     e = e < 10 ? '0'+ e : e;
+     return e;
+    }
+   </script>
+
 @endsection
