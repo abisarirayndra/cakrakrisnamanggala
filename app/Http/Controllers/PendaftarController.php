@@ -261,6 +261,7 @@ class PendaftarController extends Controller
                     'ibu' =>  $request->ibu,
                     'status_sekolah' => $request->status_sekolah,
                 ]);
+                return redirect()->route('pendaftar.cetak-formulir', $id);
             }
         }else{
             $validator = Validator::make($request->all(), [
@@ -313,6 +314,8 @@ class PendaftarController extends Controller
                         'ibu' =>  $request->ibu,
                         'status_sekolah' => $request->status_sekolah,
                 ]);
+
+                return redirect()->route('pendaftar.cetak-formulir', $id);
             }
         }
 
