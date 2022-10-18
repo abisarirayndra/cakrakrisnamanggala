@@ -17,7 +17,7 @@
     <div class="card shadow mb-4">
         <div class="card-body">
             <div class="text-right pt-3 pr-3">
-                <a href="https://cakrakrisnamanggala.com" class="btn btn-sm btn-danger"><i class="fas fa-times"></i></a>
+                <a href="https://elearning.cakrakrisnamanggala.com" class="btn btn-sm btn-danger"><i class="fas fa-times"></i></a>
             </div>
             <h5><i class="fas fa-hashtag text-warning"></i> Tahapan Pendaftaran</h5>
             <ul>
