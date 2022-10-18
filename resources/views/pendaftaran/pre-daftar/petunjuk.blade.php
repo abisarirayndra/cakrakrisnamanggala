@@ -26,9 +26,7 @@
                             <h4 class="text-dark"><i class="fas fa-hashtag text-warning"></i> Petunjuk Pendaftaran</h4>
                         </div>
                         <ul>
-                            <li>Registrasi akun email dan password pada sistem</li>
-                            <li>Login dengan email dan password yang sudah diregistrasi</li>
-                            <li>Setelah berhasil login ke sistem, isi formulir dengan data yang sebenarnya</li>
+                            <li>Registrasi dengan mengisi kebutuhan data</li>
                             <li>Cetak formulir yang sudah diisi dengan mendownload file formulir pada sistem</li>
                             <li>Setalah download file, print file dengan kertas A4 sebagai bukti pendaftaran</li>
                             <li>Datang ke markas Cakra Krisna Manggala yang dituju dengan membawa bukti pendaftaran</li>
@@ -36,9 +34,9 @@
                         </ul>
                         <div class="text-center mb-4 mt-4">
                             <a href="{{route('register-email')}}" class="btn btn-warning">Registrasi Email</a>
-                            <hr>
-                            <h6>Sudah Pernah Mendaftar ?</h6>
-                            <a href="{{ route('login') }}" class="btn btn-success">Ya, Login</a>
+                            {{-- <hr> --}}
+                            {{-- <h6>Sudah Pernah Mendaftar ?</h6>
+                            <a href="{{ route('login') }}" class="btn btn-success">Ya, Login</a> --}}
                         </div>
                     </div>
                 </div>

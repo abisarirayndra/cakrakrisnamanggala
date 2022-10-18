@@ -1,76 +1,157 @@
-@extends('master.admin1')
+@extends('master.pendaftar-pendidik')
 
 @section('title')
-    <title>Register Email - Cakra Krisna Manggala</title>
+<title>Profil Pendaftar</title>
+
 @endsection
 
 @section('content')
-<body class="bg-gradient-warning">
+<!-- Begin Page Content -->
+<div class="container">
 
-  <div class="container">
+    <!-- Page Heading -->
+    <h1 class="h3 mb-2 text-gray-800">Formulir Pendaftaran</h1>
+    <p class="mb-4">Diisi dengan data yang benar-benar sesuai dengan identitas/KTP.</p>
 
-      <!-- Outer Row -->
-      <div class="row justify-content-center">
+    <!-- DataTales Example -->
+    <div class="card shadow mb-4">
+        <div class="card-body">
+            <div class="text-right pt-3 pr-3">
+                <a href="https://cakrakrisnamanggala.com" class="btn btn-sm btn-danger"><i class="fas fa-times"></i></a>
+            </div>
+            <h5><i class="fas fa-hashtag text-warning"></i> Tahapan Pendaftaran</h5>
+            <ul>
+                <li>Mengisi data dibawah ini dengan benar</li>
+                <li>Mencetak formulir dibawah sebagai bukti pendaftaran</li>
+                <li>Datang ke lokasi markas yang dipilih dengan membawa bukti pendaftaran yang sudah dicetak</li>
+                <li>Melakukan proses administrasi selanjutnya di markas</li>
+            </ul>
+            <div class="p-3 mt-3">
+                    @if ($errors->any())
+                    <div class="alert alert-danger">
+                        <ul>
+                            @foreach ($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                    @endif
+                <form class="user" class="" action="{{ route('pendaftar.up-formulir-pendaftaran') }}" method="POST" enctype="multipart/form-data">
+                    @csrf
+                    <div class="form-group row">
+                        <div class="col-sm-4 mb-3 mb-sm-0">
+                            <label for="nama">Nama</label>
+                            <input type="text" class="form-control form-control-user"
+                                placeholder="Nama Lengkap" name="nama" value="">
+                        </div>
+                        <div class="col-sm-4">
+                            <label for="tempat">Tempat Lahir</label>
+                            <input type="text" class="form-control form-control-user" name="tempat_lahir" placeholder="Tempat Lahir" required>
+                        </div>
+                        <div class="col-sm-4">
+                            <label for="tanggal">Tanggal Lahir</label>
+                            <input type="date" class="form-control form-control-user" name="tanggal_lahir" required>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <div class="col-sm-4 mb-3 mb-sm-0">
+                            <label for="email">Email</label>
+                            <input type="email" class="form-control form-control-user"
+                                placeholder="Email" name="email" value="email">
+                        </div>
+                        <div class="col-sm-4">
+                            <label for="password">Password</label>
+                            <input type="password" class="form-control form-control-user" id="password" name="password" placeholder="password" required>
+                        </div>
+                        <div class="col-sm-4">
+                            <label for="ulangi_password">Ulangi Password</label>
+                            <input type="password" class="form-control form-control-user" id="confirm_password" required placeholder="Ulangi Password">
+                            <small id='message'></small>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <div class="col-sm-4 mb-3 mb-sm-0">
+                            <label for="nik">Nomor Induk Kependudukan</label>
+                            <input type="text" class="form-control form-control-user"
+                                placeholder="NIK/No. KTP" name="nik" required>
+                        </div>
+                        <div class="col-sm-4">
+                            <label for="nisn">Nomor Induk Siswa Nasional (NISN)</label>
+                            <input type="text" autofocus class="form-control form-control-user" name="nisn" placeholder="NISN" required>
+                        </div>
+                        <div class="col-sm-4">
+                            <label for="tanggal">Nama Ibu Kandung</label>
+                            <input type="text" class="form-control form-control-user" name="ibu" placeholder="Nama Ibu Kandung" required>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <div class="col-sm-4 mb-3 mb-sm-0">
+                            <label for="alamat">Alamat</label>
+                                <input type="text" class="form-control form-control-user" id="alamat"
+                                    placeholder="Alamat" name="alamat" required>
+                        </div>
+                        <div class="col-sm-4">
+                            <label for="sekolah">Asal Sekolah</label>
+                            <input type="text" class="form-control form-control-user" id="sekolah"
+                                placeholder="Asal Sekolah" name="sekolah" required>
+                        </div>
+                        <div class="col-sm-4">
+                            <label for="wa">No. Telepon/WhatsApp</label>
+                            <input type="number" class="form-control form-control-user" name="wa" placeholder="Nomor Telepon/Whatsapp" required>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <div class="col-sm-4 mb-3 mb-sm-0">
+                            <label for="wali">Nama Wali</label>
+                            <input type="text" class="form-control form-control-user" name="wali" placeholder="Nama Wali" required>
+                        </div>
+                        <div class="col-sm-4">
+                            <label for="wa-wali">No. Telepon/Whatsapp Wali</label>
+                            <input type="number" class="form-control form-control-user" name="wa_wali" placeholder="Nomor Telepon/Whatsapp Wali" required>
+                        </div>
+                        <div class="col-sm-4 mb-3 mb-sm-0">
+                            <label for="foto">Foto Diri (3x4) <div class="text-danger">Maksimal 500 Kb</div> </label>
+                                <input type="file" id="foto"
+                                name="foto" required>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <div class="col-sm-4">
+                            <label for="status">Status Sekolah</label>
+                            <select name="status_sekolah" class="form-control">
+                                <option value="0">Belum Lulus</option>
+                                <option value="1">Lulus</option>
+                            </select>
+                        </div>
+                        <div class="col-sm-4">
+                            <label for="markas">Markas Yang Dituju</label>
+                            <select name="markas_id" class="form-control">
+                                @foreach ($markas as $item)
+                                    <option value="{{ $item->id }}">{{ $item->markas }}</option>
+                                @endforeach
+                            </select>
+                        </div>
 
-          <div class="col-xl-10 col-lg-12 col-md-9">
+                    </div>
+                    <div class="text-center mt-4">
+                        <button id="button" class="btn btn-warning" type="submit">Simpan</button>
+                    </div>
+                </form>
+                {{-- @endif --}}
 
-              <div class="card o-hidden border-0 shadow-lg my-5">
-                  <div class="card-body p-0">
-                      <!-- Nested Row within Card Body -->
-                      <div class="row">
-                          <div class="col-lg-6 d-none d-lg-block text-center mt-4"><img src="{{asset('img/krisna.png')}}" width="300" height="300" alt=""></div>
-                          <div class="col-lg-6">
-                              <div class="p-5">
-                                  <div class="text-center">
-                                      <h1 class="h4 text-gray-900 mb-4">Daftarkan diri anda</h1>
-                                  </div>
-                                  @if ($errors->any())
-                                        <div class="alert alert-danger">
-                                            <ul>
-                                                @foreach ($errors->all() as $error)
-                                                    <li>{{ $error }}</li>
-                                                @endforeach
-                                            </ul>
-                                        </div>
-                                    @endif
-                                  <form class="user" action="{{ route('up-register-email') }}" method="post">
-                                    @csrf
-                                    <div class="form-group">
-                                        <input type="text" class="form-control form-control-user" placeholder="Nama Lengkap" name="nama" required>
-                                    </div>
-                                    <div class="form-group">
-                                        <input type="email" class="form-control form-control-user" placeholder="E-Mail" name="email" required>
-                                    </div>
-                                    <div class="form-group row">
-                                        <div class="col-sm-6 mb-3 mb-sm-0">
-                                            <input type="password" class="form-control form-control-user" id="password" placeholder="Password" name="password" required>
-                                        </div>
-                                        <div class="col-sm-6">
-                                            <input type="password" class="form-control form-control-user" id="confirm_password" placeholder="Repeat Password" required>
-                                            <small id='message'></small>
-                                        </div>
-                                    </div>
-                                    <a href="{{route('petunjuk')}}" class="btn btn-danger">Kembali</a>
-                                    <button id="button" class="btn btn-warning" type="submit" >Register</button>
-                                  </form>
-                                  <hr>
+            </div>
+        </div>
+    </div>
 
-                                  <div class="text-center">
-                                    <div class="row">
-                                         <small>Email sudah terdaftar ?</small><a class="btn btn-sm btn-success ml-2" href="{{route('login')}}"> login</a>
-                                    </div>
-                                </div>
-                              </div>
-                          </div>
-                      </div>
-                  </div>
-              </div>
+</div>
+<!-- /.container-fluid -->
+<!-- Scroll to Top Button-->
+<a class="scroll-to-top rounded" href="#page-top">
+    <i class="fas fa-angle-up"></i>
+</a>
 
-          </div>
+</div>
 
-      </div>
-
-  </div>
 @endsection
 
 @section('js')
@@ -88,4 +169,3 @@
         });
   </script>
 @endsection
-

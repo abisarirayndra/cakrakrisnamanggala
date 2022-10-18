@@ -34,7 +34,7 @@
                                   <form class="user" action="{{route('log')}}" method="post">
                                     @csrf
                                       <div class="form-group">
-                                          <input type="text" class="form-control form-control-user" placeholder="Masukkan ID / Email" name="email">
+                                          <input type="email" class="form-control form-control-user" placeholder="Masukkan Email" name="email">
                                       </div>
                                       <div class="form-group">
                                           <input type="password" class="form-control form-control-user" placeholder="Password" name="password">

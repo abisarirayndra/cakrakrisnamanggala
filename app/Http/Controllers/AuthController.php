@@ -18,10 +18,9 @@ class AuthController extends Controller
     }
 
     public function login(Request $request){
-        $logintype = filter_var($request->email, FILTER_VALIDATE_EMAIL) ? 'email' : 'nomor_registrasi';
 
         $credentials = [
-            $logintype => $request->email,
+            'email' => $request->email,
             'password' => $request->password,
         ];
 
@@ -43,7 +42,6 @@ class AuthController extends Controller
                 return redirect()->route('pelajar.dinas.beranda');
             }
             elseif(auth()->user()->role_id == 5){
-                Alert::toast('Selamat Datang Pendaftar','success');
                 return redirect()->route('pendaftar.profil');
             }
             elseif(auth()->user()->role_id == 7 ){

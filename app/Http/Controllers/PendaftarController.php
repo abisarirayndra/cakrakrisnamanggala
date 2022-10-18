@@ -24,7 +24,8 @@ class PendaftarController extends Controller
     }
 
     public function registerEmail(){
-        return view('pendaftaran.pre-daftar.register');
+        $markas = Markas::all();
+        return view('pendaftaran.pre-daftar.register',compact('markas'));
     }
 
     public function uploadRegisterEmail(Request $request){
@@ -81,6 +82,9 @@ class PendaftarController extends Controller
 
     public function upFormulirPendaftar(Request $request){
         $validator = Validator::make($request->all(), [
+            'nama' => 'required',
+            'email' => 'required|email|unique:users',
+            'password' => 'required',
             'tempat_lahir' => 'required',
             'tanggal_lahir' => 'required|date',
             'alamat' => 'required',
@@ -95,6 +99,11 @@ class PendaftarController extends Controller
             'sekolah' => 'required',
             'status_sekolah' => 'required'
         ],[
+            'nama.required' => 'Nama harus diisi',
+            'email.required' => 'Email harus diisi',
+            'email.email' => 'Format email salah ex. johndoe@gmail.com',
+            'email.users' => 'Email sudah terdaftar, coba login atau daftar dengan email lain',
+            'password.required' => 'password harus diisi',
             'tempat_lahir.required' => 'Tempat lahir harus diisi',
             'tanggal_lahir.required' => 'Tanggal lahir harus diisi',
             'tanggal_lahir.date' => 'Format harus berupa tanggal',
@@ -112,81 +121,81 @@ class PendaftarController extends Controller
             'sekolah.required' => 'Asal sekolah harus diisi',
             'status_sekolah.required' => 'Status sekolah harus dipilih',
         ]);
-        $user = Auth::user()->id;
-        $image_name = 'Pelajar'.$user.'.'.$request->file('foto')->extension();
-        $update_nama = User::find($user);
-        $update_nama->update([
-            'nama' => $request->nama,
-        ]);
-        $ada = Pelajar::where('pelajar_id',$user)->first();
-            $ada->update([
-                'pelajar_id' => $user,
-                'tempat_lahir' => $request->tempat_lahir,
-                'tanggal_lahir' => $request->tanggal_lahir,
-                'alamat' => $request->alamat,
-                'sekolah' => $request->sekolah,
-                'wa' => $request->wa,
-                'wali' => $request->wali,
-                'wa_wali' => $request->wa_wali,
-                'foto' => $image_name,
-                'markas_id' => $request->markas_id,
-                'nik' => $request->nik,
-                'nisn' => $request->nisn,
-                'ibu' =>  $request->ibu,
-                'status_sekolah' => $request->status_sekolah,
-            ]);
 
+        $userMake = User::create([
+            'nama' => $request->nama,
+            'email' => $request->email,
+            'password' => Hash::make($request->password),
+            'role_id' => 5,
+        ]);
+        $image_name = 'Pelajar'.$userMake->id.'.'.$request->file('foto')->extension();
+        $isiDataPelajar = Pelajar::create([
+                            'pelajar_id' => $userMake->id,
+                            'tempat_lahir' => $request->tempat_lahir,
+                            'tanggal_lahir' => $request->tanggal_lahir,
+                            'alamat' => $request->alamat,
+                            'sekolah' => $request->sekolah,
+                            'wa' => $request->wa,
+                            'wali' => $request->wali,
+                            'wa_wali' => $request->wa_wali,
+                            'foto' => $image_name,
+                            'markas_id' => $request->markas_id,
+                            'nik' => $request->nik,
+                            'nisn' => $request->nisn,
+                            'ibu' =>  $request->ibu,
+                            'status_sekolah' => $request->status_sekolah,
+                        ]);
         $image = $request->file('foto');
         $path = public_path('img/pelajar/');
         $image->move($path, $image_name);
 
-        $id = Pelajar::where('pelajar_id', $user)->first();
-        $user_id = $id->id;
+        // $id = Pelajar::where('pelajar_id', $user)->first();
+        // $user_id = $id->id;
 
         Alert::toast('Data Pendaftar Disimpan','success');
-        return redirect()->route('pendaftar.cetak-formulir', $user_id);
+        return redirect()->route('pendaftar.cetak-formulir', $isiDataPelajar->id);
     }
 
     public function cetak($id){
-        $user = Auth::user()->nama;
+
         $data = Pelajar::select('adm_markas.markas','adm_pelajars.id','adm_pelajars.nik','adm_pelajars.nisn','adm_pelajars.tempat_lahir','adm_pelajars.tanggal_lahir','adm_pelajars.alamat',
                                 'adm_pelajars.sekolah','adm_pelajars.status_sekolah','adm_pelajars.wa','adm_pelajars.wali','adm_pelajars.wa_wali','adm_pelajars.ibu',
-                                'adm_pelajars.created_at','adm_pelajars.foto')
+                                'adm_pelajars.created_at','adm_pelajars.foto','users.nama','users.email')
                         ->join('adm_markas','adm_markas.id','=','adm_pelajars.markas_id')
+                        ->join('users','users.id','=','adm_pelajars.pelajar_id')
                         ->where('adm_pelajars.id',$id)->first();
 
-        return view('pendaftaran.cetak', compact('data','user'));
+        return view('pendaftaran.cetak', compact('data'));
     }
 
     public function cetak_pdf($id)
     {
-        $user = Auth::user()->nama;
         $pendaftar = Pelajar::select('adm_markas.markas','adm_pelajars.id','adm_pelajars.nik','adm_pelajars.nisn','adm_pelajars.tempat_lahir','adm_pelajars.tanggal_lahir','adm_pelajars.alamat',
-        'adm_pelajars.sekolah','adm_pelajars.status_sekolah','adm_pelajars.wa','adm_pelajars.wali','adm_pelajars.wa_wali','adm_pelajars.ibu',
-        'adm_pelajars.created_at','adm_pelajars.foto')
-->join('adm_markas','adm_markas.id','=','adm_pelajars.markas_id')
-->where('adm_pelajars.id',$id)->first();
+                    'adm_pelajars.sekolah','adm_pelajars.status_sekolah','adm_pelajars.wa','adm_pelajars.wali','adm_pelajars.wa_wali','adm_pelajars.ibu',
+                    'adm_pelajars.created_at','adm_pelajars.foto','users.nama','users.email')
+                    ->join('adm_markas','adm_markas.id','=','adm_pelajars.markas_id')
+                    ->join('users','users.id','=','adm_pelajars.pelajar_id')
+                    ->where('adm_pelajars.id',$id)->first();
         $en_foto = (string) Image::make(public_path('img/pelajar/'. $pendaftar->foto))->encode('data-url');
         $en_logo = (string) Image::make(public_path('img/krisna.png'))->encode('data-url');
-        $pdf = PDF::loadview('pendaftaran.review', ['data' => $pendaftar, 'user' => $user,'foto' => $en_foto, 'logo' => $en_logo])->setPaper('a4');
+        $pdf = PDF::loadview('pendaftaran.review', ['data' => $pendaftar,'foto' => $en_foto, 'logo' => $en_logo])->setPaper('a4');
         return $pdf->stream();
     }
 
     public function editPendaftar($id){
-        $user = Auth::user()->nama;
         $data = Pelajar::find($id);
+        $user = User::find($data->pelajar_id);
         $markas = Markas::all();
 
-        return view('pendaftaran.edit', compact('user','data','markas'));
+        return view('pendaftaran.edit', compact('data','markas','user'));
 
     }
 
     public function updatePendaftar($id, Request $request){
-        $user = Auth::user()->id;
         $data = Pelajar::find($id);
-
         if($request->file('foto')){
             $validator = Validator::make($request->all(), [
+                'nama' => 'required',
                 'tempat_lahir' => 'required',
                 'tanggal_lahir' => 'required|date',
                 'alamat' => 'required',
@@ -200,6 +209,11 @@ class PendaftarController extends Controller
                 'markas_id' => 'required',
                 'sekolah' => 'required'
             ],[
+                'nama.required' => 'Nama harus diisi',
+                'email.required' => 'Email harus diisi',
+                'email.email' => 'Format email salah ex. johndoe@gmail.com',
+                'email.users' => 'Email sudah terdaftar, coba login atau daftar dengan email lain',
+                'password.required' => 'password harus diisi',
                 'tempat_lahir.required' => 'Tempat lahir harus diisi',
                 'tanggal_lahir.required' => 'Tanggal lahir harus diisi',
                 'tanggal_lahir.date' => 'Format harus berupa tanggal',
@@ -220,6 +234,10 @@ class PendaftarController extends Controller
             if ($validator->fails()) {
                 return redirect()->back()->withErrors($validator)->withInput();
             }else{
+                $user = User::find($data->pelajar_id);
+                $user->update([
+                    'nama' => $request->nama,
+                ]);
 
                 $new_photo = $request->file('foto');
                 if($data->foto && file_exists(public_path('img/pelajar/'. $data->foto))){
@@ -229,7 +247,6 @@ class PendaftarController extends Controller
                 Image::make($new_photo)->save(public_path('img/pelajar/' . $images));
 
                 $data->update([
-                    'pelajar_id' => $user,
                     'tempat_lahir' => $request->tempat_lahir,
                     'tanggal_lahir' => $request->tanggal_lahir,
                     'alamat' => $request->alamat,
@@ -247,6 +264,7 @@ class PendaftarController extends Controller
             }
         }else{
             $validator = Validator::make($request->all(), [
+                'nama' => 'required',
                 'tempat_lahir' => 'required',
                 'tanggal_lahir' => 'required|date',
                 'alamat' => 'required',
@@ -259,6 +277,7 @@ class PendaftarController extends Controller
                 'markas_id' => 'required',
                 'sekolah' => 'required'
             ],[
+                'nama.required' => 'Nama harus diisi',
                 'tempat_lahir.required' => 'Tempat lahir harus diisi',
                 'tanggal_lahir.required' => 'Tanggal lahir harus diisi',
                 'tanggal_lahir.date' => 'Format harus berupa tanggal',
@@ -276,8 +295,11 @@ class PendaftarController extends Controller
             if ($validator->fails()) {
                 return redirect()->back()->withErrors($validator)->withInput();
             }else{
+                $user = User::find($data->pelajar_id);
+                $user->update([
+                    'nama' => $request->nama,
+                ]);
                 $data->update([
-                        'pelajar_id' => $user,
                         'tempat_lahir' => $request->tempat_lahir,
                         'tanggal_lahir' => $request->tanggal_lahir,
                         'alamat' => $request->alamat,

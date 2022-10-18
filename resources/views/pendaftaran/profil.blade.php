@@ -10,120 +10,23 @@
 <div class="container">
 
     <!-- Page Heading -->
-    <h1 class="h3 mb-2 text-gray-800">Formulir Pendaftaran</h1>
-    <p class="mb-4">Diisi dengan data yang benar-benar sesuai dengan identitas/KTP.</p>
+    {{-- <h1 class="h3 mb-2 text-gray-800">Formulir Pendaftaran</h1> --}}
 
     <!-- DataTales Example -->
     <div class="card shadow mb-4">
         <div class="card-body">
-            <h5><i class="fas fa-hashtag text-warning"></i> Tahapan Pendaftaran</h5>
-            <ul>
-                <li>Mengisi data dibawah ini dengan benar</li>
-                <li>Mencetak formulir dibawah sebagai bukti pendaftaran</li>
-                <li>Datang ke lokasi markas yang dipilih dengan membawa bukti pendaftaran yang sudah dicetak</li>
-                <li>Melakukan proses administrasi selanjutnya di markas</li>
-            </ul>
             <div class="p-3 mt-3">
                 @if (isset($ada))
-                    <div class="text-center mt-4">
-                        <h4>Biodata Sudah Ada, Silakan Mencetak</h4>
-                        <a href="{{route('pendaftar.cetak-formulir', [$ada->id])}}" class="btn btn-success mt-4">Cetak</a>
-                    </div>
-                @else
-                    @if ($errors->any())
-                    <div class="alert alert-danger">
-                        <ul>
-                            @foreach ($errors->all() as $error)
-                                <li>{{ $error }}</li>
-                            @endforeach
-                        </ul>
-                    </div>
-                    @endif
-                <form class="user" class="" action="{{ route('pendaftar.up-formulir-pendaftaran') }}" method="POST" enctype="multipart/form-data">
-                    @csrf
-                    <div class="form-group row">
-                        <div class="col-sm-4 mb-3 mb-sm-0">
-                            <label for="nama">Nama</label>
-                            <input type="text" class="form-control form-control-user"
-                                placeholder="Nama Lengkap" name="nama" value="{{$user}}">
-                        </div>
-                        <div class="col-sm-4">
-                            <label for="tempat">Tempat Lahir</label>
-                            <input type="text" autofocus class="form-control form-control-user" name="tempat_lahir" placeholder="Tempat Lahir" required>
-                        </div>
-                        <div class="col-sm-4">
-                            <label for="tanggal">Tanggal Lahir</label>
-                            <input type="date" class="form-control form-control-user" name="tanggal_lahir" required>
-                        </div>
-                    </div>
-                    <div class="form-group row">
-                        <div class="col-sm-4 mb-3 mb-sm-0">
-                            <label for="nik">Nomor Induk Kependudukan</label>
-                            <input type="text" class="form-control form-control-user"
-                                placeholder="NIK/No. KTP" name="nik" required>
-                        </div>
-                        <div class="col-sm-4">
-                            <label for="nisn">Nomor Induk Siswa Nasional (NISN)</label>
-                            <input type="text" autofocus class="form-control form-control-user" name="nisn" placeholder="NISN" required>
-                        </div>
-                        <div class="col-sm-4">
-                            <label for="tanggal">Nama Ibu Kandung</label>
-                            <input type="text" class="form-control form-control-user" name="ibu" placeholder="Nama Ibu Kandung" required>
-                        </div>
-                    </div>
-                    <div class="form-group row">
-                        <div class="col-sm-4 mb-3 mb-sm-0">
-                            <label for="alamat">Alamat</label>
-                                <input type="text" class="form-control form-control-user" id="alamat"
-                                    placeholder="Alamat" name="alamat" required>
-                        </div>
-                        <div class="col-sm-4">
-                            <label for="sekolah">Asal Sekolah</label>
-                            <input type="text" class="form-control form-control-user" id="sekolah"
-                                placeholder="Asal Sekolah" name="sekolah" required>
-                        </div>
-                        <div class="col-sm-4">
-                            <label for="wa">No. Telepon/WhatsApp</label>
-                            <input type="number" class="form-control form-control-user" name="wa" placeholder="Nomor Telepon/Whatsapp" required>
-                        </div>
-                    </div>
-                    <div class="form-group row">
-                        <div class="col-sm-4 mb-3 mb-sm-0">
-                            <label for="wali">Nama Wali</label>
-                            <input type="text" class="form-control form-control-user" name="wali" placeholder="Nama Wali" required>
-                        </div>
-                        <div class="col-sm-4">
-                            <label for="wa-wali">No. Telepon/Whatsapp Wali</label>
-                            <input type="number" class="form-control form-control-user" name="wa_wali" placeholder="Nomor Telepon/Whatsapp Wali" required>
-                        </div>
-                        <div class="col-sm-4 mb-3 mb-sm-0">
-                            <label for="foto">Foto Diri (3x4) <div class="text-danger">Maksimal 500 Kb</div> </label>
-                                <input type="file" id="foto"
-                                name="foto" required>
-                        </div>
-                    </div>
-                    <div class="form-group row">
-                        <div class="col-sm-4">
-                            <label for="status">Status Sekolah</label>
-                            <select name="status_sekolah" class="form-control">
-                                <option value="0">Belum Lulus</option>
-                                <option value="1">Lulus</option>
-                            </select>
-                        </div>
-                        <div class="col-sm-4">
-                            <label for="markas">Markas Yang Dituju</label>
-                            <select name="markas_id" class="form-control">
-                                @foreach ($markas as $item)
-                                    <option value="{{ $item->id }}">{{ $item->markas }}</option>
-                                @endforeach
-                            </select>
-                        </div>
-
+                    <div class="text-center">
+                        <h4>Biodata Sudah Ada, Silakan Tunggu Validasi</h4>
+                        <h6>Hubungi Staf IT untuk validasi</h6>
                     </div>
                     <div class="text-center mt-4">
-                        <button class="btn btn-warning" type="submit">Simpan</button>
+                        <a href="https://wa.link/m9o2vu" target="_blank" class="btn btn-success">
+                            <i class="fab fa-whatsapp"></i>
+                            Staf IT
+                        </a>
                     </div>
-                </form>
                 @endif
 
             </div>

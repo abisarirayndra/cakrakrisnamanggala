@@ -1,4 +1,4 @@
-@extends('master.pendaftar')
+@extends('master.pendaftar-pendidik')
 
 @section('title')
 <title>Profil Pendaftar</title>
@@ -16,6 +16,9 @@
     <!-- DataTales Example -->
     <div class="card shadow mb-4">
         <div class="card-body">
+            <div class="text-right pt-3 pr-3">
+                <a href="{{ route('register-email') }}" class="btn btn-sm btn-danger"><i class="fas fa-times"></i></a>
+            </div>
             <h5><i class="fas fa-hashtag text-warning"></i> Edit Data</h5>
             <div class="p-3 mt-3">
                 @if ($errors->any())
@@ -33,7 +36,7 @@
                         <div class="col-sm-4 mb-3 mb-sm-0">
                             <label for="nama">Nama</label>
                             <input type="text" class="form-control form-control-user" id="exampleFirstName"
-                                placeholder="Nama Lengkap" name="nama" value="{{$user}}">
+                                placeholder="Nama Lengkap" name="nama" value="{{ $user->nama }}">
                         </div>
                         <div class="col-sm-4">
                             <label for="tempat">Tempat Lahir</label>
@@ -109,7 +112,7 @@
                         </div>
                     </div>
                     <div class="text-center mt-4">
-                        <button class="btn btn-warning" type="submit">Simpan</button>
+                        <button id="button" class="btn btn-warning" type="submit">Simpan</button>
                     </div>
                 </form>
             </div>
@@ -123,26 +126,6 @@
     <i class="fas fa-angle-up"></i>
 </a>
 
-<!-- Logout Modal-->
-<div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
-    aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Ready to Leave?</h5>
-                <button class="close" type="button" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">×</span>
-                </button>
-            </div>
-            <div class="modal-body">Select "Logout" below if you are ready to end your current session.</div>
-            <div class="modal-footer">
-                <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
-                <a class="btn btn-primary" href="{{route('logout')}}">Logout</a>
-            </div>
-        </div>
-    </div>
-</div>
-
 </div>
 
 @endsection
@@ -150,7 +133,19 @@
 @section('js')
 <script type="text/javascript" src="{{asset('back/vendor/ckeditor/ckeditor.js')}}"></script>
 
+<script type="text/javascript">
+    $('#password, #confirm_password').on('keyup', function () {
+          if ($('#password').val() == $('#confirm_password').val()) {
+            $('#message').html('Password Cocok').css('color', 'green');
+            $('#button').removeAttr("disabled");
+          } else {
+            $('#message').html('Password Tidak Cocok').css('color', 'red');
+            var element = document.getElementById('button');
+            element.setAttribute('disabled','disabled');
+          }
 
+        });
+  </script>
 @endsection
 
 

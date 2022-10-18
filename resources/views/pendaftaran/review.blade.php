@@ -27,7 +27,11 @@
                                 <table>
                                     <tr>
                                         <td><b>Nama</b></td>
-                                        <td class="pl-4">{{$user}}</td>
+                                        <td class="pl-4">{{$data->nama}}</td>
+                                    </tr>
+                                    <tr>
+                                        <td><b>Email</b></td>
+                                        <td class="pl-4">{{$data->email}}</td>
                                     </tr>
                                     <tr>
                                         <td><b>Tempat, Tanggal Lahir</b></td>

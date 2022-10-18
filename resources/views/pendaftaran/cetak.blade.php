@@ -1,4 +1,4 @@
-@extends('master.pendaftar')
+@extends('master.pendaftar-pendidik')
 
 @section('title')
 <title>Profil Pendaftar</title>
@@ -16,6 +16,9 @@
     <!-- DataTales Example -->
     <div class="card shadow mb-4">
         <div class="card-body">
+            <div class="text-right pt-3 pr-3">
+                <a href="https://cakrakrisnamanggala.com" class="btn btn-sm btn-danger"><i class="fas fa-times"></i></a>
+            </div>
             <h5><i class="fas fa-hashtag text-warning"></i> Tahapan Pendaftaran</h5>
             <ul>
                 <li>Mencetak formulir dibawah sebagai bukti pendaftaran</li>
@@ -33,7 +36,11 @@
                             <table>
                                 <tr>
                                     <td><b>Nama</b></td>
-                                    <td class="pl-4">{{$user}}</td>
+                                    <td class="pl-4">{{$data->nama}}</td>
+                                </tr>
+                                <tr>
+                                    <td><b>Email</b></td>
+                                    <td class="pl-4">{{$data->email}}</td>
                                 </tr>
                                 <tr>
                                     <td><b>NIK</b></td>
@@ -62,7 +69,7 @@
                                 <tr>
                                     <td><b>Asal Sekolah</b></td>
                                     <td class="pl-4">{{$data->sekolah}}</td>
-                                </tr> 
+                                </tr>
                                 <tr>
                                     <td><b>Status Sekolah</b></td>
                                     @if ($data->status_sekolah == 0)
