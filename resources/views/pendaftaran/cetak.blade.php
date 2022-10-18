@@ -19,12 +19,17 @@
             <div class="text-right pt-3 pr-3">
                 <a href="https://elearning.cakrakrisnamanggala.com" class="btn btn-sm btn-danger"><i class="fas fa-times"></i></a>
             </div>
-            <h5><i class="fas fa-hashtag text-warning"></i> Tahapan Pendaftaran</h5>
-            <ul>
-                <li>Mencetak formulir dibawah sebagai bukti pendaftaran</li>
-                <li>Datang ke lokasi markas yang dipilih dengan membawa bukti pendaftaran yang sudah dicetak</li>
-                <li>Melakukan proses administrasi selanjutnya di markas</li>
-            </ul>
+            <div class="text-center">
+                <h4>Biodata Sudah Ada, Silakan Tunggu Validasi</h4>
+                <h6>Download PDF, lalu hubungi Staf IT untuk validasi</h6>
+            </div>
+            <div class="text-center mt-4">
+                <a href="{{route('pendaftar.cetak-formulir-pdf', [$data->id])}}" target="_blank" class="btn btn-success"><i class="fas fa-cloud-download-alt"></i> Unduh PDF</a>
+                <a href="https://wa.link/m9o2vu" target="_blank" class="btn btn-success">
+                    <i class="fab fa-whatsapp"></i>
+                    Staf IT
+                </a>
+            </div>
             <div class="p-3 mt-3">
                 <h5 class="mb-4">Data Pendaftar Cakra Krisna Manggala</h5>
                 <div class="row">
@@ -115,7 +120,6 @@
 
                         </div>
                         <div class="row">
-                            <a href="{{route('pendaftar.cetak-formulir-pdf', [$data->id])}}" target="_blank" class="btn btn-success mt-4"><i class="fas fa-cloud-download-alt"></i> Unduh PDF</a>
                             <a href="{{route('pendaftar.edit-pendaftar', [$data->id])}}" class="btn btn-warning mt-4 ml-3"><i class="fas fa-edit"></i> Edit</a>
                         </div>
                     </div>

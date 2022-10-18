@@ -17,7 +17,7 @@
     <div class="card shadow mb-4">
         <div class="card-body">
             <div class="text-right pt-3 pr-3">
-                <a href="{{ route('register-email') }}" class="btn btn-sm btn-danger"><i class="fas fa-times"></i></a>
+                <a href="{{ route('pendaftar.cetak-formulir', [$data->id]) }}" class="btn btn-sm btn-danger"><i class="fas fa-times"></i></a>
             </div>
             <h5><i class="fas fa-hashtag text-warning"></i> Edit Data</h5>
             <div class="p-3 mt-3">
