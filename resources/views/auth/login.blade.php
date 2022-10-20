@@ -12,17 +12,18 @@
       <!-- Outer Row -->
       <div class="row justify-content-center">
 
-          <div class="col-xl-10 col-lg-12 col-md-9">
+          <div class="col-xl-6 col-lg-12 col-md-9">
 
               <div class="card o-hidden border-0 shadow-lg my-5">
                   <div class="card-body p-0">
                       <!-- Nested Row within Card Body -->
                       <div class="row">
-                          <div class="col-lg-6 d-none d-lg-block text-center mt-4"><img src="{{asset('img/krisna.png')}}" width="300" height="300" alt=""></div>
-                          <div class="col-lg-6">
+                          {{-- <div class="col-lg-6 d-none d-lg-block text-center mt-4"><img src="{{asset('img/krisna.png')}}" width="300" height="300" alt=""></div> --}}
+                          <div class="col-lg-12">
                               <div class="p-5">
                                   <div class="text-center">
-                                      <h1 class="h4 text-gray-900 mb-4">Selamat Datang di Computer Assisted Test !</h1>
+                                        <img src="{{asset('img/krisna.png')}}" width="80" height="80" alt="Cakra">
+                                      <h1 class="h4 text-gray-900 mb-4 mt-3">Sistem E-Learning Terpadu <br> Cakra Krisna Manggala</h1>
                                   </div>
                                   @if ($errors->any())
                                         <div class="alert alert-danger">
@@ -53,7 +54,7 @@
 
                                   <div class="text-center">
                                       <div class="row">
-                                           <a class="small" href="{{route('reset')}}"> Lupa Password ?</a>
+                                        Lupa Password ? <a  href="{{route('reset')}}" class="btn btn-sm btn-success ml-3"> Lupa</a>
                                       </div>
                                   </div>
                               </div>
