@@ -15,10 +15,13 @@
             <div class="card o-hidden border-0 shadow-lg my-5">
                 <div class="card-body p-0">
                     <div class="text-center mt-4">
-                        <div class="text-right mr-3">
+                        {{-- <div class="text-right mr-3">
                             <a href="{{ route('pelajar.dinas.tes',[$paket->dn_paket_id]) }}" class="btn btn-sm btn-danger"><i class="fas fa-times"></i></a>
+                        </div> --}}
+                        <div class="text-right mr-3">
+                            <a href="{{ route('pelajar.dinas.beranda') }}" class="btn btn-sm btn-danger"><i class="fas fa-times"></i></a>
                         </div>
-                        <img src="{{asset('assets/img/favicon.ico')}}" width="50" alt="">
+                        <img src="{{asset('assets/img/favicon.ico')}}" width="100" alt="">
                     </div>
                     @if($sudah)
                     <div class="text-center mt-4 mb-4">

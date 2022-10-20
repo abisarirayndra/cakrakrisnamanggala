@@ -12,7 +12,8 @@
     <!-- DataTales Example -->
     <div class="card shadow mb-4">
         <div class="text-right mr-3 mt-3">
-            <a href="{{ route('pelajar.dinas.tes', [$prosentase->dn_paket_id]) }}" class="btn btn-sm btn-danger"><i class="fas fa-times"></i></a>
+            {{-- <a href="{{ route('pelajar.dinas.tes', [$prosentase->dn_paket_id]) }}" class="btn btn-sm btn-danger"><i class="fas fa-times"></i></a> --}}
+            <a href="{{ route('pelajar.dinas.beranda') }}" class="btn btn-sm btn-danger"><i class="fas fa-times"></i></a>
         </div>
         <div class="card-body">
             <h5><b>Hasil Penilaian</b></h5>

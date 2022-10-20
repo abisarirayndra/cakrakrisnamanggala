@@ -11,6 +11,8 @@ use App\KelasDinas;
 use App\TesDinas;
 use App\Mapel;
 use App\User;
+use App\HistoriTokenTes;
+use Str;
 
 class PaketDinasController extends Controller
 {
@@ -46,7 +48,7 @@ class PaketDinasController extends Controller
         // Tes
         $mapel = Mapel::all();
         $pengajar = User::where('role_id', 3)->get();
-        $tes = TesDinas::select('mapels.mapel','dn_tes.nilai_pokok','dn_tes.mulai','dn_tes.selesai','dn_tes.id','users.nama','dn_tes.durasi')
+        $tes = TesDinas::select('dn_tes.token','mapels.mapel','dn_tes.nilai_pokok','dn_tes.mulai','dn_tes.selesai','dn_tes.id','users.nama','dn_tes.durasi')
                         ->join('mapels','mapels.id','=','dn_tes.mapel_id')
                         ->join('users','users.id','=','dn_tes.pengajar_id')
                         ->where('dn_tes.dn_paket_id', $id)
@@ -82,6 +84,20 @@ class PaketDinasController extends Controller
         Alert::toast('Hapus Kelas Berhasil','success');
         return redirect()->back();
 
+    }
+
+    public function getTesToken($id){
+        $tes = TesDinas::find($id);
+        $buatToken = HistoriTokenTes::create([
+            'tes_id' => $id,
+            'token' => Str::random(6),
+        ]);
+        $tes->update([
+            'token' => $buatToken->token,
+        ]);
+
+        Alert::toast('Get Token', 'success');
+        return redirect()->back();
     }
 
     public function hapusPaket($id){

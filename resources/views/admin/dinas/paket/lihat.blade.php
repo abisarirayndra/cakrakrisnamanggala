@@ -62,7 +62,7 @@
                           <th style="max-width: 50px">Nilai Pokok/Bobot</th>
                           <th>Mulai</th>
                           <th>Selesai</th>
-                          {{-- <th>Durasi (/Menit)</th> --}}
+                          <th>Token</th>
                           <th>Pengajar</th>
                           <th>Aksi</th>
                         </tr>
@@ -78,10 +78,11 @@
                             <td>{{$item->nilai_pokok}}</td>
                             <td>{{\Carbon\Carbon::parse($item->mulai)->isoFormat('dddd, D MMMM Y HH:mm')}}</td>
                             <td>{{\Carbon\Carbon::parse($item->selesai)->isoFormat('dddd, D MMMM Y HH:mm')}}</td>
-                            {{-- <td>{{$item->durasi}}</td> --}}
+                            <td>{{$item->token}}</td>
                             <td>{{$item->nama}}</td>
                             <td>
                               <a href="{{route('admin.dinas.edittes', [$item->id])}}" class="btn btn-sm btn-success"><i class="fas fa-feather-alt"></i> Edit</a>
+                              <a href="{{route('admin.dinas.get_token_tes', [$item->id])}}" class="btn btn-sm btn-success" onclick="return confirm('Anda yakin ingin memperbarui token ?')"><i class="fas fa-pen"></i> Token</a>
                               <a href="{{route('admin.dinas.hapustes', [$item->id])}}" class="btn btn-sm btn-danger" onclick="return confirm('Anda yakin ingin Menghapus ?')"><i class="fas fa-trash"></i> Hapus</a>
                             </td>
                           </tr>

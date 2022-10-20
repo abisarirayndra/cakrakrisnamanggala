@@ -173,4 +173,5 @@ class HasilDinasController extends Controller
         $pdf = PDF::loadview('admin.dinas.paket.cetaktnipolri', ['logo'=>$en_logo,'hasil'=>$hasil,'paket'=>$paket])->setPaper('a4','landscape');
         return $pdf->stream();
     }
+
 }

@@ -84,6 +84,7 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth','admin-role']], funct
     Route::get('/tambahpaket','PaketDinasController@tambah')->name('admin.dinas.tambahpaket');
     Route::post('/uppaket','PaketDinasController@up')->name('admin.dinas.uppaket');
     Route::get('/lihatpaket/{id}','PaketDinasController@lihat')->name('admin.dinas.lihatpaket');
+    Route::get('/get_token_tes/{id}','PaketDinasController@getTesToken')->name('admin.dinas.get_token_tes');
     Route::get('/editpaket/{id}','PaketDinasController@editPaket')->name('admin.dinas.editpaket');
     Route::post('/updatepaket/{id}','PaketDinasController@updatePaket')->name('admin.dinas.updatepaket');
     Route::get('/admin/hapuspaket/{id}','PaketDinasController@hapusPaket')->name('admin.dinas.hapuspaket');
@@ -179,6 +180,8 @@ Route::group(['prefix' => 'pelajar','middleware' => ['auth','pelajar-role']], fu
 
     Route::get('/absensi','JadwalAbsensiController@scanAbsensiPelajar')->name('pelajar.absensi');
     Route::get('/absensi/histori-pembelajaran','JadwalAbsensiController@historiPelajar')->name('pelajar.absensi.histori-pembelajaran');
+    Route::get('/masukkan_token','TesDinasController@masukToken')->name('pelajar.masukkan_token');
+    Route::post('/submit_token','TesDinasController@submitToken')->name('pelajar.submit_token');
 
 });
 

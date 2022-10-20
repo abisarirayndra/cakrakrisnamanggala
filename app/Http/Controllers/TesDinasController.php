@@ -85,4 +85,19 @@ class TesDinasController extends Controller
 
         return view('pelajar.dinas.tes.tes', compact('user','tes'));
     }
+
+    public function masukToken(){
+        $user = Auth::user()->nama;
+        return view('pelajar.dinas.tes.masuk_token',compact('user'));
+    }
+
+    public function submitToken(Request $request){
+        $tes = TesDinas::whereRaw("BINARY `token`= ?", [$request->token])->first();
+        if($tes){
+            return redirect()->route('pelajar.dinas.persiapan', $tes->id);
+        }else{
+            Alert::error('Token Tidak Ditemukan', 'Gagal Akses Soal');
+            return redirect()->back();
+        }
+    }
 }

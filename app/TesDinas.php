@@ -15,5 +15,6 @@ class TesDinas extends Model
         'selesai',
         'durasi',
         'pengajar_id',
+        'token',
     ];
 }

@@ -38,8 +38,10 @@
                     </button>
                     <div class="collapse navbar-collapse" id="navbarResponsive">
                         <ul class="navbar-nav mr-auto bg-warning">
-                            <li class="nav-item"><a class="nav-link text-white" href="{{ route('pelajar.dinas.beranda') }}">Beranda</a></li>
-                            <li class="nav-item"><a class="nav-link text-white" href="{{ route('pelajar.dinas.paket') }}">Paket Soal</a></li>
+                            <li class="nav-item"><a class="nav-link text-white" href="">E-learning Cakra Krisna Manggala</a></li>
+
+                            {{-- <li class="nav-item"><a class="nav-link text-white" href="{{ route('pelajar.dinas.beranda') }}">Beranda</a></li>
+                            <li class="nav-item"><a class="nav-link text-white" href="{{ route('pelajar.dinas.paket') }}">Paket Soal</a></li> --}}
                             {{-- <li class="nav-item"><a class="nav-link text-white" href="">Polri/TNI</a></li>
                             <li class="nav-item"><a class="nav-link text-white" href="">Kedinasan</a></li> --}}
                             {{-- <li class="nav-item"><a class="nav-link text-white" href="">Analisis</a></li>

@@ -22,7 +22,7 @@
                 <input type="text" hidden name="p" value="{{ $nilai_pokok->nilai_pokok }}">
                 <input type="text" hidden name="s" value="{{ $soal }}">
                 <input type="text" hidden name="akm" value="{{ $total_akumulasi }}">
-                <button type="submit" class="btn btn-sm btn-danger ml-3" onclick="return confirm('Anda yakin ingin selesai sekarang ?')"><i class="fas fa-cloud-upload-alt"></i> Kumpulkan</button>
+                <button type="submit" class="btn btn-danger ml-3" onclick="return confirm('Anda yakin ingin selesai sekarang ?')"><i class="fas fa-cloud-upload-alt"></i> Selesai dan Lihat Nilai</button>
             </form>
         </div>
         <div class="row p-3">

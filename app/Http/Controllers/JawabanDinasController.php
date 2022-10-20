@@ -39,7 +39,7 @@ class JawabanDinasController extends Controller
                 'jawaban' => $request->jawaban,
                 'nilai' => $nilai,
             ]);
-
+            Alert::success('Berhasil Menjawab', "Jawabanmu $request->jawaban");
             return redirect()->back();
         }
         else{
@@ -49,7 +49,7 @@ class JawabanDinasController extends Controller
                 'jawaban' => $request->jawaban,
                 'nilai' => $nilai,
             ]);
-
+            Alert::success('Berhasil Menjawab', "Jawabanmu $request->jawaban");
             return redirect()->back();
         }
     }
@@ -283,7 +283,7 @@ class JawabanDinasController extends Controller
                 'jawaban' => $request->jawaban,
                 'nilai' => $nilai,
             ]);
-
+            Alert::success('Berhasil Menjawab', "Jawabanmu $request->jawaban");
             return redirect()->back();
         }
         else{
@@ -293,7 +293,8 @@ class JawabanDinasController extends Controller
                 'jawaban' => $request->jawaban,
                 'nilai' => $nilai,
             ]);
-
+            
+            Alert::success('Berhasil Menjawab', "Jawabanmu $request->jawaban");
             return redirect()->back();
         }
     }
@@ -469,5 +470,8 @@ class JawabanDinasController extends Controller
 
         return view('pelajar.dinas.soal.nilai', compact('user','jawab_benar','soal','nilai','prosentase'));
     }
+
+    // TOEFL
+
 
 }

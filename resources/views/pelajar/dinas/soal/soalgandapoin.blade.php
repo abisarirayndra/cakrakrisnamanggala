@@ -35,8 +35,8 @@
                         </form>
                     @endforeach
                     <div class="float-right">
-                        <button class="btn btn-sm btn-warning ml-3" data-toggle="modal" data-target="#ceksoal"> Cek Jawaban</button>
-                        <a href="{{ route('pelajar.dinas.reviewgandapoin', [$id]) }}" class="btn btn-sm btn-danger ml-3" onclick="return confirm('Anda yakin ingin selesai sekarang ?')"><i class="fas fa-cloud-upload-alt"></i> Selesai</a>
+                        <button class="btn btn-warning ml-3" data-toggle="modal" data-target="#ceksoal"><i class="fas fa-search"></i> Cek</button>
+                        <a href="{{ route('pelajar.dinas.reviewgandapoin', [$id]) }}" class="btn btn-danger ml-3" onclick="return confirm('Anda yakin ingin meninggalkan halaman ini sekarang ?')"><i class="fas fa-cloud-upload-alt"></i> Review</a>
                     </div>
                 </div>
 
