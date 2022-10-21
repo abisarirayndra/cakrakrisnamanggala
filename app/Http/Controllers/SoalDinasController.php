@@ -304,7 +304,8 @@ class SoalDinasController extends Controller
     public function pelajarPersiapan($id){
         $user = Auth::user()->nama;
         $pelajar = Auth::user()->id;
-        $paket = TesDinas::find($id);
+        $paket = TesDinas::join('mapels','mapels.id','=','dn_tes.mapel_id')->where('dn_tes.id', $id)->first();
+        // return $paket;
         $essay = SoalDinasEssay::where('dn_tes_id', $id)->orderBy('id','asc')->first();
         $ganda = SoalDinasGanda::where('dn_tes_id', $id)->orderBy('id','asc')->first();
         $poin = SoalDinasGandaPoin::where('dn_tes_id', $id)->orderBy('id','asc')->first();
