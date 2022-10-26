@@ -174,4 +174,28 @@ class HasilDinasController extends Controller
         return $pdf->stream();
     }
 
+    public function liveSkorTniPolri($id){
+        $user = Auth::user()->nama;
+        $hasil = RekapTniPolri::join('users','users.id','=','dn_rekap_tnipolri.pelajar_id')
+                            ->join('kelas','kelas.id','=','users.kelas_id')
+                            ->select('users.nama','kelas.nama as kelas','dn_rekap_tnipolri.nilai_ipu','dn_rekap_tnipolri.ipu_wk','dn_rekap_tnipolri.nilai_mtk','dn_rekap_tnipolri.mtk',
+                            'dn_rekap_tnipolri.nilai_bin','dn_rekap_tnipolri.bin','dn_rekap_tnipolri.nilai_bing','dn_rekap_tnipolri.bing','dn_rekap_tnipolri.total_nilai')
+                            ->where('dn_rekap_tnipolri.dn_paket_id', $id)
+                            ->orderBy('dn_rekap_tnipolri.total_nilai','desc')
+                            ->get();
+
+        return view('admin.dinas.paket.live_tnipolri', compact('hasil','user'));
+    }
+
+    public function liveSkorKedinasan($id){
+        $user = Auth::user()->nama;
+        $hasil = RekapDinas::join('users','users.id','=','dn_rekapdinas.pelajar_id')
+                            ->join('kelas','kelas.id','=','users.kelas_id')
+                            ->select('users.nama','kelas.nama as kelas','dn_rekapdinas.twk','dn_rekapdinas.tiu','dn_rekapdinas.tkp','dn_rekapdinas.total_nilai')
+                            ->orderBy('dn_rekapdinas.total_nilai','desc')
+                            ->where('dn_paket_id', $id)->get();
+
+        return view('admin.dinas.paket.live_kedinasan', compact('hasil','user'));
+    }
+
 }

@@ -10,6 +10,9 @@ class RekapDinas extends Model
     protected $fillable = [
         'dn_paket_id',
         'pelajar_id',
+        'nilai_twk',
+        'nilai_tiu',
+        'nilai_tkp',
         'twk',
         'tiu',
         'tkp',

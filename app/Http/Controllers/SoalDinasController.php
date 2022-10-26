@@ -352,6 +352,12 @@ class SoalDinasController extends Controller
                 RekapDinas::create([
                     'pelajar_id' => $pelajar,
                     'dn_paket_id' => $kategori->id,
+                    'nilai_twk' => 0,
+                    'nilai_tiu' => 0,
+                    'nilai_tkp' => 0,
+                    'twk' => 0,
+                    'tiu' => 0,
+                    'tkp' => 0,
                     'total_nilai' => 0,
                 ]);
             }
@@ -363,6 +369,14 @@ class SoalDinasController extends Controller
                 RekapTniPolri::create([
                     'pelajar_id' => $pelajar,
                     'dn_paket_id' => $kategori->id,
+                    'bin' => 0,
+                    'bing' => 0,
+                    'mtk' => 0,
+                    'ipu_wk' => 0,
+                    'nilai_bin' => 0,
+                    'nilai_bing' => 0,
+                    'nilai_mtk' => 0,
+                    'nilai_ipu' => 0,
                     'total_nilai' => 0,
                 ]);
             }

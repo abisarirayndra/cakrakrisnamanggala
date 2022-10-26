@@ -14,6 +14,10 @@ class RekapTniPolri extends Model
         'bing',
         'mtk',
         'ipu_wk',
-        'total_nilai'
+        'nilai_bin',
+        'nilai_bing',
+        'nilai_mtk',
+        'nilai_ipu',
+        'total_nilai',
     ];
 }

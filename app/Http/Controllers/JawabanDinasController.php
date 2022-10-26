@@ -16,6 +16,7 @@ use App\RekapDinas;
 use App\RekapTniPolri;
 use App\Kelas;
 use App\Mapel;
+use App\TotalAkumulasiTniPolri;
 
 class JawabanDinasController extends Controller
 {
@@ -34,11 +35,173 @@ class JawabanDinasController extends Controller
                                             ->where('dn_soalganda_id', $id)
                                             ->where('status', null)
                                             ->first();
+        $jumlah_soal = SoalDinasGanda::where('dn_tes_id',$soal->dn_tes_id)->count();
+        // $total = $jumlah_soal + 2;
+        // return $jumlah_soal;
         if(isset($ada_jawaban)){
             $ada_jawaban->update([
                 'jawaban' => $request->jawaban,
                 'nilai' => $nilai,
             ]);
+
+            $kategori = SoalDinasGanda::join('dn_tes','dn_tes.id','=','dn_soalganda.dn_tes_id')
+                                ->join('dn_pakets','dn_pakets.id','=','dn_tes.dn_paket_id')
+                                ->select('dn_pakets.id','dn_pakets.kategori','dn_tes.mapel_id','dn_tes.nilai_pokok','dn_tes.id as tes_id')
+                                ->where('dn_soalganda.id', $id)
+                                ->first();
+
+            $nilai_pokok = $kategori->nilai_pokok;
+
+            $penilaian = JawabanGandaDinas::select(DB::raw('SUM(nilai) as total_nilai'))
+                                            ->join('dn_soalganda','dn_soalganda.id','=','dn_jawabanganda.dn_soalganda_id')
+                                            ->where('dn_jawabanganda.pelajar_id', $pelajar)
+                                            ->where('dn_soalganda.dn_tes_id',$kategori->tes_id)
+                                            ->where('status', null)
+                                            ->groupBy('pelajar_id')
+                                            ->get();
+            $total_nilai = [];
+            foreach ($penilaian as $item) {
+                $total_nilai = (int)$item->total_nilai;
+            }
+
+            $nilai = ($total_nilai/$jumlah_soal)*100;
+            $akumulasi = ($nilai_pokok/100)*$nilai;
+
+
+            if($kategori->kategori == "Kedinasan"){
+                $sudah_ada = RekapDinas::where('dn_paket_id', $kategori->id)->where('pelajar_id', $pelajar)->first();
+                if(isset($sudah_ada)){
+                    $mapel = $kategori->mapel_id;
+                    switch ($mapel) {
+                    case 7 :
+                        // if($sudah_ada->twk == null){
+                            // $total_akumulasi = $akm + $akumulasi;
+                            $sudah_ada->update([
+                                'nilai_twk' => $nilai,
+                                'twk' => $akumulasi,
+                            ]);
+                            $twk = $sudah_ada->twk;
+                            $tiu = $sudah_ada->tiu;
+                            $tkp = $sudah_ada->tkp;
+                            $total_akumulasi = $twk + $tiu + $tkp;
+                            $sudah_ada->update([
+                                'total_nilai' => $total_akumulasi,
+                            ]);
+                        // }
+                        break;
+                    case 8 :
+                        // if($sudah_ada->tiu == null){
+                        //     $total_akumulasi = $akm + $akumulasi;
+                            $sudah_ada->update([
+                                'nilai_tiu' => $nilai,
+                                'tiu' => $akumulasi,
+                            ]);
+                            $twk = $sudah_ada->twk;
+                            $tiu = $sudah_ada->tiu;
+                            $tkp = $sudah_ada->tkp;
+                            $total_akumulasi = $twk + $tiu + $tkp;
+                            $sudah_ada->update([
+                                'total_nilai' => $total_akumulasi,
+                            ]);
+                        // }
+                        break;
+                    case 9 :
+                        // if($sudah_ada->tkp == null){
+                        //     $total_akumulasi = $akm + $akumulasi;
+                            $sudah_ada->update([
+                                'nilai_tkp' => $nilai,
+                                'tkp' => $akumulasi,
+                            ]);
+                            $twk = $sudah_ada->twk;
+                            $tiu = $sudah_ada->tiu;
+                            $tkp = $sudah_ada->tkp;
+                            $total_akumulasi = $twk + $tiu + $tkp;
+                            $sudah_ada->update([
+                                'total_nilai' => $total_akumulasi,
+                            ]);
+                        // }
+                        break;
+                    }
+                }
+            }
+            elseif($kategori->kategori == "TNI/Polri"){
+                $sudah_ada = RekapTniPolri::where('dn_paket_id', $kategori->id)->where('pelajar_id', $pelajar)->first();
+
+                if(isset($sudah_ada)){
+                    $mapel = $kategori->mapel_id;
+                    switch ($mapel) {
+                        case 1:
+                            // if($sudah_ada->mtk == null){
+                                // $total_akumulasi = $akm + $akumulasi;
+                                $sudah_ada->update([
+                                    'nilai_mtk' => $nilai,
+                                    'mtk' => $akumulasi,
+                                ]);
+                                $mtk = $sudah_ada->mtk;
+                                $bin = $sudah_ada->bin;
+                                $bing = $sudah_ada->bing;
+                                $ipu_wk = $sudah_ada->ipu_wk;
+                                $total_akumulasi = $mtk + $bin + $bing + $ipu_wk;
+                                $sudah_ada->update([
+                                    'total_nilai' => $total_akumulasi,
+                                ]);
+                            // }
+                            break;
+                        case 2:
+                            // if($sudah_ada->ipu_wk == null){
+                                // $total_akumulasi = $akm + $akumulasi;
+                                $sudah_ada->update([
+                                    'nilai_ipu' => $nilai,
+                                    'ipu_wk' => $akumulasi,
+                                ]);
+                                $mtk = $sudah_ada->mtk;
+                                $bin = $sudah_ada->bin;
+                                $bing = $sudah_ada->bing;
+                                $ipu_wk = $sudah_ada->ipu_wk;
+                                $total_akumulasi = $mtk + $bin + $bing + $ipu_wk;
+                                $sudah_ada->update([
+                                    'total_nilai' => $total_akumulasi,
+                                ]);
+                            // }
+                            break;
+                        case 3:
+                            // if($sudah_ada->bing == null){
+                                // $total_akumulasi = $akm + $akumulasi;
+                                $sudah_ada->update([
+                                    'nilai_bing' => $total_nilai,
+                                    'bing' => $akumulasi,
+                                ]);
+                                $mtk = $sudah_ada->mtk;
+                                $bin = $sudah_ada->bin;
+                                $bing = $sudah_ada->bing;
+                                $ipu_wk = $sudah_ada->ipu_wk;
+                                $total_akumulasi = $mtk + $bin + $bing + $ipu_wk;
+                                $sudah_ada->update([
+                                    'total_nilai' => $total_akumulasi,
+                                ]);
+                            // }
+                            break;
+                        case 4:
+                            // if($sudah_ada->bin == null){
+                                // $total_akumulasi = $akm + $akumulasi;
+                                $sudah_ada->update([
+                                    'nilai_bin' => $total_nilai,
+                                    'bin' => $akumulasi,
+                                ]);
+                                $mtk = $sudah_ada->mtk;
+                                $bin = $sudah_ada->bin;
+                                $bing = $sudah_ada->bing;
+                                $ipu_wk = $sudah_ada->ipu_wk;
+                                $total_akumulasi = $mtk + $bin + $bing + $ipu_wk;
+                                $sudah_ada->update([
+                                    'total_nilai' => $total_akumulasi,
+                                ]);
+                            // }
+                            break;
+                    }
+                }
+            }
+
             Alert::success('Berhasil Menjawab', "Jawabanmu $request->jawaban");
             return redirect()->back();
         }
@@ -49,6 +212,165 @@ class JawabanDinasController extends Controller
                 'jawaban' => $request->jawaban,
                 'nilai' => $nilai,
             ]);
+
+            $kategori = SoalDinasGanda::join('dn_tes','dn_tes.id','=','dn_soalganda.dn_tes_id')
+                                ->join('dn_pakets','dn_pakets.id','=','dn_tes.dn_paket_id')
+                                ->select('dn_pakets.id','dn_pakets.kategori','dn_tes.mapel_id','dn_tes.nilai_pokok','dn_tes.id as tes_id')
+                                ->where('dn_soalganda.id', $id)
+                                ->first();
+
+            $nilai_pokok = $kategori->nilai_pokok;
+
+            $penilaian = JawabanGandaDinas::select(DB::raw('SUM(nilai) as total_nilai'))
+                                            ->join('dn_soalganda','dn_soalganda.id','=','dn_jawabanganda.dn_soalganda_id')
+                                            ->where('dn_jawabanganda.pelajar_id', $pelajar)
+                                            ->where('dn_soalganda.dn_tes_id',$kategori->tes_id)
+                                            ->where('status', null)
+                                            ->groupBy('pelajar_id')
+                                            ->get();
+            $total_nilai = [];
+            foreach ($penilaian as $item) {
+                $total_nilai = (int)$item->total_nilai;
+            }
+
+            $nilai = ($total_nilai/$jumlah_soal)*100;
+            $akumulasi = ($nilai_pokok/100)*$nilai;
+
+
+            if($kategori->kategori == "Kedinasan"){
+                $sudah_ada = RekapDinas::where('dn_paket_id', $kategori->id)->where('pelajar_id', $pelajar)->first();
+                if(isset($sudah_ada)){
+                    $mapel = $kategori->mapel_id;
+                    switch ($mapel) {
+                    case 7 :
+                        // if($sudah_ada->twk == null){
+                            // $total_akumulasi = $akm + $akumulasi;
+                            $sudah_ada->update([
+                                'nilai_twk' => $nilai,
+                                'twk' => $akumulasi,
+                            ]);
+                            $twk = $sudah_ada->twk;
+                            $tiu = $sudah_ada->tiu;
+                            $tkp = $sudah_ada->tkp;
+                            $total_akumulasi = $twk + $tiu + $tkp;
+                            $sudah_ada->update([
+                                'total_nilai' => $total_akumulasi,
+                            ]);
+                        // }
+                        break;
+                    case 8 :
+                        // if($sudah_ada->tiu == null){
+                        //     $total_akumulasi = $akm + $akumulasi;
+                            $sudah_ada->update([
+                                'nilai_tiu' => $nilai,
+                                'tiu' => $akumulasi,
+                            ]);
+                            $twk = $sudah_ada->twk;
+                            $tiu = $sudah_ada->tiu;
+                            $tkp = $sudah_ada->tkp;
+                            $total_akumulasi = $twk + $tiu + $tkp;
+                            $sudah_ada->update([
+                                'total_nilai' => $total_akumulasi,
+                            ]);
+                        // }
+                        break;
+                    case 9 :
+                        // if($sudah_ada->tkp == null){
+                        //     $total_akumulasi = $akm + $akumulasi;
+                            $sudah_ada->update([
+                                'nilai_tkp' => $nilai,
+                                'tkp' => $akumulasi,
+                            ]);
+                            $twk = $sudah_ada->twk;
+                            $tiu = $sudah_ada->tiu;
+                            $tkp = $sudah_ada->tkp;
+                            $total_akumulasi = $twk + $tiu + $tkp;
+                            $sudah_ada->update([
+                                'total_nilai' => $total_akumulasi,
+                            ]);
+                        // }
+                        break;
+                    }
+                }
+            }
+            elseif($kategori->kategori == "TNI/Polri"){
+                $sudah_ada = RekapTniPolri::where('dn_paket_id', $kategori->id)->where('pelajar_id', $pelajar)->first();
+
+                if(isset($sudah_ada)){
+                    $mapel = $kategori->mapel_id;
+                    switch ($mapel) {
+                        case 1:
+                            // if($sudah_ada->mtk == null){
+                                // $total_akumulasi = $akm + $akumulasi;
+                                $sudah_ada->update([
+                                    'nilai_mtk' => $nilai,
+                                    'mtk' => $akumulasi,
+                                ]);
+                                $mtk = $sudah_ada->mtk;
+                                $bin = $sudah_ada->bin;
+                                $bing = $sudah_ada->bing;
+                                $ipu_wk = $sudah_ada->ipu_wk;
+                                $total_akumulasi = $mtk + $bin + $bing + $ipu_wk;
+                                $sudah_ada->update([
+                                    'total_nilai' => $total_akumulasi,
+                                ]);
+                            // }
+                            break;
+                        case 2:
+                            // if($sudah_ada->ipu_wk == null){
+                                // $total_akumulasi = $akm + $akumulasi;
+                                $sudah_ada->update([
+                                    'nilai_ipu' => $nilai,
+                                    'ipu_wk' => $akumulasi,
+                                ]);
+                                $mtk = $sudah_ada->mtk;
+                                $bin = $sudah_ada->bin;
+                                $bing = $sudah_ada->bing;
+                                $ipu_wk = $sudah_ada->ipu_wk;
+                                $total_akumulasi = $mtk + $bin + $bing + $ipu_wk;
+                                $sudah_ada->update([
+                                    'total_nilai' => $total_akumulasi,
+                                ]);
+                            // }
+                            break;
+                        case 3:
+                            // if($sudah_ada->bing == null){
+                                // $total_akumulasi = $akm + $akumulasi;
+                                $sudah_ada->update([
+                                    'nilai_bing' => $total_nilai,
+                                    'bing' => $akumulasi,
+                                ]);
+                                $mtk = $sudah_ada->mtk;
+                                $bin = $sudah_ada->bin;
+                                $bing = $sudah_ada->bing;
+                                $ipu_wk = $sudah_ada->ipu_wk;
+                                $total_akumulasi = $mtk + $bin + $bing + $ipu_wk;
+                                $sudah_ada->update([
+                                    'total_nilai' => $total_akumulasi,
+                                ]);
+                            // }
+                            break;
+                        case 4:
+                            // if($sudah_ada->bin == null){
+                                // $total_akumulasi = $akm + $akumulasi;
+                                $sudah_ada->update([
+                                    'nilai_bin' => $total_nilai,
+                                    'bin' => $akumulasi,
+                                ]);
+                                $mtk = $sudah_ada->mtk;
+                                $bin = $sudah_ada->bin;
+                                $bing = $sudah_ada->bing;
+                                $ipu_wk = $sudah_ada->ipu_wk;
+                                $total_akumulasi = $mtk + $bin + $bing + $ipu_wk;
+                                $sudah_ada->update([
+                                    'total_nilai' => $total_akumulasi,
+                                ]);
+                            // }
+                            break;
+                    }
+                }
+            }
+
             Alert::success('Berhasil Menjawab', "Jawabanmu $request->jawaban");
             return redirect()->back();
         }
@@ -283,6 +605,165 @@ class JawabanDinasController extends Controller
                 'jawaban' => $request->jawaban,
                 'nilai' => $nilai,
             ]);
+
+            $kategori = SoalDinasGandaPoin::join('dn_tes','dn_tes.id','=','dn_soalgandapoin.dn_tes_id')
+                                ->join('dn_pakets','dn_pakets.id','=','dn_tes.dn_paket_id')
+                                ->select('dn_pakets.id','dn_pakets.kategori','dn_tes.mapel_id','dn_tes.nilai_pokok','dn_tes.id as tes_id')
+                                ->where('dn_soalgandapoin.id', $id)
+                                ->first();
+
+            $nilai_pokok = $kategori->nilai_pokok;
+
+            $penilaian = JawabanGandaPoinDinas::select(DB::raw('SUM(nilai) as total_nilai'))
+                                            ->join('dn_soalgandapoin','dn_soalgandapoin.id','=','dn_jawabangandapoin.dn_soalgandapoin_id')
+                                            ->where('dn_jawabangandapoin.pelajar_id', $pelajar)
+                                            ->where('dn_soalgandapoin.dn_tes_id',$kategori->tes_id)
+                                            ->where('status', null)
+                                            ->groupBy('pelajar_id')
+                                            ->get();
+            $total_nilai = [];
+            foreach ($penilaian as $item) {
+                $total_nilai = (int)$item->total_nilai;
+            }
+
+            $nilai = $total_nilai;
+            $akumulasi = ($nilai_pokok/100)*$nilai;
+
+
+            if($kategori->kategori == "Kedinasan"){
+                $sudah_ada = RekapDinas::where('dn_paket_id', $kategori->id)->where('pelajar_id', $pelajar)->first();
+                if(isset($sudah_ada)){
+                    $mapel = $kategori->mapel_id;
+                    switch ($mapel) {
+                    case 7 :
+                        // if($sudah_ada->twk == null){
+                            // $total_akumulasi = $akm + $akumulasi;
+                            $sudah_ada->update([
+                                'nilai_twk' => $nilai,
+                                'twk' => $akumulasi,
+                            ]);
+                            $twk = $sudah_ada->twk;
+                            $tiu = $sudah_ada->tiu;
+                            $tkp = $sudah_ada->tkp;
+                            $total_akumulasi = $twk + $tiu + $tkp;
+                            $sudah_ada->update([
+                                'total_nilai' => $total_akumulasi,
+                            ]);
+                        // }
+                        break;
+                    case 8 :
+                        // if($sudah_ada->tiu == null){
+                        //     $total_akumulasi = $akm + $akumulasi;
+                            $sudah_ada->update([
+                                'nilai_tiu' => $nilai,
+                                'tiu' => $akumulasi,
+                            ]);
+                            $twk = $sudah_ada->twk;
+                            $tiu = $sudah_ada->tiu;
+                            $tkp = $sudah_ada->tkp;
+                            $total_akumulasi = $twk + $tiu + $tkp;
+                            $sudah_ada->update([
+                                'total_nilai' => $total_akumulasi,
+                            ]);
+                        // }
+                        break;
+                    case 9 :
+                        // if($sudah_ada->tkp == null){
+                        //     $total_akumulasi = $akm + $akumulasi;
+                            $sudah_ada->update([
+                                'nilai_tkp' => $nilai,
+                                'tkp' => $akumulasi,
+                            ]);
+                            $twk = $sudah_ada->twk;
+                            $tiu = $sudah_ada->tiu;
+                            $tkp = $sudah_ada->tkp;
+                            $total_akumulasi = $twk + $tiu + $tkp;
+                            $sudah_ada->update([
+                                'total_nilai' => $total_akumulasi,
+                            ]);
+                        // }
+                        break;
+                    }
+                }
+            }
+            elseif($kategori->kategori == "TNI/Polri"){
+                $sudah_ada = RekapTniPolri::where('dn_paket_id', $kategori->id)->where('pelajar_id', $pelajar)->first();
+
+                if(isset($sudah_ada)){
+                    $mapel = $kategori->mapel_id;
+                    switch ($mapel) {
+                        case 1:
+                            // if($sudah_ada->mtk == null){
+                                // $total_akumulasi = $akm + $akumulasi;
+                                $sudah_ada->update([
+                                    'nilai_mtk' => $nilai,
+                                    'mtk' => $akumulasi,
+                                ]);
+                                $mtk = $sudah_ada->mtk;
+                                $bin = $sudah_ada->bin;
+                                $bing = $sudah_ada->bing;
+                                $ipu_wk = $sudah_ada->ipu_wk;
+                                $total_akumulasi = $mtk + $bin + $bing + $ipu_wk;
+                                $sudah_ada->update([
+                                    'total_nilai' => $total_akumulasi,
+                                ]);
+                            // }
+                            break;
+                        case 2:
+                            // if($sudah_ada->ipu_wk == null){
+                                // $total_akumulasi = $akm + $akumulasi;
+                                $sudah_ada->update([
+                                    'nilai_ipu' => $nilai,
+                                    'ipu_wk' => $akumulasi,
+                                ]);
+                                $mtk = $sudah_ada->mtk;
+                                $bin = $sudah_ada->bin;
+                                $bing = $sudah_ada->bing;
+                                $ipu_wk = $sudah_ada->ipu_wk;
+                                $total_akumulasi = $mtk + $bin + $bing + $ipu_wk;
+                                $sudah_ada->update([
+                                    'total_nilai' => $total_akumulasi,
+                                ]);
+                            // }
+                            break;
+                        case 3:
+                            // if($sudah_ada->bing == null){
+                                // $total_akumulasi = $akm + $akumulasi;
+                                $sudah_ada->update([
+                                    'nilai_bing' => $total_nilai,
+                                    'bing' => $akumulasi,
+                                ]);
+                                $mtk = $sudah_ada->mtk;
+                                $bin = $sudah_ada->bin;
+                                $bing = $sudah_ada->bing;
+                                $ipu_wk = $sudah_ada->ipu_wk;
+                                $total_akumulasi = $mtk + $bin + $bing + $ipu_wk;
+                                $sudah_ada->update([
+                                    'total_nilai' => $total_akumulasi,
+                                ]);
+                            // }
+                            break;
+                        case 4:
+                            // if($sudah_ada->bin == null){
+                                // $total_akumulasi = $akm + $akumulasi;
+                                $sudah_ada->update([
+                                    'nilai_bin' => $total_nilai,
+                                    'bin' => $akumulasi,
+                                ]);
+                                $mtk = $sudah_ada->mtk;
+                                $bin = $sudah_ada->bin;
+                                $bing = $sudah_ada->bing;
+                                $ipu_wk = $sudah_ada->ipu_wk;
+                                $total_akumulasi = $mtk + $bin + $bing + $ipu_wk;
+                                $sudah_ada->update([
+                                    'total_nilai' => $total_akumulasi,
+                                ]);
+                            // }
+                            break;
+                    }
+                }
+            }
+
             Alert::success('Berhasil Menjawab', "Jawabanmu $request->jawaban");
             return redirect()->back();
         }
@@ -293,7 +774,165 @@ class JawabanDinasController extends Controller
                 'jawaban' => $request->jawaban,
                 'nilai' => $nilai,
             ]);
-            
+
+            $kategori = SoalDinasGandaPoin::join('dn_tes','dn_tes.id','=','dn_soalgandapoin.dn_tes_id')
+                                ->join('dn_pakets','dn_pakets.id','=','dn_tes.dn_paket_id')
+                                ->select('dn_pakets.id','dn_pakets.kategori','dn_tes.mapel_id','dn_tes.nilai_pokok','dn_tes.id as tes_id')
+                                ->where('dn_soalgandapoin.id', $id)
+                                ->first();
+
+            $nilai_pokok = $kategori->nilai_pokok;
+
+            $penilaian = JawabanGandaPoinDinas::select(DB::raw('SUM(nilai) as total_nilai'))
+                                            ->join('dn_soalgandapoin','dn_soalgandapoin.id','=','dn_jawabangandapoin.dn_soalgandapoin_id')
+                                            ->where('dn_jawabangandapoin.pelajar_id', $pelajar)
+                                            ->where('dn_soalgandapoin.dn_tes_id',$kategori->tes_id)
+                                            ->where('status', null)
+                                            ->groupBy('pelajar_id')
+                                            ->get();
+            $total_nilai = [];
+            foreach ($penilaian as $item) {
+                $total_nilai = (int)$item->total_nilai;
+            }
+
+            $nilai = $total_nilai;
+            $akumulasi = ($nilai_pokok/100)*$nilai;
+
+
+            if($kategori->kategori == "Kedinasan"){
+                $sudah_ada = RekapDinas::where('dn_paket_id', $kategori->id)->where('pelajar_id', $pelajar)->first();
+                if(isset($sudah_ada)){
+                    $mapel = $kategori->mapel_id;
+                    switch ($mapel) {
+                    case 7 :
+                        // if($sudah_ada->twk == null){
+                            // $total_akumulasi = $akm + $akumulasi;
+                            $sudah_ada->update([
+                                'nilai_twk' => $nilai,
+                                'twk' => $akumulasi,
+                            ]);
+                            $twk = $sudah_ada->twk;
+                            $tiu = $sudah_ada->tiu;
+                            $tkp = $sudah_ada->tkp;
+                            $total_akumulasi = $twk + $tiu + $tkp;
+                            $sudah_ada->update([
+                                'total_nilai' => $total_akumulasi,
+                            ]);
+                        // }
+                        break;
+                    case 8 :
+                        // if($sudah_ada->tiu == null){
+                        //     $total_akumulasi = $akm + $akumulasi;
+                            $sudah_ada->update([
+                                'nilai_tiu' => $nilai,
+                                'tiu' => $akumulasi,
+                            ]);
+                            $twk = $sudah_ada->twk;
+                            $tiu = $sudah_ada->tiu;
+                            $tkp = $sudah_ada->tkp;
+                            $total_akumulasi = $twk + $tiu + $tkp;
+                            $sudah_ada->update([
+                                'total_nilai' => $total_akumulasi,
+                            ]);
+                        // }
+                        break;
+                    case 9 :
+                        // if($sudah_ada->tkp == null){
+                        //     $total_akumulasi = $akm + $akumulasi;
+                            $sudah_ada->update([
+                                'nilai_tkp' => $nilai,
+                                'tkp' => $akumulasi,
+                            ]);
+                            $twk = $sudah_ada->twk;
+                            $tiu = $sudah_ada->tiu;
+                            $tkp = $sudah_ada->tkp;
+                            $total_akumulasi = $twk + $tiu + $tkp;
+                            $sudah_ada->update([
+                                'total_nilai' => $total_akumulasi,
+                            ]);
+                        // }
+                        break;
+                    }
+                }
+            }
+            elseif($kategori->kategori == "TNI/Polri"){
+                $sudah_ada = RekapTniPolri::where('dn_paket_id', $kategori->id)->where('pelajar_id', $pelajar)->first();
+
+                if(isset($sudah_ada)){
+                    $mapel = $kategori->mapel_id;
+                    switch ($mapel) {
+                        case 1:
+                            // if($sudah_ada->mtk == null){
+                                // $total_akumulasi = $akm + $akumulasi;
+                                $sudah_ada->update([
+                                    'nilai_mtk' => $nilai,
+                                    'mtk' => $akumulasi,
+                                ]);
+                                $mtk = $sudah_ada->mtk;
+                                $bin = $sudah_ada->bin;
+                                $bing = $sudah_ada->bing;
+                                $ipu_wk = $sudah_ada->ipu_wk;
+                                $total_akumulasi = $mtk + $bin + $bing + $ipu_wk;
+                                $sudah_ada->update([
+                                    'total_nilai' => $total_akumulasi,
+                                ]);
+                            // }
+                            break;
+                        case 2:
+                            // if($sudah_ada->ipu_wk == null){
+                                // $total_akumulasi = $akm + $akumulasi;
+                                $sudah_ada->update([
+                                    'nilai_ipu' => $nilai,
+                                    'ipu_wk' => $akumulasi,
+                                ]);
+                                $mtk = $sudah_ada->mtk;
+                                $bin = $sudah_ada->bin;
+                                $bing = $sudah_ada->bing;
+                                $ipu_wk = $sudah_ada->ipu_wk;
+                                $total_akumulasi = $mtk + $bin + $bing + $ipu_wk;
+                                $sudah_ada->update([
+                                    'total_nilai' => $total_akumulasi,
+                                ]);
+                            // }
+                            break;
+                        case 3:
+                            // if($sudah_ada->bing == null){
+                                // $total_akumulasi = $akm + $akumulasi;
+                                $sudah_ada->update([
+                                    'nilai_bing' => $total_nilai,
+                                    'bing' => $akumulasi,
+                                ]);
+                                $mtk = $sudah_ada->mtk;
+                                $bin = $sudah_ada->bin;
+                                $bing = $sudah_ada->bing;
+                                $ipu_wk = $sudah_ada->ipu_wk;
+                                $total_akumulasi = $mtk + $bin + $bing + $ipu_wk;
+                                $sudah_ada->update([
+                                    'total_nilai' => $total_akumulasi,
+                                ]);
+                            // }
+                            break;
+                        case 4:
+                            // if($sudah_ada->bin == null){
+                                // $total_akumulasi = $akm + $akumulasi;
+                                $sudah_ada->update([
+                                    'nilai_bin' => $total_nilai,
+                                    'bin' => $akumulasi,
+                                ]);
+                                $mtk = $sudah_ada->mtk;
+                                $bin = $sudah_ada->bin;
+                                $bing = $sudah_ada->bing;
+                                $ipu_wk = $sudah_ada->ipu_wk;
+                                $total_akumulasi = $mtk + $bin + $bing + $ipu_wk;
+                                $sudah_ada->update([
+                                    'total_nilai' => $total_akumulasi,
+                                ]);
+                            // }
+                            break;
+                    }
+                }
+            }
+
             Alert::success('Berhasil Menjawab', "Jawabanmu $request->jawaban");
             return redirect()->back();
         }
