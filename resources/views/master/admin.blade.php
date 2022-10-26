@@ -39,7 +39,7 @@
                     <div class="collapse navbar-collapse" id="navbarResponsive">
                         <ul class="navbar-nav mr-auto bg-warning">
                             <li class="nav-item"><a class="nav-link text-white" href="{{ route('admin.dinas.paket') }}">Beranda</a></li>
-                            <li class="nav-item"><a class="nav-link text-white" href="{{ route('admin.toefl.index') }}">Toefl</a></li>
+                            {{-- <li class="nav-item"><a class="nav-link text-white" href="{{ route('admin.monitor_tes') }}">Monitor</a></li> --}}
                             {{-- <li class="nav-item"><a class="nav-link text-white" href="">Kedinasan</a></li> --}}
                             {{-- <li class="nav-item"><a class="nav-link text-white" href="">Analisis</a></li>
                             <div class="topbar-divider d-none d-sm-block"></div> --}}
