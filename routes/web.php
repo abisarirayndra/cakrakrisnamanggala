@@ -96,9 +96,15 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth','admin-role']], funct
     Route::get('/edittes/{id}','TesDinasController@editTes')->name('admin.dinas.edittes');
     Route::post('/updatetes/{id}','TesDinasController@updateTes')->name('admin.dinas.updatetes');
     Route::get('/hasildinas/{id}','HasilDinasController@hasilKedinasanAdmin')->name('admin.dinas.hasildinas');
+    Route::get('/live_hasildinas/{id}','HasilDinasController@liveSkorKedinasan')->name('admin.dinas.live_hasildinas');
     Route::get('/hasiltnipolri/{id}','HasilDinasController@hasilTniPolriAdmin')->name('admin.dinas.hasiltnipolri');
+    Route::get('/live_hasiltnipolri/{id}','HasilDinasController@liveSkorTniPolri')->name('admin.dinas.live_hasiltnipolri');
     Route::get('/cetakhasildinas/{id}','HasilDinasController@cetakKedinasanAdmin')->name('admin.dinas.cetakhasildinas');
     Route::get('/cetaktnipolri/{id}','HasilDinasController@cetakTniPolriAdmin')->name('admin.dinas.cetakhasiltnipolri');
+
+    // Route::get('/monitor_tes','TesDinasController@monitor')->name('admin.monitor_tes');
+    // Route::get('/monitor_tes/lihat/{id}','TesDinasController@monitorTes')->name('admin.monitor_tes.lihat');
+    // Route::post('/monitor_tes/diskualifikasi/{id}','TesDinasController@diskualifikasi')->name('admin.monitor_tes.diskualifikasi');
 
     //Toefl
     Route::get('/paket-toefl','PaketToeflController@index')->name('admin.toefl.index');
