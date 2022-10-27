@@ -569,8 +569,33 @@ class JawabanDinasController extends Controller
         $nilai = Penilaian::where('pelajar_id', $pelajar->id)->where('dn_tes_id', $id)->where('status', null)->first();
         $prosentase = TesDinas::find($id);
         $mapel = Mapel::find($prosentase->mapel_id);
+        $tes_selanjutnya = " ";
 
-        return view('pelajar.dinas.soal.nilai', compact('user','pelajar','kelas','jawab_benar','soal','nilai','prosentase','jenis','mapel'));
+        $kategori = TesDinas::select('dn_pakets.kategori','dn_pakets.id')
+                            ->join('dn_pakets','dn_pakets.id','=','dn_tes.dn_paket_id')
+                            ->where('dn_tes.id', $id)
+                            ->first();
+        if($mapel->id == 7){
+            $tes_selanjutnya = TesDinas::select('dn_tes.id','mapels.mapel')
+                                        ->join('dn_pakets','dn_pakets.id','=','dn_tes.dn_paket_id')
+                                        ->join('mapels','mapels.id','=','dn_tes.mapel_id')
+                                        ->where('dn_tes.dn_paket_id', $kategori->id)
+                                        ->where('mapel_id', 8)
+                                        ->first();
+        }elseif($mapel->id == 8){
+            $tes_selanjutnya = TesDinas::select('dn_tes.id','mapels.mapel')
+                                        ->join('dn_pakets','dn_pakets.id','=','dn_tes.dn_paket_id')
+                                        ->join('mapels','mapels.id','=','dn_tes.mapel_id')
+                                        ->where('dn_tes.dn_paket_id', $kategori->id)
+                                        ->where('mapel_id', 9)
+                                        ->first();
+        }elseif($mapel->id == 9){
+            $tes_selanjutnya = "Selesai";
+        }
+
+
+        return view('pelajar.dinas.soal.nilai', compact('user','pelajar','kelas','jawab_benar','soal',
+                                                    'nilai','prosentase','jenis','mapel','kategori','tes_selanjutnya'));
     }
 
     public function upJawabanGandaPoin($id, Request $request){
