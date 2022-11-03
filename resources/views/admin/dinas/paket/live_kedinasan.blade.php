@@ -89,9 +89,9 @@
                         <td>{{$no++}}</td>
                         <td>{{$item->nama}}</td>
                         <td>{{$item->kelas }}</td>
-                        <td>{{$item->twk}}</td>
-                        <td>{{$item->tiu}}</td>
-                        <td>{{$item->tkp}}</td>
+                        <td>{{$item->nilai_twk}}</td>
+                        <td>{{$item->nilai_tiu}}</td>
+                        <td>{{$item->nilai_tkp}}</td>
                         <td>{{$item->total_nilai}}</td>
                         </tr>
                           @endforeach

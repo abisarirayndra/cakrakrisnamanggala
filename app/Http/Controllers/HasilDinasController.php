@@ -191,9 +191,10 @@ class HasilDinasController extends Controller
         $user = Auth::user()->nama;
         $hasil = RekapDinas::join('users','users.id','=','dn_rekapdinas.pelajar_id')
                             ->join('kelas','kelas.id','=','users.kelas_id')
-                            ->select('users.nama','kelas.nama as kelas','dn_rekapdinas.twk','dn_rekapdinas.tiu','dn_rekapdinas.tkp','dn_rekapdinas.total_nilai')
+                            ->select('users.nama','kelas.nama as kelas','dn_rekapdinas.nilai_twk','dn_rekapdinas.nilai_tiu','dn_rekapdinas.nilai_tkp','dn_rekapdinas.total_nilai')
                             ->orderBy('dn_rekapdinas.total_nilai','desc')
-                            ->where('dn_paket_id', $id)->get();
+                            ->where('dn_paket_id', $id)
+                            ->get();
 
         return view('admin.dinas.paket.live_kedinasan', compact('hasil','user'));
     }

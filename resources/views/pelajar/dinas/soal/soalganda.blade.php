@@ -36,7 +36,7 @@
                     @endforeach
                     <div class="float-right">
                         <button class="btn btn-warning ml-3" data-toggle="modal" data-target="#ceksoal"><i class="fas fa-search"></i> Cek</button>
-                        <a href="{{ route('pelajar.dinas.review', [$id]) }}" class="btn btn-danger ml-2" onclick="return confirm('Anda yakin ingin meninggalkan halaman ini sekarang ?')"><i class="fas fa-cloud-upload-alt"></i> Review</a>
+                        <a href="{{ route('pelajar.dinas.kumpulkan', [$id]) }}" class="btn btn-danger ml-3" onclick="return confirm('Anda yakin ingin menyelesaikan sekarang ?')"><i class="fas fa-cloud-upload-alt"></i> Selesai</a>
                     </div>
                 </div>
 
@@ -46,6 +46,11 @@
                                 <h6>{{ $item->nomor_soal }}.</h6>
                                 <p>{!! $item->soal !!}</p>
                             </div>
+                            @if ($message = session()->get('error'))
+                                <div class="alert alert-danger">
+                                    <p>{{ $message }}</p>
+                                </div>
+                            @endif
                             <form class="jawaban" action="{{ route('pelajar.dinas.upjawabanganda', [$item->id]) }}" method="POST">
                                 @csrf
                                     <input hidden name="soal" value={{$item->id}}>

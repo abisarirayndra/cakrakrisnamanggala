@@ -21,6 +21,9 @@ use App\TotalAkumulasiTniPolri;
 class JawabanDinasController extends Controller
 {
     public function upJawabanGanda($id, Request $request){
+        if($request->jawaban == null){
+            return redirect()->back()->withError('Jawaban Kosong Tidak Bisa Disimpan');
+        }
         $pelajar = Auth::user()->id;
         $soal = SoalDinasGanda::find($id);
         $kunci = $soal->kunci;
@@ -408,29 +411,29 @@ class JawabanDinasController extends Controller
 
         $nilai_pokok = TesDinas::find($id);
 
-        $kategori = TesDinas::join('dn_pakets','dn_pakets.id','=','dn_tes.dn_paket_id')
-                                ->select('dn_pakets.id','dn_pakets.kategori')
-                                ->where('dn_tes.id', $id)
-                                ->first();
+        // $kategori = TesDinas::join('dn_pakets','dn_pakets.id','=','dn_tes.dn_paket_id')
+        //                         ->select('dn_pakets.id','dn_pakets.kategori')
+        //                         ->where('dn_tes.id', $id)
+        //                         ->first();
 
-        if($kategori->kategori == "Kedinasan"){
-            $nilai_akm = RekapDinas::select('total_nilai')->where('dn_paket_id', $kategori->id)->where('pelajar_id', $pelajar)->first();
-            $total_akumulasi = (float)$nilai_akm->total_nilai;
-        }
-        elseif($kategori->kategori == "TNI/Polri"){
-            $nilai_akm = RekapTniPolri::select('total_nilai')->where('dn_paket_id', $kategori->id)->where('pelajar_id', $pelajar)->first();
-            $total_akumulasi = (float)$nilai_akm->total_nilai;
-        }
+        // if($kategori->kategori == "Kedinasan"){
+        //     $nilai_akm = RekapDinas::select('total_nilai')->where('dn_paket_id', $kategori->id)->where('pelajar_id', $pelajar)->first();
+        //     $total_akumulasi = (float)$nilai_akm->total_nilai;
+        // }
+        // elseif($kategori->kategori == "TNI/Polri"){
+        //     $nilai_akm = RekapTniPolri::select('total_nilai')->where('dn_paket_id', $kategori->id)->where('pelajar_id', $pelajar)->first();
+        //     $total_akumulasi = (float)$nilai_akm->total_nilai;
+        // }
 
         return view('pelajar.dinas.soal.reviewganda', compact('review','soal','soal_terjawab','user','total_nilai','nilai_pokok','id','total_akumulasi'));
     }
 
-    public function kumpulkan(Request $request, $id){
+    public function kumpulkan($id){
         $pelajar = Auth::user()->id;
-        $benar = $request->n;
-        $pokok = $request->p;
-        $jumlah_soal = $request->s;
-        $akm = $request->akm;
+        // $benar = $request->n;
+        // $pokok = $request->p;
+        // $jumlah_soal = $request->s;
+        // $akm = $request->akm;
 
         $sudah_kerja = Penilaian::where('pelajar_id', $pelajar)->where('dn_tes_id', $id)->where('status', null)->first();
 
@@ -439,105 +442,90 @@ class JawabanDinasController extends Controller
             return redirect()->back();
         }
 
-        $nilai = ($benar/$jumlah_soal)*100;
-        $akumulasi = ($pokok/100)*$nilai;
-
-        Penilaian::create([
-            'dn_tes_id' => $id,
-            'pelajar_id' => $pelajar,
-            'nilai' => $nilai,
-            'akumulasi' => $akumulasi,
-
-        ]);
+        // $nilai_pokok = TesDinas::find($id);
 
         $kategori = TesDinas::join('dn_pakets','dn_pakets.id','=','dn_tes.dn_paket_id')
-                                ->select('dn_pakets.id','dn_pakets.kategori','dn_tes.mapel_id')
-                                ->where('dn_tes.id', $id)
-                                ->first();
+                        ->select('dn_pakets.id','dn_pakets.kategori','dn_tes.mapel_id')
+                        ->where('dn_tes.id', $id)
+                        ->first();
 
         if($kategori->kategori == "Kedinasan"){
-            $sudah_ada = RekapDinas::where('dn_paket_id', $kategori->id)->where('pelajar_id', $pelajar)->first();
-            if(isset($sudah_ada)){
-                $mapel = $kategori->mapel_id;
-                switch ($mapel) {
-                case 7 :
-                    if($sudah_ada->twk == null){
-                        $total_akumulasi = $akm + $akumulasi;
-                        $sudah_ada->update([
-                            'twk' => $akumulasi,
-                            'total_nilai' => $total_akumulasi,
-                        ]);
-                    }
-                    break;
-                case 8 :
-                    if($sudah_ada->tiu == null){
-                        $total_akumulasi = $akm + $akumulasi;
-                        $sudah_ada->update([
-                            'tiu' => $akumulasi,
-                            'total_nilai' => $total_akumulasi,
-                        ]);
-                    }
-                    break;
-                case 9 :
-                    if($sudah_ada->tkp == null){
-                        $total_akumulasi = $akm + $akumulasi;
-                        $sudah_ada->update([
-                            'tkp' => $akumulasi,
-                            'total_nilai' => $total_akumulasi,
-                        ]);
-                    }
-                    break;
-                }
+            if($kategori->mapel_id == 7){
+                $nilai = RekapDinas::select('nilai_twk','total_nilai')->where('dn_paket_id', $kategori->id)->where('pelajar_id', $pelajar)->first();
+                Penilaian::create([
+                    'dn_tes_id' => $id,
+                    'pelajar_id' => $pelajar,
+                    'nilai' => $nilai->nilai_twk,
+                    'akumulasi' => $nilai->total_nilai,
+                ]);
+                Alert::success('Jawaban Sudah Dikumpulkan','Terima Kasih Sudah Mengerjakan');
+                return redirect()->route('pelajar.dinas.nilai', $id);
+
+            }elseif($kategori->mapel_id == 8){
+                $nilai = RekapDinas::select('nilai_tiu','total_nilai')->where('dn_paket_id', $kategori->id)->where('pelajar_id', $pelajar)->first();
+                Penilaian::create([
+                    'dn_tes_id' => $id,
+                    'pelajar_id' => $pelajar,
+                    'nilai' => $nilai->nilai_tiu,
+                    'akumulasi' => $nilai->total_nilai,
+                ]);
+                Alert::success('Jawaban Sudah Dikumpulkan','Terima Kasih Sudah Mengerjakan');
+                return redirect()->route('pelajar.dinas.nilai', $id);
+            }elseif($kategori->mapel_id == 9){
+                $nilai = RekapDinas::select('nilai_tkp','total_nilai')->where('dn_paket_id', $kategori->id)->where('pelajar_id', $pelajar)->first();
+                Penilaian::create([
+                    'dn_tes_id' => $id,
+                    'pelajar_id' => $pelajar,
+                    'nilai' => $nilai->nilai_tkp,
+                    'akumulasi' => $nilai->total_nilai,
+                ]);
+                Alert::success('Jawaban Sudah Dikumpulkan','Terima Kasih Sudah Mengerjakan');
+                return redirect()->route('pelajar.dinas.nilai', $id);
             }
         }
         elseif($kategori->kategori == "TNI/Polri"){
-            $sudah_ada = RekapTniPolri::where('dn_paket_id', $kategori->id)->where('pelajar_id', $pelajar)->first();
-            if(isset($sudah_ada)){
-                $mapel = $kategori->mapel_id;
-                switch ($mapel) {
-                    case 1:
-                        if($sudah_ada->mtk == null){
-                            $total_akumulasi = $akm + $akumulasi;
-                            $sudah_ada->update([
-                                'mtk' => $akumulasi,
-                                'total_nilai' => $total_akumulasi,
-                            ]);
-                        }
-                        break;
-                    case 2:
-                        if($sudah_ada->ipu_wk == null){
-                            $total_akumulasi = $akm + $akumulasi;
-                            $sudah_ada->update([
-                                'ipu_wk' => $akumulasi,
-                                'total_nilai' => $total_akumulasi,
-                            ]);
-                        }
-                        break;
-                    case 3:
-                        if($sudah_ada->bing == null){
-                            $total_akumulasi = $akm + $akumulasi;
-                            $sudah_ada->update([
-                                'bing' => $akumulasi,
-                                'total_nilai' => $total_akumulasi,
-                            ]);
-                        }
-                        break;
-                    case 4:
-                        if($sudah_ada->bin == null){
-                            $total_akumulasi = $akm + $akumulasi;
-                            $sudah_ada->update([
-                                'bin' => $akumulasi,
-                                'total_nilai' => $total_akumulasi,
-                            ]);
-                        }
-                        break;
-                }
+            if($kategori->mapel_id == 1){
+                $nilai = RekapTniPolri::select('nilai_mtk','mtk')->where('dn_paket_id', $kategori->id)->where('pelajar_id', $pelajar)->first();
+                Penilaian::create([
+                    'dn_tes_id' => $id,
+                    'pelajar_id' => $pelajar,
+                    'nilai' => $nilai->nilai_mtk,
+                    'akumulasi' => $nilai->mtk,
+                ]);
+                Alert::success('Jawaban Sudah Dikumpulkan','Terima Kasih Sudah Mengerjakan');
+                return redirect()->route('pelajar.dinas.nilai', $id);
+            }elseif($kategori->mapel_id == 2){
+                $nilai = RekapTniPolri::select('nilai_ipu','ipu_wk')->where('dn_paket_id', $kategori->id)->where('pelajar_id', $pelajar)->first();
+                Penilaian::create([
+                    'dn_tes_id' => $id,
+                    'pelajar_id' => $pelajar,
+                    'nilai' => $nilai->nilai_ipu,
+                    'akumulasi' => $nilai->ipu_wk,
+                ]);
+                Alert::success('Jawaban Sudah Dikumpulkan','Terima Kasih Sudah Mengerjakan');
+                return redirect()->route('pelajar.dinas.nilai', $id);
+            }elseif($kategori->mapel_id == 3){
+                $nilai = RekapTniPolri::select('nilai_bing','bing')->where('dn_paket_id', $kategori->id)->where('pelajar_id', $pelajar)->first();
+                Penilaian::create([
+                    'dn_tes_id' => $id,
+                    'pelajar_id' => $pelajar,
+                    'nilai' => $nilai->nilai_bing,
+                    'akumulasi' => $nilai->bing,
+                ]);
+                Alert::success('Jawaban Sudah Dikumpulkan','Terima Kasih Sudah Mengerjakan');
+                return redirect()->route('pelajar.dinas.nilai', $id);
+            }elseif($kategori->mapel_id == 4){
+                $nilai = RekapTniPolri::select('nilai_bin','bin')->where('dn_paket_id', $kategori->id)->where('pelajar_id', $pelajar)->first();
+                Penilaian::create([
+                    'dn_tes_id' => $id,
+                    'pelajar_id' => $pelajar,
+                    'nilai' => $nilai->nilai_bin,
+                    'akumulasi' => $nilai->bin,
+                ]);
+                Alert::success('Jawaban Sudah Dikumpulkan','Terima Kasih Sudah Mengerjakan');
+                return redirect()->route('pelajar.dinas.nilai', $id);
             }
         }
-
-        Alert::success('Jawaban Sudah Dikumpulkan','Terima Kasih Sudah Mengerjakan');
-        return redirect()->route('pelajar.dinas.nilai', $id);
-
     }
 
     public function nilai($id){
@@ -599,6 +587,9 @@ class JawabanDinasController extends Controller
     }
 
     public function upJawabanGandaPoin($id, Request $request){
+        if($request->jawaban == null){
+            return redirect()->back()->withError('Jawaban Kosong Tidak Bisa Disimpan');
+        }
         $pelajar = Auth::user()->id;
         $soal = SoalDinasGandaPoin::find($id);
 
