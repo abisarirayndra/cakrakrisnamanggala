@@ -175,7 +175,7 @@ Route::group(['prefix' => 'pelajar','middleware' => ['auth','pelajar-role']], fu
     Route::get('/tes/{id}','TesDinasController@pelajarTes')->name('pelajar.dinas.tes');
     Route::get('/persiapan/{id}','SoalDinasController@pelajarPersiapan')->name('pelajar.dinas.persiapan');
     Route::get('/soalganda/{id}','SoalDinasController@pelajarSoalGanda')->name('pelajar.dinas.soalganda');
-    Route::post('pelajar/upjawabanganda/{id}','JawabanDinasController@upJawabanGanda')->name('pelajar.dinas.upjawabanganda');
+    Route::post('/upjawabanganda/{id}','JawabanDinasController@upJawabanGanda')->name('pelajar.dinas.upjawabanganda');
     Route::get('/review/{id}','JawabanDinasController@review')->name('pelajar.dinas.review');
     Route::get('/kumpulkan/{id}','JawabanDinasController@kumpulkan')->name('pelajar.dinas.kumpulkan');
     Route::get('/nilai/{id}','JawabanDinasController@nilai')->name('pelajar.dinas.nilai');

@@ -58,7 +58,7 @@ class JawabanDinasController extends Controller
             $penilaian = JawabanGandaDinas::select(DB::raw('SUM(nilai) as total_nilai'))
                                             ->join('dn_soalganda','dn_soalganda.id','=','dn_jawabanganda.dn_soalganda_id')
                                             ->where('dn_jawabanganda.pelajar_id', $pelajar)
-                                            ->where('dn_soalganda.dn_tes_id',$kategori->tes_id)
+                                            ->where('dn_soalganda.dn_tes_id', $kategori->tes_id)
                                             ->where('status', null)
                                             ->groupBy('pelajar_id')
                                             ->get();
@@ -67,9 +67,8 @@ class JawabanDinasController extends Controller
                 $total_nilai = (int)$item->total_nilai;
             }
 
-            $nilai = ($total_nilai/$jumlah_soal)*100;
-            $akumulasi = ($nilai_pokok/100)*$nilai;
-
+            $nilai_hasil = ($total_nilai/$jumlah_soal)*100;
+            $akumulasi = ($nilai_pokok/100)*$nilai_hasil;
 
             if($kategori->kategori == "Kedinasan"){
                 $sudah_ada = RekapDinas::where('dn_paket_id', $kategori->id)->where('pelajar_id', $pelajar)->first();
@@ -137,7 +136,7 @@ class JawabanDinasController extends Controller
                             // if($sudah_ada->mtk == null){
                                 // $total_akumulasi = $akm + $akumulasi;
                                 $sudah_ada->update([
-                                    'nilai_mtk' => $nilai,
+                                    'nilai_mtk' => $nilai_hasil,
                                     'mtk' => $akumulasi,
                                 ]);
                                 $mtk = $sudah_ada->mtk;
@@ -154,7 +153,7 @@ class JawabanDinasController extends Controller
                             // if($sudah_ada->ipu_wk == null){
                                 // $total_akumulasi = $akm + $akumulasi;
                                 $sudah_ada->update([
-                                    'nilai_ipu' => $nilai,
+                                    'nilai_ipu' => $nilai_hasil,
                                     'ipu_wk' => $akumulasi,
                                 ]);
                                 $mtk = $sudah_ada->mtk;
@@ -171,7 +170,7 @@ class JawabanDinasController extends Controller
                             // if($sudah_ada->bing == null){
                                 // $total_akumulasi = $akm + $akumulasi;
                                 $sudah_ada->update([
-                                    'nilai_bing' => $total_nilai,
+                                    'nilai_bing' => $nilai_hasil,
                                     'bing' => $akumulasi,
                                 ]);
                                 $mtk = $sudah_ada->mtk;
@@ -188,7 +187,7 @@ class JawabanDinasController extends Controller
                             // if($sudah_ada->bin == null){
                                 // $total_akumulasi = $akm + $akumulasi;
                                 $sudah_ada->update([
-                                    'nilai_bin' => $total_nilai,
+                                    'nilai_bin' => $nilai_hasil,
                                     'bin' => $akumulasi,
                                 ]);
                                 $mtk = $sudah_ada->mtk;
@@ -236,8 +235,8 @@ class JawabanDinasController extends Controller
                 $total_nilai = (int)$item->total_nilai;
             }
 
-            $nilai = ($total_nilai/$jumlah_soal)*100;
-            $akumulasi = ($nilai_pokok/100)*$nilai;
+            $nilai_hasil = ($total_nilai/$jumlah_soal)*100;
+            $akumulasi = ($nilai_pokok/100)*$nilai_hasil;
 
 
             if($kategori->kategori == "Kedinasan"){
@@ -249,7 +248,7 @@ class JawabanDinasController extends Controller
                         // if($sudah_ada->twk == null){
                             // $total_akumulasi = $akm + $akumulasi;
                             $sudah_ada->update([
-                                'nilai_twk' => $nilai,
+                                'nilai_twk' => $nilai_hasil,
                                 'twk' => $akumulasi,
                             ]);
                             $twk = $sudah_ada->twk;
@@ -265,7 +264,7 @@ class JawabanDinasController extends Controller
                         // if($sudah_ada->tiu == null){
                         //     $total_akumulasi = $akm + $akumulasi;
                             $sudah_ada->update([
-                                'nilai_tiu' => $nilai,
+                                'nilai_tiu' => $nilai_hasil,
                                 'tiu' => $akumulasi,
                             ]);
                             $twk = $sudah_ada->twk;
@@ -281,7 +280,7 @@ class JawabanDinasController extends Controller
                         // if($sudah_ada->tkp == null){
                         //     $total_akumulasi = $akm + $akumulasi;
                             $sudah_ada->update([
-                                'nilai_tkp' => $nilai,
+                                'nilai_tkp' => $nilai_hasil,
                                 'tkp' => $akumulasi,
                             ]);
                             $twk = $sudah_ada->twk;
@@ -306,7 +305,7 @@ class JawabanDinasController extends Controller
                             // if($sudah_ada->mtk == null){
                                 // $total_akumulasi = $akm + $akumulasi;
                                 $sudah_ada->update([
-                                    'nilai_mtk' => $nilai,
+                                    'nilai_mtk' => $nilai_hasil,
                                     'mtk' => $akumulasi,
                                 ]);
                                 $mtk = $sudah_ada->mtk;
@@ -323,7 +322,7 @@ class JawabanDinasController extends Controller
                             // if($sudah_ada->ipu_wk == null){
                                 // $total_akumulasi = $akm + $akumulasi;
                                 $sudah_ada->update([
-                                    'nilai_ipu' => $nilai,
+                                    'nilai_ipu' => $nilai_hasil,
                                     'ipu_wk' => $akumulasi,
                                 ]);
                                 $mtk = $sudah_ada->mtk;
@@ -340,7 +339,7 @@ class JawabanDinasController extends Controller
                             // if($sudah_ada->bing == null){
                                 // $total_akumulasi = $akm + $akumulasi;
                                 $sudah_ada->update([
-                                    'nilai_bing' => $total_nilai,
+                                    'nilai_bing' => $nilai_hasil,
                                     'bing' => $akumulasi,
                                 ]);
                                 $mtk = $sudah_ada->mtk;
@@ -357,7 +356,7 @@ class JawabanDinasController extends Controller
                             // if($sudah_ada->bin == null){
                                 // $total_akumulasi = $akm + $akumulasi;
                                 $sudah_ada->update([
-                                    'nilai_bin' => $total_nilai,
+                                    'nilai_bin' => $nilai_hasil,
                                     'bin' => $akumulasi,
                                 ]);
                                 $mtk = $sudah_ada->mtk;
@@ -642,8 +641,8 @@ class JawabanDinasController extends Controller
                 $total_nilai = (int)$item->total_nilai;
             }
 
-            $nilai = $total_nilai;
-            $akumulasi = ($nilai_pokok/100)*$nilai;
+            $nilai_hasil = $total_nilai;
+            $akumulasi = ($nilai_pokok/100)*$nilai_hasil;
 
 
             if($kategori->kategori == "Kedinasan"){
@@ -655,7 +654,7 @@ class JawabanDinasController extends Controller
                         // if($sudah_ada->twk == null){
                             // $total_akumulasi = $akm + $akumulasi;
                             $sudah_ada->update([
-                                'nilai_twk' => $nilai,
+                                'nilai_twk' => $nilai_hasil,
                                 'twk' => $akumulasi,
                             ]);
                             $twk = $sudah_ada->twk;
@@ -671,7 +670,7 @@ class JawabanDinasController extends Controller
                         // if($sudah_ada->tiu == null){
                         //     $total_akumulasi = $akm + $akumulasi;
                             $sudah_ada->update([
-                                'nilai_tiu' => $nilai,
+                                'nilai_tiu' => $nilai_hasil,
                                 'tiu' => $akumulasi,
                             ]);
                             $twk = $sudah_ada->twk;
@@ -687,7 +686,7 @@ class JawabanDinasController extends Controller
                         // if($sudah_ada->tkp == null){
                         //     $total_akumulasi = $akm + $akumulasi;
                             $sudah_ada->update([
-                                'nilai_tkp' => $nilai,
+                                'nilai_tkp' => $nilai_hasil,
                                 'tkp' => $akumulasi,
                             ]);
                             $twk = $sudah_ada->twk;
@@ -712,7 +711,7 @@ class JawabanDinasController extends Controller
                             // if($sudah_ada->mtk == null){
                                 // $total_akumulasi = $akm + $akumulasi;
                                 $sudah_ada->update([
-                                    'nilai_mtk' => $nilai,
+                                    'nilai_mtk' => $nilai_hasil,
                                     'mtk' => $akumulasi,
                                 ]);
                                 $mtk = $sudah_ada->mtk;
@@ -729,7 +728,7 @@ class JawabanDinasController extends Controller
                             // if($sudah_ada->ipu_wk == null){
                                 // $total_akumulasi = $akm + $akumulasi;
                                 $sudah_ada->update([
-                                    'nilai_ipu' => $nilai,
+                                    'nilai_ipu' => $nilai_hasil,
                                     'ipu_wk' => $akumulasi,
                                 ]);
                                 $mtk = $sudah_ada->mtk;
@@ -746,7 +745,7 @@ class JawabanDinasController extends Controller
                             // if($sudah_ada->bing == null){
                                 // $total_akumulasi = $akm + $akumulasi;
                                 $sudah_ada->update([
-                                    'nilai_bing' => $total_nilai,
+                                    'nilai_bing' => $nilai_hasil,
                                     'bing' => $akumulasi,
                                 ]);
                                 $mtk = $sudah_ada->mtk;
@@ -763,7 +762,7 @@ class JawabanDinasController extends Controller
                             // if($sudah_ada->bin == null){
                                 // $total_akumulasi = $akm + $akumulasi;
                                 $sudah_ada->update([
-                                    'nilai_bin' => $total_nilai,
+                                    'nilai_bin' => $nilai_hasil,
                                     'bin' => $akumulasi,
                                 ]);
                                 $mtk = $sudah_ada->mtk;
