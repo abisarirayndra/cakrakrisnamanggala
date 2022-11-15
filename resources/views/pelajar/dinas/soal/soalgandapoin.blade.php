@@ -164,7 +164,7 @@
           document.getElementById("demo").innerHTML = "Waktu Habis";
 
           var id = {!!json_encode($id)!!}
-          window.location = ('https://elearning.cakrakrisnamanggala.com/pelajar/reviewgandapoin/'+id);
+          window.location = ('https://elearning.cakrakrisnamanggala.com/pelajar/kumpulkan/'+id);
         }
       }, 1000);
 </script>
