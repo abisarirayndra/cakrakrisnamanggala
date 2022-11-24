@@ -19,36 +19,6 @@
                 <div class="float-right">
                     <a href="{{route('admin.dinas.paket')}}" class="btn btn-sm btn-danger"><i class="fas fa-times"></i></a>
                 </div>
-            <h5><i class="fas fa-hashtag text-warning"></i> Paket {{$paket->nama_paket}}</h5>
-            <div class="mt-3">
-                <button class="btn btn-sm btn-warning" data-toggle="modal" data-target="#tambahkelas"><i class="fas fa-plus-square"></i> Tambah Kelas</button>
-            </div>
-            <div class="p-3 mt-3">
-                <table class="table table-bordered dataTable" id="dataTable" width="100%" cellspacing="0">
-                    <thead>
-                        <tr>
-                          <th style="max-width: 30px">No.</th>
-                          <th>Kelas Yang Mengikuti</th>
-                          <th style="max-width: 60px">Aksi</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                            @php
-                                $no = 1;
-                            @endphp
-                        @foreach ($kelas as $item)
-                          <tr>
-                            <td>{{$no++}}</td>
-                            <td>{{$item->nama}}</td>
-                            <td>
-                              <a href="{{route('admin.dinas.hapuskelas', [$item->id])}}" class="btn btn-sm btn-danger" onclick="return confirm('Anda yakin ingin Menghapus ?')"><i class="fas fa-trash"></i> Hapus</a>
-                            </td>
-                          </tr>
-                        @endforeach
-                    </tbody>
-                </table>
-            </div>
-            <hr>
             <h5 class="mt-4"><i class="fas fa-hashtag text-warning"></i> Daftar Tes {{$paket->nama_paket}}</h5>
             <div class="mt-3">
                 <button class="btn btn-sm btn-warning" data-toggle="modal" data-target="#tambahtes"><i class="fas fa-plus-square"></i> Tambah Tes</button>
@@ -95,36 +65,6 @@
 
 
     <!-- The Modal -->
-    <div class="modal fade" id="tambahkelas" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h5 class="modal-title text-warning" id="exampleModalLabel">Tambah Kelas</h5>
-              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-              </button>
-            </div>
-                <form action="{{route('admin.dinas.tambahkelas', [$paket->id])}}" method="POST">
-                    @csrf
-                    <div class="modal-body">
-                        <div class="form-group">
-                            <label for="nama">Kelas</label>
-                            <select name="kelas_id" class="form-control">
-                                @foreach ($list_kelas as $item)
-                                    <option value="{{$item->id}}">{{$item->nama}}</option>
-                                @endforeach
-                            </select>
-                            <input type="text" name="nama_paket" hidden value="{{$paket->nama_paket}}">
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-danger" data-dismiss="modal">Keluar</button>
-                        <button type="submit" class="btn btn-warning">Simpan</button>
-                    </div>
-                </form>
-          </div>
-        </div>
-    </div>
     <div class="modal fade" id="tambahtes" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog" role="document">
           <div class="modal-content">

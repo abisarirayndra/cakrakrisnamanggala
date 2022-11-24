@@ -40,13 +40,19 @@ class PaketDinasController extends Controller
     public function lihat($id){
         $user = Auth::user()->nama;
         $paket = PaketDinas::find($id);
-        $kelas = KelasDinas::select('kelas.nama','dn_kelas.id')
-                            ->join('kelas','kelas.id','=','dn_kelas.kelas_id')
-                            ->where('dn_kelas.dn_paket_id', $id)->get();
-        $list_kelas = Kelas::all();
 
         // Tes
-        $mapel = Mapel::all();
+        switch($paket->kategori){
+            case "TNI/Polri" :
+                $mapel = Mapel::where('kategori', "TNI/Polri")->get();
+            break;
+            case "Kedinasan" :
+                $mapel = Mapel::where('kategori', "Kedinasan")->get();
+            break;
+            case "Psikotes" :
+                $mapel = Mapel::where('kategori', "Psikotes")->get();
+            break;
+        }
         $pengajar = User::where('role_id', 3)->get();
         $tes = TesDinas::select('dn_tes.token','mapels.mapel','dn_tes.nilai_pokok','dn_tes.mulai','dn_tes.selesai','dn_tes.id','users.nama','dn_tes.durasi')
                         ->join('mapels','mapels.id','=','dn_tes.mapel_id')
@@ -55,7 +61,7 @@ class PaketDinasController extends Controller
                         ->get();
 
 
-        return view('admin.dinas.paket.lihat', compact('paket','user','kelas','list_kelas','tes','mapel','pengajar'));
+        return view('admin.dinas.paket.lihat', compact('paket','user','tes','mapel','pengajar'));
     }
 
     public function tambahKelas(Request $request, $id){
@@ -132,7 +138,7 @@ class PaketDinasController extends Controller
                             ->join('dn_pakets','dn_pakets.id','=','dn_tes.dn_paket_id')
                             ->where('dn_pakets.status', 1)
                             ->where('dn_tes.pengajar_id', $id)
-                            ->orderBy('dn_tes.mulai','asc')
+                            ->orderBy('dn_tes.mulai','desc')
                             ->distinct()
                             ->get();
 

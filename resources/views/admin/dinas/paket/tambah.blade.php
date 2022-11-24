@@ -35,6 +35,7 @@
                         <select name="kategori" id="" class="form-control" required>
                             <option value="TNI/Polri">TNI/Polri</option>
                             <option value="Kedinasan">Kedinasan</option>
+                            <option value="Psikotes">Psikotes</option>
                         </select>
                     </div>
                     <div class="text-center mt-4">

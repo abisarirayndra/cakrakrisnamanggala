@@ -47,6 +47,36 @@
             </div>
             @endif
         </div>
+        @elseif ($kategori->kategori == "Psikotes")
+        <div class="p-3 mt-2">
+            @if ($tes_selanjutnya == "Selesai")
+                <div class="text-center">
+                    <h3>Psikotes Selesai</h3>
+                </div>
+            @else
+            <h5><i class="fas fa-hashtag text-warning"></i> Tes Selanjutnya</h5>
+            <div class="mt-3">
+                <div class="col-xl-4 col-md-6 mb-4">
+                    <div class="card border-left-warning shadow h-100 py-2">
+                        <div class="card-body">
+                            <div class="row no-gutters align-items-center">
+                                <div class="col mr-2">
+                                    <div class=" font-weight-bold text-dark text-uppercase mb-1">
+                                        {{ $tes_selanjutnya->mapel }}</div>
+                                        <div class="font-weight-bold mb-1" style="font-size: 10pt;">
+                                            <a href="{{ route('pelajar.dinas.persiapan', [$tes_selanjutnya->id]) }}" class="btn btn-sm btn-warning mt-3"><i class="fas fa-folder-open"></i> Buka</a>
+                                        </div>
+                                    </div>
+                                <div class="col-auto">
+                                    <i class="fas fa-calendar fa-2x text-gray-300"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            @endif
+        </div>
         @endif
         <div class="card-body">
             <h5><b>Hasil Penilaian</b></h5>

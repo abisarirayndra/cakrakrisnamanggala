@@ -161,6 +161,6 @@
           window.location = ('https://elearning.cakrakrisnamanggala.com/pelajar/kumpulkan/'+id);
         }
       }, 1000);
-          </script>
+          </script> 
 @endsection
 

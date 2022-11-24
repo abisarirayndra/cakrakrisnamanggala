@@ -14,9 +14,11 @@ use App\TesDinas;
 use App\Penilaian;
 use App\RekapDinas;
 use App\RekapTniPolri;
+use App\RekapPsikotes;
 use App\Imports\SoalGandaImport;
 use App\Imports\SoalGandaPoinImport;
 use Maatwebsite\Excel\Facades\Excel;
+use Carbon\Carbon;
 use Image;
 use PDF;
 use DB;
@@ -310,9 +312,90 @@ class SoalDinasController extends Controller
         $ganda = SoalDinasGanda::where('dn_tes_id', $id)->orderBy('id','asc')->first();
         $poin = SoalDinasGandaPoin::where('dn_tes_id', $id)->orderBy('id','asc')->first();
 
-        $sudah = Penilaian::where('dn_tes_id', $id)->where('pelajar_id', $pelajar)->where('status', null)->first();
+        $sudah = Penilaian::select('dn_tes.dn_paket_id','dn_pakets.kategori')
+                            ->join('dn_tes','dn_tes.id','=','dn_penilaians.dn_tes_id')
+                            ->join('dn_pakets','dn_pakets.id','=','dn_tes.dn_paket_id')
+                            ->where('dn_penilaians.dn_tes_id', $id)
+                            ->where('dn_penilaians.pelajar_id', $pelajar)
+                            ->where('dn_penilaians.status', null)
+                            ->first();
+        if($sudah){
+            $cek_paket = Penilaian::select('dn_pakets.kategori')
+                                ->join('dn_tes','dn_tes.id','=','dn_penilaians.dn_tes_id')
+                                ->join('dn_pakets','dn_pakets.id','=','dn_tes.dn_paket_id')
+                                ->where('dn_tes.dn_paket_id', $sudah->dn_paket_id)
+                                ->where('dn_penilaians.pelajar_id', $pelajar)
+                                ->where('dn_penilaians.status', null)
+                                ->orderBy('dn_penilaians.id','desc')
+                                ->first();
+            if($cek_paket->kategori == "Psikotes"){
+                $cek_belum = Penilaian::select('dn_tes.dn_paket_id','mapels.id as mapel')
+                                ->join('dn_tes','dn_tes.id','=','dn_penilaians.dn_tes_id')
+                                ->join('dn_pakets','dn_pakets.id','=','dn_tes.dn_paket_id')
+                                ->join('mapels','mapels.id','=','dn_tes.mapel_id')
+                                ->where('dn_tes.dn_paket_id', $sudah->dn_paket_id)
+                                ->where('dn_penilaians.pelajar_id', $pelajar)
+                                ->where('dn_penilaians.status', null)
+                                ->orderBy('dn_penilaians.id','desc')
+                                ->first();
 
-        return view('pelajar.dinas.tes.persiapan', compact('user','essay','ganda','poin','id','paket','sudah'));
+                if($cek_belum->mapel == 11){
+                    $tes_selanjutnya = TesDinas::select('dn_tes.id','mapels.mapel')
+                                                ->join('mapels','mapels.id','=','dn_tes.mapel_id')
+                                                ->where('dn_tes.dn_paket_id', $cek_belum->dn_paket_id)
+                                                ->where('mapel_id', 12)
+                                                ->first();
+                }
+                elseif($cek_belum->mapel == 12){
+                    $tes_selanjutnya = TesDinas::select('dn_tes.id','mapels.mapel')
+                                                ->join('mapels','mapels.id','=','dn_tes.mapel_id')
+                                                ->where('dn_paket_id', $cek_belum->dn_paket_id)
+                                                ->where('mapel_id', 13)
+                                                ->first();
+                }
+                elseif($cek_belum->mapel == 13){
+                    $tes_selanjutnya = "Selesai";
+                }
+            }elseif($cek_paket->kategori == "Kedinasan"){
+                $cek_belum = Penilaian::select('dn_tes.dn_paket_id','mapels.id as mapel')
+                                ->join('dn_tes','dn_tes.id','=','dn_penilaians.dn_tes_id')
+                                ->join('dn_pakets','dn_pakets.id','=','dn_tes.dn_paket_id')
+                                ->join('mapels','mapels.id','=','dn_tes.mapel_id')
+                                ->where('dn_tes.dn_paket_id', $sudah->dn_paket_id)
+                                ->where('dn_penilaians.pelajar_id', $pelajar)
+                                ->where('dn_penilaians.status', null)
+                                ->orderBy('dn_penilaians.id','desc')
+                                ->first();
+                // return $cek_belum;
+                if($cek_belum->mapel == 7){
+                    $tes_selanjutnya = TesDinas::select('dn_tes.id','mapels.mapel')
+                                                ->join('mapels','mapels.id','=','dn_tes.mapel_id')
+                                                ->where('dn_paket_id', $cek_belum->dn_paket_id)
+                                                ->where('mapel_id', 8)
+                                                ->first();
+                }
+                elseif($cek_belum->mapel == 8){
+                    $tes_selanjutnya = TesDinas::select('dn_tes.id','mapels.mapel')
+                                                ->join('mapels','mapels.id','=','dn_tes.mapel_id')
+                                                ->where('dn_paket_id', $cek_belum->dn_paket_id)
+                                                ->where('mapel_id', 9)
+                                                ->first();
+                }
+                elseif($cek_belum->mapel == 9){
+                    $tes_selanjutnya = "Selesai";
+                }
+            }else{
+                $tes_selanjutnya = " ";
+            }
+        }
+        else{
+             $tes_selanjutnya = " ";
+        }
+
+        // return $tes_selanjutnya;
+
+
+        return view('pelajar.dinas.tes.persiapan', compact('user','essay','ganda','poin','id','paket','sudah','tes_selanjutnya'));
     }
 
     public function pelajarSoalGanda($id, Request $request){
@@ -377,6 +460,19 @@ class SoalDinasController extends Controller
                     'nilai_bing' => 0,
                     'nilai_mtk' => 0,
                     'nilai_ipu' => 0,
+                    'total_nilai' => 0,
+                ]);
+            }
+        }elseif($kategori->kategori == "Psikotes"){
+            $sudah_ada = RekapPsikotes::where('dn_paket_id', $kategori->id)->where('pelajar_id', $pelajar)->first();
+            if(isset($sudah_ada)){}
+            else{
+                RekapPsikotes::create([
+                    'pelajar_id' => $pelajar,
+                    'dn_paket_id' => $kategori->id,
+                    'verbal' => 0,
+                    'numerik' => 0,
+                    'figural' => 0,
                     'total_nilai' => 0,
                 ]);
             }
@@ -465,6 +561,19 @@ class SoalDinasController extends Controller
                     'nilai_bing' => 0,
                     'nilai_mtk' => 0,
                     'nilai_ipu' => 0,
+                    'total_nilai' => 0,
+                ]);
+            }
+        }elseif($kategori->kategori == "Psikotes"){
+            $sudah_ada = RekapPsikotes::where('dn_paket_id', $kategori->id)->where('pelajar_id', $pelajar)->first();
+            if(isset($sudah_ada)){}
+            else{
+                RekapPsikotes::create([
+                    'pelajar_id' => $pelajar,
+                    'dn_paket_id' => $kategori->id,
+                    'verbal' => 0,
+                    'numerik' => 0,
+                    'figural' => 0,
                     'total_nilai' => 0,
                 ]);
             }
