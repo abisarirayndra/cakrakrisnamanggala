@@ -20,6 +20,7 @@ use App\SoalDinasGandaPoin;
 use App\JawabanGandaDinas;
 use App\JawabanGandaPoinDinas;
 use App\PaketDinas;
+use App\RekapPsikotes;
 
 class HasilDinasController extends Controller
 {
@@ -174,6 +175,34 @@ class HasilDinasController extends Controller
         return $pdf->stream();
     }
 
+    public function hasilPsikotesAdmin($id){
+        $user = Auth::user()->nama;
+        $hasil = RekapPsikotes::join('users','users.id','=','dn_rekap_psikotes.pelajar_id')
+                            ->join('kelas','kelas.id','=','users.kelas_id')
+                            ->select('users.nama','kelas.nama as kelas','dn_rekap_psikotes.verbal','dn_rekap_psikotes.numerik','dn_rekap_psikotes.figural','dn_rekap_psikotes.total_nilai')
+                            ->where('dn_paket_id', $id)
+                            ->orderBy('dn_rekap_psikotes.total_nilai','desc')
+                            ->get();
+
+        return view('admin.dinas.paket.hasilpsikotes', compact('hasil','user','id'));
+    }
+
+    public function cetakPsikotesAdmin($id){
+        $hasil = RekapPsikotes::join('users','users.id','=','dn_rekap_psikotes.pelajar_id')
+                            ->join('kelas','kelas.id','=','users.kelas_id')
+                            ->select('users.nama','kelas.nama as kelas','dn_rekap_psikotes.verbal','dn_rekap_psikotes.numerik','dn_rekap_psikotes.figural','dn_rekap_psikotes.total_nilai')
+                            ->where('dn_paket_id', $id)
+                            ->orderBy('dn_rekap_psikotes.total_nilai','desc')
+                            ->get();
+
+        $paket = PaketDinas::select('nama_paket')->find($id);
+
+        $en_logo = (string) Image::make(public_path('img/krisna.png'))->encode('data-url');
+        $pdf = PDF::loadview('admin.dinas.paket.cetaktnipolri', ['logo'=>$en_logo,'hasil'=>$hasil,'paket'=>$paket])->setPaper('a4','landscape');
+        return $pdf->stream();
+    }
+
+
     public function liveSkorTniPolri($id){
         $user = Auth::user()->nama;
         $hasil = RekapTniPolri::join('users','users.id','=','dn_rekap_tnipolri.pelajar_id')
@@ -197,6 +226,18 @@ class HasilDinasController extends Controller
                             ->get();
 
         return view('admin.dinas.paket.live_kedinasan', compact('hasil','user'));
+    }
+
+    public function liveSkorPsikotes($id){
+        $user = Auth::user()->nama;
+        $hasil = RekapPsikotes::join('users','users.id','=','dn_rekap_psikotes.pelajar_id')
+                            ->join('kelas','kelas.id','=','users.kelas_id')
+                            ->select('users.nama','kelas.nama as kelas','dn_rekap_psikotes.verbal','dn_rekap_psikotes.numerik','dn_rekap_psikotes.figural','dn_rekap_psikotes.total_nilai')
+                            ->where('dn_paket_id', $id)
+                            ->orderBy('dn_rekap_psikotes.total_nilai','desc')
+                            ->get();
+
+        return view('admin.dinas.paket.live_psikotes', compact('hasil','user'));
     }
 
 }

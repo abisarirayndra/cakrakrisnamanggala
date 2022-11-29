@@ -101,6 +101,9 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth','admin-role']], funct
     Route::get('/live_hasiltnipolri/{id}','HasilDinasController@liveSkorTniPolri')->name('admin.dinas.live_hasiltnipolri');
     Route::get('/cetakhasildinas/{id}','HasilDinasController@cetakKedinasanAdmin')->name('admin.dinas.cetakhasildinas');
     Route::get('/cetaktnipolri/{id}','HasilDinasController@cetakTniPolriAdmin')->name('admin.dinas.cetakhasiltnipolri');
+    Route::get('/hasil_psikotes/{id}','HasilDinasController@hasilPsikotesAdmin')->name('admin.dinas.hasil_psikotes');
+    Route::get('/cetak_hasil_psikotes/{id}','HasilDinasController@cetakPsikotesAdmin')->name('admin.dinas.cetak_hasil_psikotes');
+    Route::get('/live_hasilpsikotes/{id}','HasilDinasController@liveSkorPsikotes')->name('admin.dinas.live_hasilpsikotes');
 
     // Route::get('/monitor_tes','TesDinasController@monitor')->name('admin.monitor_tes');
     // Route::get('/monitor_tes/lihat/{id}','TesDinasController@monitorTes')->name('admin.monitor_tes.lihat');

@@ -46,16 +46,19 @@
                             @endif
                             <td>{{ $item->kategori }}</td>
                             <td>
-                              <a href="{{route('admin.dinas.editpaket', [$item->id])}}" class="btn btn-sm btn-success"><i class="fas fa-feather-alt"></i> Edit</a>
-                              <a href="{{route('admin.dinas.lihatpaket', [$item->id])}}"><button type="button" class="btn btn-sm btn-primary"><i class="fas fa-eye"></i> Lihat</button></a>
+                              <a href="{{route('admin.dinas.editpaket', [$item->id])}}" class="btn btn-sm btn-success"><i class="fas fa-feather-alt"></i> </a>
+                              <a href="{{route('admin.dinas.lihatpaket', [$item->id])}}"><button type="button" class="btn btn-sm btn-primary"><i class="fas fa-eye"></i> </button></a>
                               @if ($item->kategori == "Kedinasan")
-                              <a href="{{ route('admin.dinas.live_hasildinas', [$item->id]) }}" class="btn btn-sm btn-warning" target="_blank"><i class="fas fa-list-alt"></i> Live</a>
-                              <a href="{{ route('admin.dinas.hasildinas', [$item->id]) }}" class="btn btn-sm btn-warning" target="_blank"><i class="fas fa-list-alt"></i> Hasil</a>
+                              <a href="{{ route('admin.dinas.live_hasildinas', [$item->id]) }}" class="btn btn-sm btn-warning" target="_blank"><i class="fa fa-play" aria-hidden="true"></i></a>
+                              <a href="{{ route('admin.dinas.hasildinas', [$item->id]) }}" class="btn btn-sm btn-warning" target="_blank"><i class="fas fa-list-alt"></i></a>
                               @elseif ($item->kategori == "TNI/Polri")
-                              <a href="{{ route('admin.dinas.live_hasiltnipolri', [$item->id]) }}" class="btn btn-sm btn-warning"><i class="fas fa-list-alt"></i> Live</a>
-                              <a href="{{ route('admin.dinas.hasiltnipolri', [$item->id]) }}" class="btn btn-sm btn-warning"><i class="fas fa-list-alt"></i> Hasil</a>
+                              <a href="{{ route('admin.dinas.live_hasiltnipolri', [$item->id]) }}" class="btn btn-sm btn-warning"><i class="fa fa-play" aria-hidden="true"></i></a>
+                              <a href="{{ route('admin.dinas.hasiltnipolri', [$item->id]) }}" class="btn btn-sm btn-warning"><i class="fas fa-list-alt"></i></a>
+                              @elseif ($item->kategori == "Psikotes")
+                              <a href="{{ route('admin.dinas.live_hasilpsikotes', [$item->id]) }}" class="btn btn-sm btn-warning"><i class="fa fa-play" aria-hidden="true"></i></a>
+                              <a href="{{ route('admin.dinas.hasil_psikotes', [$item->id]) }}" class="btn btn-sm btn-warning"><i class="fas fa-list-alt"></i></a>
                               @endif
-                              <a href="{{route('admin.dinas.hapuspaket', [$item->id])}}" class="btn btn-sm btn-danger" onclick="return confirm('Anda yakin ingin Menghapus ?')"><i class="fas fa-trash"></i> Hapus</a>
+                              <a href="{{route('admin.dinas.hapuspaket', [$item->id])}}" class="btn btn-sm btn-danger" onclick="return confirm('Anda yakin ingin Menghapus ?')"><i class="fas fa-trash"></i></a>
                               </td>
                           </tr>
                         @endforeach
