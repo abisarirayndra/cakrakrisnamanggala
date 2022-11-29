@@ -58,6 +58,7 @@
                               <a href="{{ route('admin.dinas.live_hasilpsikotes', [$item->id]) }}" class="btn btn-sm btn-warning"><i class="fa fa-play" aria-hidden="true"></i></a>
                               <a href="{{ route('admin.dinas.hasil_psikotes', [$item->id]) }}" class="btn btn-sm btn-warning"><i class="fas fa-list-alt"></i></a>
                               @endif
+                              <a href="{{ route('admin.dinas.arsipkan_paket', [$item->id]) }}" class="btn btn-sm btn-dark" onclick="return confirm('Anda yakin ingin Menghapus ?')"><i class="fa fa-archive" aria-hidden="true"></i></a>
                               <a href="{{route('admin.dinas.hapuspaket', [$item->id])}}" class="btn btn-sm btn-danger" onclick="return confirm('Anda yakin ingin Menghapus ?')"><i class="fas fa-trash"></i></a>
                               </td>
                           </tr>

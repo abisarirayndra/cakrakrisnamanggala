@@ -104,6 +104,7 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth','admin-role']], funct
     Route::get('/hasil_psikotes/{id}','HasilDinasController@hasilPsikotesAdmin')->name('admin.dinas.hasil_psikotes');
     Route::get('/cetak_hasil_psikotes/{id}','HasilDinasController@cetakPsikotesAdmin')->name('admin.dinas.cetak_hasil_psikotes');
     Route::get('/live_hasilpsikotes/{id}','HasilDinasController@liveSkorPsikotes')->name('admin.dinas.live_hasilpsikotes');
+    Route::get('/arsipkan_paket/{id}', 'HasilDinasController@arsipkanPaket')->name('admin.dinas.arsipkan_paket');
 
     // Route::get('/monitor_tes','TesDinasController@monitor')->name('admin.monitor_tes');
     // Route::get('/monitor_tes/lihat/{id}','TesDinasController@monitorTes')->name('admin.monitor_tes.lihat');
@@ -221,5 +222,4 @@ Route::group(['prefix' => 'staf-admin', 'middleware' => ['auth','stafadmin-role'
     Route::get('/absen/rekap-pembelajaran/cetak/{id}','JadwalAbsensiController@cetakJurnalHarian')->name('staf-admin.absensi.rekap-pembelajaran.cetak');
     Route::get('/absen/rekap-staf/','JadwalAbsensiController@rekapAbsensiStaf')->name('staf-admin.absensi.rekap-staf');
     Route::get('/absen/rekap-staf/cetak-jurnal','JadwalAbsensiController@cetakJurnalStaf')->name('staf-admin.absensi.rekap-staf.cetak');
-
 });

@@ -29,13 +29,6 @@
                     </div>
                 @endif
                 <div class="row mb-3">
-                    @if ($tes->selesai < $now)
-                        @if ($selected == "")
-                        <button type="button" class="btn btn-sm btn-warning mr-3" data-toggle="modal" data-target="#arsip">
-                            <i class="fas fa-file-archive"></i> Arsipkan
-                        </button>
-                        @endif
-                    @endif
                     <form action="{{ route('pendidik.dinas.cetak_hasil', [$id]) }}" method="GET">
                         <input name="kelas" value="{{ $selected }}" hidden>
                         <button type="submit" class="btn btn-sm btn-success"><i class="fas fa-file-pdf"></i> Unduh PDF</button>

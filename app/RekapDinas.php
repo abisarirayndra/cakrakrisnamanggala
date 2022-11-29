@@ -8,6 +8,7 @@ class RekapDinas extends Model
 {
     protected $table = 'dn_rekapdinas';
     protected $fillable = [
+        'kode_arsip',
         'dn_paket_id',
         'pelajar_id',
         'nilai_twk',

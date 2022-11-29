@@ -8,6 +8,7 @@ class RekapTniPolri extends Model
 {
     protected $table = 'dn_rekap_tnipolri';
     protected $fillable = [
+        'kode_arsip',
         'dn_paket_id',
         'pelajar_id',
         'bin',

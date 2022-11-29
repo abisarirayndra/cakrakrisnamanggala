@@ -8,6 +8,7 @@ class RekapPsikotes extends Model
 {
     protected $table = 'dn_rekap_psikotes';
     protected $fillable = [
+        'kode_arsip',
         'dn_paket_id',
         'pelajar_id',
         'verbal',
