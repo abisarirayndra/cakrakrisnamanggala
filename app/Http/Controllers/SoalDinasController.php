@@ -232,6 +232,37 @@ class SoalDinasController extends Controller
         Alert::toast('Update Soal Berhasil','success');
 
         return redirect()->route('pendidik.dinas.soalgandapoin', $soal->dn_tes_id);
+    }
+
+    public function adminCetakSoalGandaPoin($id){
+        $soal_poin = SoalDinasGandaPoin::where('dn_tes_id', $id)->first();
+        $soal_ganda = SoalDinasGanda::where('dn_tes_id', $id)->first();
+
+        if(isset($soal_poin)){
+            $soal = SoalDinasGandaPoin::where('dn_tes_id', $id)->get();
+            $data = TesDinas::join('mapels','mapels.id','=','dn_tes.mapel_id')
+                            ->join('users','users.id','=','dn_tes.pengajar_id')
+                            ->select('users.nama','mapels.mapel')
+                            ->where('dn_tes.id', $id)
+                            ->first();
+
+                $en_logo = (string) Image::make(public_path('img/krisna.png'))->encode('data-url');
+                $pdf = PDF::loadview('pendidik.dinas.soal.cetakgandapoin', ['soal'=>$soal,'logo'=>$en_logo,'data'=>$data])->setPaper('a4');
+                return $pdf->stream();
+        }elseif(isset($soal_ganda)){
+            $soal = SoalDinasGanda::where('dn_tes_id', $id)->get();
+            $data = TesDinas::join('mapels','mapels.id','=','dn_tes.mapel_id')
+                                ->join('users','users.id','=','dn_tes.pengajar_id')
+                                ->select('users.nama','mapels.mapel')
+                                ->where('dn_tes.id', $id)
+                                ->first();
+
+            $en_logo = (string) Image::make(public_path('img/krisna.png'))->encode('data-url');
+            $pdf = PDF::loadview('pendidik.dinas.soal.cetakganda', ['soal'=>$soal,'logo'=>$en_logo,'data'=>$data])->setPaper('a4');
+            return $pdf->stream();
+        }else{
+            return abort(404);
+        }
 
     }
 
@@ -305,7 +336,7 @@ class SoalDinasController extends Controller
     //Pelajar
     public function pelajarPersiapan($id){
         $user = Auth::user()->nama;
-        $pelajar = Auth::user()->id; 
+        $pelajar = Auth::user()->id;
         $paket = TesDinas::join('mapels','mapels.id','=','dn_tes.mapel_id')->where('dn_tes.id', $id)->first();
         // return $paket;
         $essay = SoalDinasEssay::where('dn_tes_id', $id)->orderBy('id','asc')->first();

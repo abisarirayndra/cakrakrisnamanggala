@@ -35,7 +35,7 @@
 	<center>
 		<img src="{!!$logo!!}" width="80" alt="">
                 <h5>Cakra Krisna Manggala</h5>
-                <h6>Hasil Penilaian Mata Pelajaran {{ $arsip->mapel }}</h6>
+                <h6>Hasil Penilaian Mata Pelajaran {{ $mapel->mapel }}</h6>
 	</center>
 
     <div class="container-fluid">

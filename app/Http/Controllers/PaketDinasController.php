@@ -20,7 +20,7 @@ class PaketDinasController extends Controller
 
     public function paket(){
         $user = Auth::user()->nama;
-        $paket = PaketDinas::orderBy('id','desc')->get();
+        $paket = PaketDinas::orderBy('id','desc')->paginate(25);
 
         return view('admin.dinas.paket.paket', compact('user','paket'));
     }

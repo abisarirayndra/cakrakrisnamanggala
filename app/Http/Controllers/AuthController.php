@@ -26,12 +26,11 @@ class AuthController extends Controller
 
         if(Auth::attempt($credentials)){
             if(auth()->user()->role_id == 1){
-                Alert::success('Selamat datang Super Admin');
-                return redirect()->route('super.beranda');
+                return abort(403);
             }
             elseif (auth()->user()->role_id == 2) {
                 Alert::success('Selamat datang','Admin');
-                return redirect()->route('admin.dinas.paket');
+                return redirect()->route('admin.beranda');
             }
             elseif (auth()->user()->role_id == 3) {
                 Alert::success('Selamat datang','Pendidik Cakra');

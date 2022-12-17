@@ -19,9 +19,10 @@
             <h5><i class="fas fa-hashtag text-warning"></i> Daftar Paket Soal</h5>
             <div class="mt-3">
                 <a href="{{route('admin.dinas.tambahpaket')}}" class="btn btn-sm btn-warning"><i class="fas fa-plus-square"></i> Tambah</a>
+                <a href="{{ route('admin.dinas.daftar_arsip') }}" class="btn btn-sm btn-warning"><i class="fa fa-archive" aria-hidden="true"></i> Arsip</a>
             </div>
             <div class="p-3 mt-3">
-                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                <table class="table table-bordered" width="100%" cellspacing="0">
                     <thead>
                         <tr>
                           <th style="max-width: 20px">No.</th>
@@ -65,6 +66,8 @@
                         @endforeach
                     </tbody>
                 </table>
+                {{ $paket->links() }}
+                <a href="{{ route('admin.beranda') }}" class="btn btn-sm btn-danger">Keluar</a>
             </div>
         </div>
     </div>

@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use RealRashid\SweetAlert\Facades\Alert;
-use App\ArsipNilai;
+use App\ArsipPaket;
 use App\Penilaian;
 use App\Kelas;
 use App\SoalDinasGanda;
@@ -13,6 +13,7 @@ use App\SoalDinasGandaPoin;
 use App\SoalDinasEssay;
 use App\JawabanGandaDinas;
 use App\JawabanGandaPoinDinas;
+use App\TesDinas;
 use DB;
 use App\User;
 use Image;
@@ -22,24 +23,41 @@ class ArsipController extends Controller
 {
     public function analisis(){
         $user = Auth::user()->nama;
-        $arsip = ArsipNilai::select('dn_tes.id','mapels.mapel','dn_arsipnilai.tanggal','dn_arsipnilai.kode')
-                            ->join('dn_tes','dn_tes.id','=','dn_arsipnilai.dn_tes_id')
-                            ->join('mapels','mapels.id','=','dn_tes.mapel_id')
-                            ->where('dn_arsipnilai.pendidik_id', Auth::user()->id)
-                            ->orderBy('tanggal','desc')
-                            ->get();
+        $pendidik_id = Auth::user()->id;
+        $arsip = ArsipPaket::select('mapels.mapel', 'dn_arsippaket.kode','dn_arsippaket.tanggal','dn_tes.id as tes_id')
+                                ->join('dn_pakets','dn_pakets.id','=','dn_arsippaket.dn_paket_id')
+                                ->join('dn_tes','dn_tes.dn_paket_id','=', 'dn_pakets.id')
+                                ->join('mapels','mapels.id','=','dn_tes.mapel_id')
+                                ->where('dn_tes.pengajar_id', $pendidik_id)
+                                ->orderBy('dn_arsippaket.tanggal','desc')
+                                ->paginate(10);
         // return $arsip;
+
         return view('pendidik.dinas.analisis.analisis', compact('arsip','user'));
+    }
+
+    public function daftarArsip(){
+        $user = Auth::user()->nama;
+        $arsip = ArsipPaket::select('mapels.mapel', 'dn_arsippaket.kode','dn_arsippaket.tanggal','dn_tes.id as tes_id')
+                                ->join('dn_pakets','dn_pakets.id','=','dn_arsippaket.dn_paket_id')
+                                ->join('dn_tes','dn_tes.dn_paket_id','=', 'dn_pakets.id')
+                                ->join('mapels','mapels.id','=','dn_tes.mapel_id')
+                                ->orderBy('dn_arsippaket.tanggal','desc')
+                                ->paginate(10);
+                                
+        return view('admin.dinas.arsip.arsip', compact('user','arsip'));
     }
 
     public function hasil(Request $request){
         $user = Auth::user()->nama;
         $arsip = $request->token;
+        $tes_id = $request->tes_id;
         $nilai = Penilaian::select('users.nama','dn_penilaians.nilai','dn_penilaians.akumulasi','kelas.nama as kelas','dn_penilaians.created_at')
                         ->join('users','users.id','=','dn_penilaians.pelajar_id')
                         ->join('dn_tes','dn_tes.id','=','dn_penilaians.dn_tes_id')
                         ->join('kelas','kelas.id','=','users.kelas_id')
                         ->where('status', $request->token)
+                        ->where('dn_penilaians.dn_tes_id', $request->tes_id)
                         ->orderBy('nilai','desc')
                         ->get();
             $selected = "";
@@ -50,12 +68,13 @@ class ArsipController extends Controller
                         ->join('dn_tes','dn_tes.id','=','dn_penilaians.dn_tes_id')
                         ->join('kelas','kelas.id','=','users.kelas_id')
                         ->where('status', $request->token)
+                        ->where('dn_penilaians.dn_tes_id', $request->tes_id)
                         ->where('users.kelas_id', $request->kelas)
                         ->orderBy('nilai','desc')
                         ->get();
             $selected = $request->kelas;
         }
-        return view('pendidik.dinas.analisis.hasil',  compact('user','nilai','kelas','selected','arsip'));
+        return view('pendidik.dinas.analisis.hasil',  compact('user','nilai','kelas','selected','arsip','tes_id'));
     }
 
     public function cetakHasil(Request $request){
@@ -65,6 +84,7 @@ class ArsipController extends Controller
                                 ->join('dn_tes','dn_tes.id','=','dn_penilaians.dn_tes_id')
                                 ->join('kelas','kelas.id','=','users.kelas_id')
                                 ->where('status', $request->token)
+                                ->where('dn_penilaians.dn_tes_id', $request->tes_id)
                                 ->orderBy('nilai','desc')
                                 ->get();
         }
@@ -74,17 +94,15 @@ class ArsipController extends Controller
                         ->join('dn_tes','dn_tes.id','=','dn_penilaians.dn_tes_id')
                         ->join('kelas','kelas.id','=','users.kelas_id')
                         ->where('status', $request->token)
+                        ->where('dn_penilaians.dn_tes_id', $request->tes_id)
                         ->where('users.kelas_id', $request->kelas)
                         ->orderBy('nilai','desc')
                         ->get();
         }
-        $arsip = ArsipNilai::join('dn_tes','dn_tes.id','=','dn_arsipnilai.dn_tes_id')
-                            ->join('mapels','mapels.id','=','dn_tes.mapel_id')
-                            ->select('mapels.mapel')
-                            ->where('dn_arsipnilai.kode', $request->token)->first();
+        $mapel = TesDinas::join('mapels','mapels.id','=','dn_tes.mapel_id')->where('dn_tes.id', $request->tes_id)->first();
 
         $en_logo = (string) Image::make(public_path('img/krisna.png'))->encode('data-url');
-        $pdf = PDF::loadview('pendidik.dinas.analisis.cetakhasil', ['nilai'=>$nilai,'logo'=>$en_logo,'arsip'=>$arsip])->setPaper('a4','landscape');
+        $pdf = PDF::loadview('pendidik.dinas.analisis.cetakhasil', ['nilai'=>$nilai,'logo'=>$en_logo,'mapel'=>$mapel])->setPaper('a4','landscape');
         return $pdf->stream();
     }
 
@@ -122,6 +140,7 @@ class ArsipController extends Controller
                                 ->join('kelas','kelas.id','=','users.kelas_id')
                                 ->join('dn_soalganda','dn_soalganda.id','=','dn_jawabanganda.dn_soalganda_id')
                                 ->where('status', $request->token)
+                                ->where('dn_soalganda.dn_tes_id', $request->tes)
                                 ->distinct()
                                 ->get();
             $jenis = 1;
@@ -132,6 +151,7 @@ class ArsipController extends Controller
                                 ->join('kelas','kelas.id','=','users.kelas_id')
                                 ->join('dn_soalgandapoin','dn_soalgandapoin.id','=','dn_jawabangandapoin.dn_soalgandapoin_id')
                                 ->where('status', $request->token)
+                                ->where('dn_soalgandapoin.dn_tes_id', $request->tes)
                                 ->distinct()
                                 ->get();
             $jenis = 2;
@@ -146,7 +166,7 @@ class ArsipController extends Controller
         // $essay = SoalDinasEssay::where('dn_tes_id', $request->tes)->first();
         $pelajar = User::join('kelas','kelas.id','=','users.kelas_id')
                             ->select('users.nama as pelajar','kelas.nama as kelas')
-                            ->where('users.id',$request->auth)
+                            ->where('users.id', $request->auth)
                             ->first();
 
         if($ganda){

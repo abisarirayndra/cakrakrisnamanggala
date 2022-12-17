@@ -23,6 +23,7 @@
                     <form action="{{ route('pendidik.dinas.cetakhasil') }}" method="GET">
                         <input name="kelas" value="{{ $selected }}" hidden>
                         <input name="token" value="{{ $arsip }}" hidden>
+                        <input name="tes_id" value="{{ $tes_id }}" hidden>
                         <button type="submit" class="btn btn-sm btn-success"><i class="fas fa-file-pdf"></i> Unduh PDF</button>
                     </form>
                 </div>

@@ -42,7 +42,54 @@ Route::group(['prefix' => 'pendaftar','middleware' => ['auth','pendaftar-role']]
 });
 
 Route::group(['prefix' => 'super','middleware' => ['auth','super-role']], function(){
-    Route::get('/beranda','SuperController@index')->name('super.beranda');
+
+
+
+});
+
+Route::group(['prefix' => 'admin', 'middleware' => ['auth','admin-role']], function(){
+    Route::get('/beranda','AdminController@index')->name('admin.beranda');
+
+    Route::get('/paket','PaketDinasController@paket')->name('admin.dinas.paket');
+    Route::get('/tambahpaket','PaketDinasController@tambah')->name('admin.dinas.tambahpaket');
+    Route::post('/uppaket','PaketDinasController@up')->name('admin.dinas.uppaket');
+    Route::get('/lihatpaket/{id}','PaketDinasController@lihat')->name('admin.dinas.lihatpaket');
+    Route::get('/get_token_tes/{id}','PaketDinasController@getTesToken')->name('admin.dinas.get_token_tes');
+    Route::get('/editpaket/{id}','PaketDinasController@editPaket')->name('admin.dinas.editpaket');
+    Route::post('/updatepaket/{id}','PaketDinasController@updatePaket')->name('admin.dinas.updatepaket');
+    Route::get('/admin/hapuspaket/{id}','PaketDinasController@hapusPaket')->name('admin.dinas.hapuspaket');
+    Route::get('/daftar_arsip','ArsipController@daftarArsip')->name('admin.dinas.daftar_arsip');
+
+    Route::post('/tambahkelas/{id}','PaketDinasController@tambahKelas')->name('admin.dinas.tambahkelas');
+    Route::get('/hapuskelas/{id}','PaketDinasController@hapusKelas')->name('admin.dinas.hapuskelas');
+    Route::post('/tambahtes/{id}','TesDinasController@tambahTes')->name('admin.dinas.tambahtes');
+    Route::get('/hapustes/{id}','TesDinasController@hapusTes')->name('admin.dinas.hapustes');
+    Route::get('/edittes/{id}','TesDinasController@editTes')->name('admin.dinas.edittes');
+    Route::post('/updatetes/{id}','TesDinasController@updateTes')->name('admin.dinas.updatetes');
+    Route::get('/hasildinas/{id}','HasilDinasController@hasilKedinasanAdmin')->name('admin.dinas.hasildinas');
+    Route::get('/live_hasildinas/{id}','HasilDinasController@liveSkorKedinasan')->name('admin.dinas.live_hasildinas');
+    Route::get('/hasiltnipolri/{id}','HasilDinasController@hasilTniPolriAdmin')->name('admin.dinas.hasiltnipolri');
+    Route::get('/live_hasiltnipolri/{id}','HasilDinasController@liveSkorTniPolri')->name('admin.dinas.live_hasiltnipolri');
+    Route::get('/cetakhasildinas/{id}','HasilDinasController@cetakKedinasanAdmin')->name('admin.dinas.cetakhasildinas');
+    Route::get('/cetaktnipolri/{id}','HasilDinasController@cetakTniPolriAdmin')->name('admin.dinas.cetakhasiltnipolri');
+    Route::get('/hasil_psikotes/{id}','HasilDinasController@hasilPsikotesAdmin')->name('admin.dinas.hasil_psikotes');
+    Route::get('/cetak_hasil_psikotes/{id}','HasilDinasController@cetakPsikotesAdmin')->name('admin.dinas.cetak_hasil_psikotes');
+    Route::get('/live_hasilpsikotes/{id}','HasilDinasController@liveSkorPsikotes')->name('admin.dinas.live_hasilpsikotes');
+    Route::get('/arsipkan_paket/{id}', 'HasilDinasController@arsipkanPaket')->name('admin.dinas.arsipkan_paket');
+
+    // Route::get('/monitor_tes','TesDinasController@monitor')->name('admin.monitor_tes');
+    // Route::get('/monitor_tes/lihat/{id}','TesDinasController@monitorTes')->name('admin.monitor_tes.lihat');
+    // Route::post('/monitor_tes/diskualifikasi/{id}','TesDinasController@diskualifikasi')->name('admin.monitor_tes.diskualifikasi');
+
+    //Toefl
+    Route::get('/paket-toefl','PaketToeflController@index')->name('admin.toefl.index');
+    Route::post('/tambah-paket-toefl','PaketToeflController@create')->name('admin.toefl.create');
+    Route::get('/perbarui-referal/{id}','PaketToeflController@perbaruiReferal')->name('admin.toefl.perbarui-referal');
+    Route::get('/hapus-paket/{id}','PaketToeflController@hapusPaket')->name('admin.toefl.hapus-paket');
+    Route::get('/edit-paket/{id}','PaketToeflController@editPaket')->name('admin.toefl.edit-paket');
+    Route::post('/update-paket/{id}','PaketToeflController@updatePaket')->name('admin.toefl.update-paket');
+
+    Route::get('/opsi_administrasi','SuperController@index')->name('super.administrasi');
 
     Route::get('/pengguna-pendaftar','PenggunaController@penggunaPendaftar')->name('super.penggunapendaftar');
     Route::get('/pengguna-pendaftar/lihat/{id}','PenggunaController@lihatPendaftar')->name('super.penggunapendaftar.lihat');
@@ -77,46 +124,7 @@ Route::group(['prefix' => 'super','middleware' => ['auth','super-role']], functi
     Route::get('/pengguna-pelajar-suspended/lihat/{id}','PenggunaController@lihatSuspended')->name('super.penggunasuspend.lihat');
     Route::get('/pengguna-pelajar-suspended/cabut-suspend-pelajar/{id}','PenggunaController@cabutSuspendPelajar')->name('super.penggunasuspend.cabutsuspendpelajar');
 
-});
-
-Route::group(['prefix' => 'admin', 'middleware' => ['auth','admin-role']], function(){
-    Route::get('/paket','PaketDinasController@paket')->name('admin.dinas.paket');
-    Route::get('/tambahpaket','PaketDinasController@tambah')->name('admin.dinas.tambahpaket');
-    Route::post('/uppaket','PaketDinasController@up')->name('admin.dinas.uppaket');
-    Route::get('/lihatpaket/{id}','PaketDinasController@lihat')->name('admin.dinas.lihatpaket');
-    Route::get('/get_token_tes/{id}','PaketDinasController@getTesToken')->name('admin.dinas.get_token_tes');
-    Route::get('/editpaket/{id}','PaketDinasController@editPaket')->name('admin.dinas.editpaket');
-    Route::post('/updatepaket/{id}','PaketDinasController@updatePaket')->name('admin.dinas.updatepaket');
-    Route::get('/admin/hapuspaket/{id}','PaketDinasController@hapusPaket')->name('admin.dinas.hapuspaket');
-
-    Route::post('/tambahkelas/{id}','PaketDinasController@tambahKelas')->name('admin.dinas.tambahkelas');
-    Route::get('/hapuskelas/{id}','PaketDinasController@hapusKelas')->name('admin.dinas.hapuskelas');
-    Route::post('/tambahtes/{id}','TesDinasController@tambahTes')->name('admin.dinas.tambahtes');
-    Route::get('/hapustes/{id}','TesDinasController@hapusTes')->name('admin.dinas.hapustes');
-    Route::get('/edittes/{id}','TesDinasController@editTes')->name('admin.dinas.edittes');
-    Route::post('/updatetes/{id}','TesDinasController@updateTes')->name('admin.dinas.updatetes');
-    Route::get('/hasildinas/{id}','HasilDinasController@hasilKedinasanAdmin')->name('admin.dinas.hasildinas');
-    Route::get('/live_hasildinas/{id}','HasilDinasController@liveSkorKedinasan')->name('admin.dinas.live_hasildinas');
-    Route::get('/hasiltnipolri/{id}','HasilDinasController@hasilTniPolriAdmin')->name('admin.dinas.hasiltnipolri');
-    Route::get('/live_hasiltnipolri/{id}','HasilDinasController@liveSkorTniPolri')->name('admin.dinas.live_hasiltnipolri');
-    Route::get('/cetakhasildinas/{id}','HasilDinasController@cetakKedinasanAdmin')->name('admin.dinas.cetakhasildinas');
-    Route::get('/cetaktnipolri/{id}','HasilDinasController@cetakTniPolriAdmin')->name('admin.dinas.cetakhasiltnipolri');
-    Route::get('/hasil_psikotes/{id}','HasilDinasController@hasilPsikotesAdmin')->name('admin.dinas.hasil_psikotes');
-    Route::get('/cetak_hasil_psikotes/{id}','HasilDinasController@cetakPsikotesAdmin')->name('admin.dinas.cetak_hasil_psikotes');
-    Route::get('/live_hasilpsikotes/{id}','HasilDinasController@liveSkorPsikotes')->name('admin.dinas.live_hasilpsikotes');
-    Route::get('/arsipkan_paket/{id}', 'HasilDinasController@arsipkanPaket')->name('admin.dinas.arsipkan_paket');
-
-    // Route::get('/monitor_tes','TesDinasController@monitor')->name('admin.monitor_tes');
-    // Route::get('/monitor_tes/lihat/{id}','TesDinasController@monitorTes')->name('admin.monitor_tes.lihat');
-    // Route::post('/monitor_tes/diskualifikasi/{id}','TesDinasController@diskualifikasi')->name('admin.monitor_tes.diskualifikasi');
-
-    //Toefl
-    Route::get('/paket-toefl','PaketToeflController@index')->name('admin.toefl.index');
-    Route::post('/tambah-paket-toefl','PaketToeflController@create')->name('admin.toefl.create');
-    Route::get('/perbarui-referal/{id}','PaketToeflController@perbaruiReferal')->name('admin.toefl.perbarui-referal');
-    Route::get('/hapus-paket/{id}','PaketToeflController@hapusPaket')->name('admin.toefl.hapus-paket');
-    Route::get('/edit-paket/{id}','PaketToeflController@editPaket')->name('admin.toefl.edit-paket');
-    Route::post('/update-paket/{id}','PaketToeflController@updatePaket')->name('admin.toefl.update-paket');
+    Route::get('/cetak_soal/{id}','SoalDinasController@adminCetakSoalGandaPoin')->name('admin.cetak_soal');
 });
 
 Route::group(['prefix' => 'pendidik','middleware' => ['auth','pengajar-role']], function(){

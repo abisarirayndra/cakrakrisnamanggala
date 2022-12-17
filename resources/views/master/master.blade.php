@@ -38,10 +38,10 @@
                     </button>
                     <div class="collapse navbar-collapse" id="navbarResponsive">
                         <ul class="navbar-nav mr-auto bg-warning">
-                            <li class="nav-item"><a class="nav-link text-white" href="{{ route('pendidik.dinas.beranda') }}">Beranda</a></li>
-                            <li class="nav-item"><a class="nav-link text-white" href="{{ route('pendidik.dinas.paket') }}"">Paket Soal</a></li>
+                            <li class="nav-item"><a class="nav-link text-white" href="#">E-learning Cakra Krisna Manggala</a></li>
+                            {{-- <li class="nav-item"><a class="nav-link text-white" href="{{ route('pendidik.dinas.paket') }}"">Paket Soal</a></li> --}}
                             {{-- <li class="nav-item"><a class="nav-link text-white" href="">Kedinasan</a></li> --}}
-                            <li class="nav-item"><a class="nav-link text-white" href="{{ route('pendidik.dinas.analisis') }}">Analisis</a></li>
+                            {{-- <li class="nav-item"><a class="nav-link text-white" href="{{ route('pendidik.dinas.analisis') }}">Analisis</a></li> --}}
                             <div class="topbar-divider d-none d-sm-block"></div>
 
                                 <!-- Nav Item - User Information -->

@@ -8,8 +8,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="description" content="">
     <meta name="author" content="">
-    <link rel="icon" type="image/x-icon" href="{{asset('img/favicon.png')}}" />
-    <title>Adminitrasi - Cakra Krisna Manggala</title>
+    <link rel="icon" type="image/x-icon" href="{{asset('assets/img/favicon.ico')}}" />
 
     @yield('title')
 
@@ -33,31 +32,17 @@
             <!-- Topbar -->
             <nav class="navbar navbar-expand-md navbar-light bg-warning topbar mb-4 static-top shadow">
                 <div class="container">
-                    <a class="navbar-brand" href="#"><img src="{{asset('assets/img/favicon.ico')}}" width="50" alt=""></a>
+                    <a class="navbar-brand" href="{{ route('admin.beranda') }}"><img src="{{asset('assets/img/favicon.ico')}}" width="50" alt=""></a>
                     <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
                         <i class="fas fa-bars ml-1"></i>
                     </button>
                     <div class="collapse navbar-collapse" id="navbarResponsive">
                         <ul class="navbar-nav mr-auto bg-warning">
-                            <li class="nav-item"><a class="nav-link text-white" href="{{ route('super.beranda') }}">Beranda</a></li>
-                            <li class="nav-item dropdown">
-                                <a class="nav-link dropdown-toggle" style="color: white" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                  Pengguna
-                                </a>
-                                <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                                  <a class="dropdown-item" href="{{ route('super.penggunapendaftar') }}">Pendaftar</a>
-                                  <a class="dropdown-item" href="{{ route('super.penggunapelajar') }}">Pelajar</a>
-                                  <a class="dropdown-item" href="{{ route('super.penggunapendidik') }}">Pendidik</a>
-                                  {{-- <a class="dropdown-item" href="#">Umum</a> --}}
-                                  <a class="dropdown-item" href="{{ route('super.penggunasuspend') }}">Suspended</a>
-                                  <a class="dropdown-item" href="{{ route('super.penggunastafadmin') }}">Staf Admin</a>
-                                </div>
-                              </li>
-
-                            {{-- <li class="nav-item"><a class="nav-link text-white" href="">Polri/TNI</a></li>
-                            <li class="nav-item"><a class="nav-link text-white" href="">Kedinasan</a></li> --}}
-                            {{-- <li class="nav-item"><a class="nav-link text-white" href="{{ route('pendidik.dinas.analisis') }}">Analisis</a></li> --}}
-                            <div class="topbar-divider d-none d-sm-block"></div>
+                            <li class="nav-item"><a class="nav-link text-white" href="#">Mission Control IT</a></li>
+                            {{-- <li class="nav-item"><a class="nav-link text-white" href="{{ route('admin.monitor_tes') }}">Monitor</a></li> --}}
+                            {{-- <li class="nav-item"><a class="nav-link text-white" href="">Kedinasan</a></li> --}}
+                            {{-- <li class="nav-item"><a class="nav-link text-white" href="">Analisis</a></li>
+                            <div class="topbar-divider d-none d-sm-block"></div> --}}
 
                                 <!-- Nav Item - User Information -->
                                 <li class="nav-item dropdown no-arrow">

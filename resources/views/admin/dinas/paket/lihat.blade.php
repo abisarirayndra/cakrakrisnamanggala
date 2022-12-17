@@ -24,12 +24,12 @@
                 <button class="btn btn-sm btn-warning" data-toggle="modal" data-target="#tambahtes"><i class="fas fa-plus-square"></i> Tambah Tes</button>
             </div>
             <div class="p-3 mt-3">
-                <table class="table table-bordered dataTable" id="dataTable" width="100%" cellspacing="0">
+                <table class="table table-bordered" width="100%" cellspacing="0">
                     <thead>
                         <tr>
-                          <th style="max-width: 30px">No.</th>
+                          <th>No.</th>
                           <th>Mapel</th>
-                          <th style="max-width: 50px">Nilai Pokok/Bobot</th>
+                          <th>Nilai Pokok/Bobot</th>
                           <th>Mulai</th>
                           <th>Selesai</th>
                           <th>Token</th>
@@ -51,9 +51,10 @@
                             <td>{{$item->token}}</td>
                             <td>{{$item->nama}}</td>
                             <td>
-                              <a href="{{route('admin.dinas.edittes', [$item->id])}}" class="btn btn-sm btn-success"><i class="fas fa-feather-alt"></i> Edit</a>
-                              <a href="{{route('admin.dinas.get_token_tes', [$item->id])}}" class="btn btn-sm btn-success" onclick="return confirm('Anda yakin ingin memperbarui token ?')"><i class="fas fa-pen"></i> Token</a>
-                              <a href="{{route('admin.dinas.hapustes', [$item->id])}}" class="btn btn-sm btn-danger" onclick="return confirm('Anda yakin ingin Menghapus ?')"><i class="fas fa-trash"></i> Hapus</a>
+                              <a href="{{route('admin.dinas.edittes', [$item->id])}}" class="btn btn-sm btn-success"><i class="fas fa-feather-alt"></i></a>
+                              <a href="{{route('admin.dinas.get_token_tes', [$item->id])}}" class="btn btn-sm btn-success" onclick="return confirm('Anda yakin ingin memperbarui token ?')"><i class="fas fa-key"></i></a>
+                              <a href="{{route('admin.cetak_soal', [$item->id])}}" class="btn btn-sm btn-warning" target="_blank"><i class="fas fa-print"></i></a>
+                              <a href="{{route('admin.dinas.hapustes', [$item->id])}}" class="btn btn-sm btn-danger" onclick="return confirm('Anda yakin ingin Menghapus ?')"><i class="fas fa-trash"></i></a>
                             </td>
                           </tr>
                         @endforeach

@@ -1,4 +1,4 @@
-@extends('master.master')
+@extends('master.admin')
 
 @section('title')
 <title>Computer Assisted Test - Cakra Krisna Manggala</title>
@@ -28,9 +28,9 @@
                                             Arsip {{ $item->mapel }}</div>
                                             <div class=" font-weight-bold text-dark mb-1">
                                                 Kode Arsip : {{ $item->kode }}</div>
-                                            <div class="font-weight-bold mb-1" style="font-size: 10pt;">
+                                             <div class="font-weight-bold mb-1" style="font-size: 10pt;">
                                                 <div class="text-success">{{\Carbon\Carbon::parse($item->tanggal)->isoFormat('dddd, D MMMM Y HH:mm')}}</div>
-                                                <div class="row ml-1 mt-2">
+                                                {{-- <div class="row ml-1 mt-2">
                                                         <form action="{{ route('pendidik.dinas.hasil') }}" method="GET" >
                                                             <input name="token" value="{{ $item->kode }}" hidden>
                                                             <input type="text" name="tes_id" value="{{ $item->tes_id }}" hidden>
@@ -42,11 +42,11 @@
                                                             </a>
                                                             <div class="dropdown-menu dropdown-menu-right shadow animated--fade-in" aria-labelledby="dropdownMenuLink" style="">
                                                                 <div class="dropdown-header">Analisis Berdasarkan</div>
-                                                                {{-- <form action="{{ route('pendidik.dinas.analisissoal') }}">
+                                                                <form action="{{ route('pendidik.dinas.analisissoal') }}">
                                                                     <input type="text" name="token" hidden value="{{ $item->kode }}">
                                                                     <input type="text" name="tes" hidden value="{{ $item->id }}">
                                                                     <button type="submit" class="dropdown-item">Soal</button>
-                                                                </form> --}}
+                                                                </form>
                                                                 <form action="{{ route('pendidik.dinas.analisispelajar') }}">
                                                                     <input type="text" name="token" hidden value="{{ $item->kode }}">
                                                                     <input type="text" name="tes" hidden value="{{ $item->tes_id }}">
@@ -54,7 +54,7 @@
                                                                 </form>
                                                             </div>
                                                         </div>
-                                                </div>
+                                                </div> --}}
                                             </div>
                                         </div>
                                     <div class="col-auto">
@@ -67,7 +67,7 @@
                     @endforeach
                 </div>
                 {{ $arsip->links() }}
-                <a href="{{ route('pendidik.dinas.beranda') }}" class="btn btn-sm btn-danger">Keluar</a>
+                <a href="{{ route('admin.beranda') }}" class="btn btn-sm btn-danger">Keluar</a>
             </div>
         </div>
     </div>

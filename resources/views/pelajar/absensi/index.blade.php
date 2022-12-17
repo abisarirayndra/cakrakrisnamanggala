@@ -18,6 +18,7 @@
             <input id="text" value="{{ $token }}" hidden/>
             <div class="row">
                 <button id="btn-qrcode" class="btn btn-success btn-sm mt-4 ml-3" data-toggle="modal" data-target="#qrcode-modal"><i class="fas fa-qrcode"></i> Kode QR</button>
+                {{-- <button class="btn btn-sm btn-danger mt-4 ml-2"  data-toggle="modal" data-target="#absensi-outdoor"><i class="fas fa-pen"></i> Absensi Outdoor</button> --}}
                 <form action="{{ route('pelajar.absensi.histori-pembelajaran') }}" method="GET">
                     @php
                         $sekarang = \Carbon\Carbon::now();
@@ -27,6 +28,8 @@
                     <button class="btn btn-sm btn-warning mt-4 ml-2" type="submit"><i class="fas fa-list"></i> Histori Pembelajaran</a>
                 </form>
             </div>
+
+
 
             <div class="p-3 mt-3">
                 @if ($errors->any())
@@ -80,6 +83,24 @@
           </div>
         </div>
     </div>
+    {{-- <div class="modal fade" id="absensi-outdoor" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="exampleModalLongTitle">Masukkan Kode Dari Coach</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+                <form action="" class="form-group">
+                    <input type="text" class="form-control">
+                    <button class="btn btn-sm btn-warning mt-3"><i class="fas fa-pen"></i> Submit</button>
+                </form>
+            </div>
+          </div>
+        </div>
+    </div> --}}
 </div>
 @endsection
 

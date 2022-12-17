@@ -32,13 +32,13 @@
             <!-- Topbar -->
             <nav class="navbar navbar-expand-md navbar-light bg-warning topbar mb-4 static-top shadow">
                 <div class="container">
-                    <a class="navbar-brand" href="#"><img src="{{asset('assets/img/favicon.ico')}}" width="50" alt=""></a>
+                    <a class="navbar-brand" href="{{ route('admin.beranda') }}"><img src="{{asset('assets/img/favicon.ico')}}" width="50" alt=""></a>
                     <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
                         <i class="fas fa-bars ml-1"></i>
                     </button>
                     <div class="collapse navbar-collapse" id="navbarResponsive">
                         <ul class="navbar-nav mr-auto bg-warning">
-                            <li class="nav-item"><a class="nav-link text-white" href="{{ route('admin.dinas.paket') }}">Beranda</a></li>
+                            <li class="nav-item"><a class="nav-link text-white" href="#">Mission Control IT</a></li>
                             {{-- <li class="nav-item"><a class="nav-link text-white" href="{{ route('admin.monitor_tes') }}">Monitor</a></li> --}}
                             {{-- <li class="nav-item"><a class="nav-link text-white" href="">Kedinasan</a></li> --}}
                             {{-- <li class="nav-item"><a class="nav-link text-white" href="">Analisis</a></li>
