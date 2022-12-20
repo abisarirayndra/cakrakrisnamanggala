@@ -19,39 +19,44 @@ class AuthController extends Controller
 
     public function login(Request $request){
 
-        $credentials = [
-            'email' => $request->email,
-            'password' => $request->password,
-        ];
+        $cek = User::where('email', $request->email)->first();
 
-        if(Auth::attempt($credentials)){
-            if(auth()->user()->role_id == 1){
-                return abort(403);
-            }
-            elseif (auth()->user()->role_id == 2) {
-                Alert::success('Selamat datang','Admin');
-                return redirect()->route('admin.beranda');
-            }
-            elseif (auth()->user()->role_id == 3) {
-                Alert::success('Selamat datang','Pendidik Cakra');
-                return redirect()->route('pendidik.dinas.beranda');
-            }
-            elseif (auth()->user()->role_id == 4) {
-                Alert::success('Selamat datang','Peserta Didik Cakra');
-                return redirect()->route('pelajar.dinas.beranda');
-            }
-            elseif(auth()->user()->role_id == 5){
-                return redirect()->route('pendaftar.profil');
-            }
-            elseif(auth()->user()->role_id == 7 ){
-                Alert::toast('Selamat Datang Staf Admin','success');
-                return redirect()->route('staf-admin.beranda');
+        if(!$cek){
+            return redirect()->route('login')->withErrors(['msg' => 'Login gagal, email tidak terdaftar']);
+        }elseif(!Hash::check($request->password, $cek->password)){
+            return redirect()->route('login')->withErrors(['msg' => 'Login gagal, password salah']);
+        }else{
+            $credentials = [
+                'email' => $request->email,
+                'password' => $request->password,
+            ];
+
+            if(Auth::attempt($credentials)){
+                if(auth()->user()->role_id == 1){
+                    return abort(403);
+                }
+                elseif (auth()->user()->role_id == 2) {
+                    Alert::success('Selamat datang','Admin');
+                    return redirect()->route('admin.beranda');
+                }
+                elseif (auth()->user()->role_id == 3) {
+                    Alert::success('Selamat datang','Pendidik Cakra');
+                    return redirect()->route('pendidik.dinas.beranda');
+                }
+                elseif (auth()->user()->role_id == 4) {
+                    Alert::success('Selamat datang','Peserta Didik Cakra');
+                    return redirect()->route('pelajar.dinas.beranda');
+                }
+                elseif(auth()->user()->role_id == 5){
+                    return redirect()->route('pendaftar.profil');
+                }
+                elseif(auth()->user()->role_id == 7 ){
+                    Alert::toast('Selamat Datang Staf Admin','success');
+                    return redirect()->route('staf-admin.beranda');
+                }
             }
 
-        }else {
-            return redirect()->route('login')->withErrors(['msg' => 'Akun tidak ditemukan']);
         }
-
     }
     public function logout(Request $request)
     {
