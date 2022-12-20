@@ -230,4 +230,15 @@ Route::group(['prefix' => 'staf-admin', 'middleware' => ['auth','stafadmin-role'
     Route::get('/absen/rekap-pembelajaran/cetak/{id}','JadwalAbsensiController@cetakJurnalHarian')->name('staf-admin.absensi.rekap-pembelajaran.cetak');
     Route::get('/absen/rekap-staf/','JadwalAbsensiController@rekapAbsensiStaf')->name('staf-admin.absensi.rekap-staf');
     Route::get('/absen/rekap-staf/cetak-jurnal','JadwalAbsensiController@cetakJurnalStaf')->name('staf-admin.absensi.rekap-staf.cetak');
+
+    Route::get('/pengguna-pelajar','PenggunaController@penggunaPelajar')->name('staf-admin.penggunapelajar');
+    Route::get('/pengguna-pelajar/cetak','PenggunaController@cetakPenggunaPelajar')->name('staf-admin.penggunapelajar.cetak');
+    Route::get('/pengguna-pelajar/lihat/{id}','PenggunaController@lihatPelajar')->name('staf-admin.penggunapelajar.lihat');
+    Route::get('/pengguna-pelajar/edit/{id}','PenggunaController@editPelajar')->name('staf-admin.penggunapelajar.edit');
+    Route::post('/pengguna-pelajar/update/{id}','PenggunaController@updatePelajar')->name('staf-admin.penggunapelajar.update');
+    Route::get('/pengguna-pelajar/cetak-pdf/{id}','PenggunaController@cetakPdfPelajar')->name('staf-admin.penggunapelajar.cetak-pdf');
+    Route::get('/pengguna-pelajar/editdata/{id}','PenggunaController@editDataPelajar')->name('staf-admin.penggunapelajar.editdata');
+    Route::post('/pengguna-pelajar/updatedata/{id}','PenggunaController@updateDataPelajar')->name('staf-admin.penggunapelajar.updatedata');
+    // Route::get('/pengguna-pelajar/suspend/{id}','PenggunaController@suspendPelajar')->name('staf-admin.penggunapelajar.suspend');
+    // Route::get('/pengguna-pelajar/hapus/{id}','PenggunaController@destroyPelajar')->name('staf-admin.penggunapelajar.hapus');
 });

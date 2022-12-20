@@ -72,14 +72,14 @@ class PenggunaController extends Controller
 // Pelajar
     public function penggunaPelajar(){
         $user = Auth::user()->nama;
+        $role = Auth::user()->role_id;
         $pelajar = User::join('kelas','kelas.id','=','users.kelas_id')
                     ->select('users.id','users.nama','kelas.nama as kelas','users.nomor_registrasi','users.email','users.updated_at')
                     ->where('role_id', 4)
                     ->orderBy('users.updated_at', 'desc')
-                    ->get();
+                    ->paginate(25);
         // return $pelajar;
-
-        return view('super.pengguna.pelajar.penggunapelajar', compact('user','pelajar'));
+        return view('super.pengguna.pelajar.penggunapelajar', compact('user','pelajar','role'));
     }
 
     public function cetakPenggunaPelajar(){
@@ -88,6 +88,7 @@ class PenggunaController extends Controller
 
     public function lihatPelajar($id){
         $user = Auth::user()->nama;
+        $role = Auth::user()->role_id;
         $pelajar = Pelajar::join('users','users.id','=','adm_pelajars.pelajar_id')
                             // ->join('adm_markas','adm_markas.id','=','adm_pelajars.markas_id')
                             ->select('users.id','users.nama','users.email','adm_pelajars.pelajar_id','adm_pelajars.tempat_lahir','adm_pelajars.tanggal_lahir','adm_pelajars.alamat','adm_pelajars.sekolah','adm_pelajars.wa',
@@ -96,7 +97,7 @@ class PenggunaController extends Controller
                             ->firstOrFail();
         // return $pelajar;
 
-        return view('super.pengguna.pelajar.lihat', compact('pelajar','user'));
+        return view('super.pengguna.pelajar.lihat', compact('pelajar','user','role'));
     }
 
     public function cetakPdfPelajar($id){
@@ -119,7 +120,8 @@ class PenggunaController extends Controller
         $pelajar = User::find($id);
         $kelas = Kelas::all();
         $roles = Role::all();
-        return view('super.pengguna.pelajar.edit', compact('pelajar','kelas','user','roles'));
+        $role = Auth::user()->role_id;
+        return view('super.pengguna.pelajar.edit', compact('pelajar','kelas','user','roles','role'));
     }
 
     public function updatePelajar($id, Request $request){
@@ -150,9 +152,10 @@ class PenggunaController extends Controller
 
     public function editDataPelajar($id){
         $user = Auth::user()->nama;
+        $role = Auth::user()->role_id;
         $data = User::select('nama', 'email', 'nomor_registrasi')->where('id', $id)->first();
         $pelajar = Pelajar::where('pelajar_id', $id)->first();
-        return view('super.pengguna.pelajar.editdata', compact('user','pelajar','data'));
+        return view('super.pengguna.pelajar.editdata', compact('user','pelajar','data','role'));
     }
 
     public function updateDataPelajar($id, Request $request){

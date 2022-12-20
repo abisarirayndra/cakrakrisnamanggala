@@ -89,6 +89,15 @@
             <div class="p-3 mt-3">
                 <div class="row">
                     <div class="col-xl-3 col-md-3 text-center">
+                        <a href="{{ route('staf-admin.penggunapelajar') }}">
+                            <span class="fa-stack fa-3x">
+                                <i class="fas fa-circle fa-stack-2x text-warning"></i>
+                                <i class="fas fa-user-cog fa-stack-1x fa-inverse"></i>
+                            </span>
+                                <h6 class="my-3 text-dark">Data Pelajar</h6>
+                        </a>
+                    </div>
+                    <div class="col-xl-3 col-md-3 text-center">
                         <form action="{{ route('staf-admin.jadwal') }}" method="GET">
                             @if ($data->markas_id == 1)
                                 <input type="text" value="1" name="kelas" hidden>
