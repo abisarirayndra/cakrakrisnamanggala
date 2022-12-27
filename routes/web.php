@@ -174,6 +174,15 @@ Route::group(['prefix' => 'pendidik','middleware' => ['auth','pengajar-role']], 
     Route::post('/absensi/up-jurnal/{id}','JadwalAbsensiController@upJurnalPendidik')->name('pendidik.absensi.up-jurnal');
     Route::post('/absensi/selesai/{id}','JadwalAbsensiController@selesaiPendidik')->name('pendidik.absensi.selesai');
     Route::get('/absensi/histori-mengajar','JadwalAbsensiController@historiMengajar')->name('pendidik.absensi.histori-mengajar');
+    // Absensi Jasmani
+    Route::get('/jadwal_jasmani','JadwalAbsensiController@jadwalAbsensiJasmani')->name('pendidik.absensi.jadwal_jasmani');
+    Route::get('/jadwal_jasmani/absensi/{id}','JadwalAbsensiController@absensiJasmani')->name('pendidik.absensi.jadwal_jasmani.absensi');
+    Route::post('/absensi_jasmani/upload_absensi_jasmani/pelajar','JadwalAbsensiController@uploadAbsensiPelajarJasmani')->name('pendidik.absensi.upload_absensi_jasmani.pelajar');
+    Route::post('/absensi_jasmani/upload_absensi_jasmani','JadwalAbsensiController@uploadAbsensiPendidikJasmani')->name('pendidik.absensi.upload_absensi_jasmani');
+    Route::get('/absensi_jasmani/hapus/izin-pelajar/{id}','JadwalAbsensiController@hapusIzinPelajar')->name('pendidik.absensi.hapus-izin-pelajar');
+    Route::post('/absensi_jasmani/upload-absensi/izin-pelajar','JadwalAbsensiController@uploadAbsensiIzinPelajar')->name('pendidik.absensi.upload-izin-pelajar');
+    Route::post('/absensi_jasmani/upload-absensi/izin-pendidik','JadwalAbsensiController@uploadAbsensiIzinPendidik')->name('pendidik.absensi.upload-izin-pendidik');
+    Route::get('/absensi_jasmani/hapus/izin-pendidik/{id}','JadwalAbsensiController@hapusIzinPendidik')->name('pendidik.absensi.hapus-izin-pendidik');
 
 });
 

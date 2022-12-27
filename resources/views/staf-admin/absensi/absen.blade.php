@@ -67,9 +67,6 @@
                     </div>
                 </div>
                 <hr>
-                    <div class="float-right">
-                        <button class="btn btn-sm btn-danger"><i class="fas fa-pen"></i> Manual</button>
-                    </div>
                     <h5><i class="fas fa-hashtag text-warning"></i> Pendidik</h5>
 
                         <div class="card mb-4 border-bottom-warning mt-3">
@@ -312,5 +309,4 @@
      return e;
     }
    </script>
-
 @endsection

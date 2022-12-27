@@ -681,4 +681,87 @@ class JadwalAbsensiController extends Controller
         return $pdf->stream();
     }
 
+    public function jadwalAbsensiJasmani(){
+        $user = Auth::user()->nama;
+        $coach = Auth::user()->id;
+        $sekarang = Carbon::now()->format('Y-m-d');
+        $jadwal = Jadwal::select('adm_jadwal.id','mapels.mapel','kelas.nama as kelas','users.nama','adm_jadwal.mulai','adm_jadwal.selesai')
+                            ->join('users','users.id','=','adm_jadwal.pendidik_id')
+                            ->join('mapels','mapels.id','=','adm_jadwal.mapel_id')
+                            ->join('kelas','kelas.id','=','adm_jadwal.kelas_id')
+                            ->where('adm_jadwal.pendidik_id', $coach)
+                            ->whereDate('adm_jadwal.mulai', $sekarang)
+                            ->orderBy('adm_jadwal.mulai', 'asc')
+                            ->get();
+
+        return view('pendidik.absensi.jasmani.jadwal', compact('user','jadwal'));
+    }
+
+    public function absensiJasmani($id){
+        $user = Auth::user()->nama;
+        $markas_admin = Pendidik::select('markas_id')->where('pendidik_id', Auth::user()->id)->first();
+        // return $markas_admin;
+        $jadwal = Jadwal::select('adm_jadwal.id','mapels.mapel','kelas.nama as kelas','users.nama','adm_jadwal.mulai','adm_jadwal.selesai')
+                            ->join('users','users.id','=','adm_jadwal.pendidik_id')
+                            ->join('mapels','mapels.id','=','adm_jadwal.mapel_id')
+                            ->join('kelas','kelas.id','=','adm_jadwal.kelas_id')
+                            ->where('adm_jadwal.id', $id)
+                            ->firstOrFail();
+        $nama_pelajar = Pelajar::select('users.id','users.nama')
+                                ->join('users','users.id','=','adm_pelajars.pelajar_id')
+                                ->where('adm_pelajars.markas_id', $markas_admin->markas_id)
+                                ->orderBy('users.nama', 'asc')
+                                ->get();
+        $nama_pendidik = Pendidik::select('users.id','users.nama')
+                                ->join('users','users.id','=','adm_pendidik.pendidik_id')
+                                ->where('adm_pendidik.markas_id', $markas_admin->markas_id)
+                                ->where('adm_pendidik.mapel_id', 5)
+                                ->orderBy('users.nama', 'asc')
+                                ->get();
+        // return $nama_pendidik;
+        $pendidik = AbsensiPendidik::select('adm_absensi_pendidik.id as pendidik_id','users.nama','adm_absensi_pendidik.jurnal')
+                                    ->join('users','users.id','=','adm_absensi_pendidik.pendidik_id')
+                                    ->join('adm_pendidik','adm_pendidik.pendidik_id','=','users.id')
+                                    ->where('adm_absensi_pendidik.jadwal_id', $id)
+                                    ->where('adm_absensi_pendidik.keterangan',null)
+                                    ->orderBy('adm_absensi_pendidik.datang', 'desc')
+                                    ->get();
+        $pelajar = AbsensiPelajar::select('adm_absensi_pelajar.id as pelajar_id','users.nama','adm_absensi_pelajar.status')
+                                    ->join('users','users.id','=','adm_absensi_pelajar.pelajar_id')
+                                    ->join('adm_pelajars','adm_pelajars.pelajar_id','=','users.id')
+                                    ->where('adm_absensi_pelajar.jadwal_id', $id)
+                                    ->where('adm_absensi_pelajar.keterangan', null)
+                                    ->orderBy('adm_absensi_pelajar.datang', 'desc')
+                                    ->get();
+        $izin_pelajar = AbsensiPelajar::select('adm_absensi_pelajar.id as pelajar_id','users.nama','roles.role','adm_absensi_pelajar.status','adm_absensi_pelajar.keterangan')
+                                    ->join('users','users.id','=','adm_absensi_pelajar.pelajar_id')
+                                    ->join('roles','roles.id','=','users.role_id')
+                                    ->where('adm_absensi_pelajar.status', 2)
+                                    ->where('adm_absensi_pelajar.jadwal_id', $id)
+                                    ->get();
+        $izin_pendidik = AbsensiPendidik::select('adm_absensi_pendidik.id as pendidik_id','users.nama','roles.role','adm_absensi_pendidik.status','adm_absensi_pendidik.keterangan')
+                                    ->join('users','users.id','=','adm_absensi_pendidik.pendidik_id')
+                                    ->join('roles','roles.id','=','users.role_id')
+                                    ->where('adm_absensi_pendidik.status', 2)
+                                    ->where('adm_absensi_pendidik.jadwal_id', $id)
+                                    ->get();
+        // return $izin_pendidik;
+        return view('pendidik.absensi.jasmani.absensi', compact('user','jadwal','pendidik','pelajar','nama_pelajar','nama_pendidik','izin_pendidik','izin_pelajar'));
+    }
+    public function uploadAbsensiPendidikJasmani(Request $request){
+        // return $request;
+        foreach($request->tambah as $key=> $value){
+            AbsensiPendidik::create($value);
+        }
+
+        return back()->with('success','Absensi Pendidik Berhasil');
+    }
+    public function uploadAbsensiPelajarJasmani(Request $request){
+        // return $request;
+        foreach($request->tambah2 as $key=> $value){
+            AbsensiPelajar::create($value);
+        }
+
+        return back()->with('success-pelajar','Absensi Pelajar Berhasil');
+    }
 }

@@ -141,6 +141,17 @@
                                 <h6 class="my-3 text-dark">Absensi</h6>
                         </a>
                     </div>
+                    @if ($data->mapel == "Jasmani")
+                    <div class="col-xl-3 col-md-3 text-center">
+                        <a href="{{ route('pendidik.absensi.jadwal_jasmani') }}">
+                            <span class="fa-stack fa-3x">
+                                <i class="fas fa-circle fa-stack-2x text-warning"></i>
+                                <i class="fas fa-search fa-stack-1x fa-inverse"></i>
+                            </span>
+                                <h6 class="my-3 text-dark">Absen Lapangan</h6>
+                        </a>
+                    </div>
+                    @endif
                 </div>
             </div>
             @endif
