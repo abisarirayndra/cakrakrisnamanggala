@@ -7,8 +7,10 @@ use App\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use RealRashid\SweetAlert\Facades\Alert;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\ResetMail;
 use App\Kelas;
-use Cookie;
+use Str;
 
 
 class AuthController extends Controller
@@ -67,6 +69,27 @@ class AuthController extends Controller
 
     public function reset(){
         return view('auth.reset');
+    }
+
+    public function kirimEmail(Request $request){
+        $cek = User::where('email', $request->email)->first();
+        if(!$cek){
+            return redirect()->back()->with('error','Email Tidak Terdaftar');
+        }else{
+            $cek->update([
+                'token_reset' => Str::random(15),
+            ]);
+
+            $data = ['token' => $cek->token_reset];
+            Mail::to($cek->email)->send(new ResetMail($data));
+            return redirect()->back()->with('success','Link reset sudah dikirim ke email yang tertera, silakan cek email anda');
+        }
+
+    }
+
+    public function formReset(Request $request){
+        $token = $request->token;
+        return view('auth.reset.form_reset', compact('token'));
     }
 
     public function upReset(Request $request){

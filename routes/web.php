@@ -21,6 +21,8 @@ Route::get('/login','AuthController@tampilLogin')->name('login');
 Route::post('/log','AuthController@login')->name('log');
 Route::get('/logout', 'AuthController@logout')->name('logout');
 Route::get('/reset', 'AuthController@reset')->name('reset');
+Route::post('/submit_email','AuthController@kirimEmail')->name('submit_email');
+Route::get('/form_reset','AuthController@formReset')->name('form_reset');
 Route::post('/upreset', 'AuthController@upReset')->name('upreset');
 
 // Pendaftaran

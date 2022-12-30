@@ -26,11 +26,16 @@
                                   </div>
                                   <form class="user" action="{{route('submit_email')}}" method="post">
                                     @csrf
-                                      <div class="form-group">
-                                          <input type="text" class="form-control form-control-user"
-                                              id="exampleInputEmail" aria-describedby="emailHelp"
-                                              placeholder="Email" name="email" required>
-                                      </div>
+                                    <div class="form-group">
+                                        <label for="password">Password Baru</label>
+                                        <input type="text" value="{{ $token }}">
+                                        <input type="password" class="form-control form-control-user" id="password" placeholder="Password" name="password" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="ulangi_password">Ulangi Password</label>
+                                        <input type="password" class="form-control form-control-user" id="confirm_password" required placeholder="Ulangi Password">
+                                        <small id='message'></small>
+                                    </div>
                                       <button type="submit" class="btn btn-warning btn-user btn-block">
                                           Submit
                                       </button>
@@ -60,4 +65,21 @@
 
   </div>
 @endsection
+
+@section('js')
+<script type="text/javascript">
+    $('#password, #confirm_password').on('keyup', function () {
+          if ($('#password').val() == $('#confirm_password').val()) {
+            $('#message').html('Password Cocok').css('color', 'green');
+            $('#button').removeAttr("disabled");
+          } else {
+            $('#message').html('Password Tidak Cocok').css('color', 'red');
+            var element = document.getElementById('button');
+            element.setAttribute('disabled','disabled');
+          }
+
+        });
+  </script>
+@endsection
+
 
