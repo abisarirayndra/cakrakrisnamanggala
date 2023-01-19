@@ -1,7 +1,7 @@
 @extends('master.admin1')
 
 @section('title')
-    <title>Login</title>
+    <title>Reset Form</title>
 @endsection
 
 @section('content')
@@ -24,11 +24,17 @@
                                   <div class="text-center">
                                       <h1 class="h4 text-gray-900 mb-4">Reset Password</h1>
                                   </div>
-                                  <form class="user" action="{{route('submit_email')}}" method="post">
+                                  @if (session()->has('success'))
+                                    <div class="alert alert-success mt-3">
+                                        <a href="#" class="close" data-dismiss="alert" aria-label="close">×</a>
+                                        <p>{{ session()->get('success') }}</p>
+                                    </div>
+                                  @endif
+                                  <form class="user" action="{{route('upreset')}}" method="post">
                                     @csrf
                                     <div class="form-group">
                                         <label for="password">Password Baru</label>
-                                        <input type="text" value="{{ $token }}">
+                                        <input type="text" name="token" value="{{ session()->get('token') }}" hidden>
                                         <input type="password" class="form-control form-control-user" id="password" placeholder="Password" name="password" required>
                                     </div>
                                     <div class="form-group">
@@ -36,22 +42,11 @@
                                         <input type="password" class="form-control form-control-user" id="confirm_password" required placeholder="Ulangi Password">
                                         <small id='message'></small>
                                     </div>
-                                      <button type="submit" class="btn btn-warning btn-user btn-block">
+                                      <button id="button" class="btn btn-warning btn-user btn-block" type="submit" >
                                           Submit
                                       </button>
                                   </form>
-                                @if (session()->has('success'))
-                                    <div class="alert alert-success mt-3">
-                                        <a href="#" class="close" data-dismiss="alert" aria-label="close">×</a>
-                                        <p>{{ session()->get('success') }}</p>
-                                    </div>
-                                @endif
-                                @if (session()->has('error'))
-                                    <div class="alert alert-danger mt-3">
-                                        <a href="#" class="close" data-dismiss="alert" aria-label="close">×</a>
-                                        <p>{{ session()->get('error') }}</p>
-                                    </div>
-                                @endif
+
                               </div>
 
                           </div>

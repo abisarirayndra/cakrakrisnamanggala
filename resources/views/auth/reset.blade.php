@@ -1,7 +1,7 @@
 @extends('master.admin1')
 
 @section('title')
-    <title>Login</title>
+    <title>Reset Password</title>
 @endsection
 
 @section('content')
@@ -31,6 +31,10 @@
                                               id="exampleInputEmail" aria-describedby="emailHelp"
                                               placeholder="Email" name="email" required>
                                       </div>
+                                      <div class="form-group">
+                                        <input type="text" class="form-control form-control-user"
+                                            placeholder="Token / No. ID" name="token" required>
+                                    </div>
                                       <button type="submit" class="btn btn-warning btn-user btn-block">
                                           Submit
                                       </button>

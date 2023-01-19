@@ -7,8 +7,6 @@ use App\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use RealRashid\SweetAlert\Facades\Alert;
-use Illuminate\Support\Facades\Mail;
-use App\Mail\ResetMail;
 use App\Kelas;
 use Str;
 
@@ -75,27 +73,29 @@ class AuthController extends Controller
         $cek = User::where('email', $request->email)->first();
         if(!$cek){
             return redirect()->back()->with('error','Email Tidak Terdaftar');
+        }elseif($cek->nomor_registrasi != $request->token){
+            return redirect()->back()->with('error','Token salah, Lihat pada ID Card/Konfirmasi admin markas');
         }else{
             $cek->update([
-                'token_reset' => Str::random(15),
+                'token_reset' => Str::random(40),
             ]);
 
-            $data = ['token' => $cek->token_reset];
-            Mail::to($cek->email)->send(new ResetMail($data));
-            return redirect()->back()->with('success','Link reset sudah dikirim ke email yang tertera, silakan cek email anda');
+            return redirect()->route('form_reset')->with([
+                'token' => $cek->token_reset,
+                'success' => "Akun ditemukan, silakan memperbarui password anda!",
+            ]);
         }
 
     }
 
-    public function formReset(Request $request){
-        $token = $request->token;
-        return view('auth.reset.form_reset', compact('token'));
+    public function formReset(){
+        return view('auth.reset.form_reset');
     }
 
     public function upReset(Request $request){
-        $email = $request->email;
+        $token = $request->token;
 
-        $user = User::where('email', $email)->first();
+        $user = User::where('token_reset', $token)->first();
 
         if(isset($user)){
             $user->update([
