@@ -155,7 +155,7 @@
       <div style="margin-top: 15px">
         <p>Dibuat Oleh : <b>{{ $user }}</b> </p>
         @if ($markas->markas_id == 1)
-        <p>Pengawas : <b>Yayan Ferdiyan, S.Pd.</b></p>
+        <p>Pengawas : <b>Yayan Ferdiyan, M.Pd.</b></p>
         @elseif ($markas->markas_id == 2)
         <p>Pengawas : <b>Yudhi Irawan, S.H.</b></p>
         @elseif ($markas->markas_id == 3)
