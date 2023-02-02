@@ -157,7 +157,7 @@
         @if ($markas->markas_id == 1)
         <p>Pengawas : <b>Yayan Ferdiyan, M.Pd.</b></p>
         @elseif ($markas->markas_id == 2)
-        <p>Pengawas : <b>Yudhi Irawan, S.H.</b></p>
+        <p>Pengawas : <b>Yayan Ferdiyan, M.Pd.</b></p>
         @elseif ($markas->markas_id == 3)
         <p>Pengawas : <b>Agung Sedayu, S.Pd.</b></p>
         @endif
