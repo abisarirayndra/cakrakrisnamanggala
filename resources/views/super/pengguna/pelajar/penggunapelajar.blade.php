@@ -20,7 +20,7 @@
                     <a href="{{ route('staf-admin.penggunapelajar.cetak') }}" class="btn btn-sm btn-warning mb-4" target="_blank"><i class="fas fa-print"></i> Cetak</a>
                     <a href="{{ route('staf-admin.beranda') }}" class="btn btn-sm btn-danger mb-4">Kembali</a>
                 @endif
-                <table class="table table-bordered" width="100%" cellspacing="0">
+                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                     <thead>
                         <tr>
                           <th>No.</th>
@@ -60,7 +60,6 @@
                         @endforeach
                     </tbody>
                 </table>
-                {{ $pelajar->links() }}
             </div>
         </div>
     </div>

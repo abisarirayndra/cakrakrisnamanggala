@@ -15,6 +15,7 @@
                 @if ($role == 2)
                 <form class="user" action="{{ route('super.penggunapelajar.updatedata', [$pelajar->id]) }}" method="POST">
                     @csrf
+                    <input type="text" hidden name="auth" value="2">
                     <div class="form-group">
                         <label for="nama">Nama</label>
                         <input type="text" class="form-control" readonly value="{{$data->nama}}">
@@ -89,6 +90,7 @@
                 @elseif ($role == 7)
                 <form class="user" action="{{ route('staf-admin.penggunapelajar.updatedata', [$pelajar->id]) }}" method="POST">
                     @csrf
+                    <input type="text" hidden name="auth" value="7">
                     <div class="form-group">
                         <label for="nama">Nama</label>
                         <input type="text" class="form-control" readonly value="{{$data->nama}}">

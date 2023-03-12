@@ -256,6 +256,87 @@ class JadwalAbsensiController extends Controller
         return view('staf-admin.absensi.absensi-staf', compact('user','staf','nama_staf','izin_staf'));
     }
 
+    public function absenPulangStaf(){
+        $user = Auth::user()->nama;
+        $id_staf = Auth::user()->id;
+        $now = Carbon::today()->format('Y-m-d');
+        // return $now;
+        $markas = Pendidik::select('markas_id')->where('pendidik_id', $id_staf)->first();
+        $staf = AbsensiStaf::select('adm_absensi_staf.id','roles.role','users.nama','adm_absensi_staf.datang','adm_absensi_staf.pulang','adm_absensi_staf.status')
+                            ->join('users','users.id','=','adm_absensi_staf.staf_id')
+                            ->join('roles','roles.id','=','users.role_id')
+                            ->join('adm_pendidik','adm_pendidik.pendidik_id','=','users.id')
+                            ->where('adm_pendidik.markas_id', $markas->markas_id)
+                            ->whereDate('datang', $now)
+                            ->get();
+        $nama_staf = Pendidik::select('users.id','users.nama')
+                                ->join('users','users.id','=','adm_pendidik.pendidik_id')
+                                ->where('users.role_id', 7)
+                                ->orWhere('users.role_id', 2)
+                                ->get();
+        $izin_staf = AbsensiStaf::select('adm_absensi_staf.id','roles.role','users.nama','adm_absensi_staf.status','adm_absensi_staf.keterangan')
+                            ->join('users','users.id','=','adm_absensi_staf.staf_id')
+                            ->join('roles','roles.id','=','users.role_id')
+                            ->join('adm_pendidik','adm_pendidik.pendidik_id','=','users.id')
+                            ->where('adm_pendidik.markas_id', $markas->markas_id)
+                            ->whereDate('adm_absensi_staf.created_at', $now)
+                            ->where('adm_absensi_staf.status', 2)
+                            ->get();
+        return view('staf-admin.absensi.absen-pulang-staf', compact('user','staf','nama_staf','izin_staf'));
+    }
+
+    public function uploadAbsensiStaf(Request $request){
+        $pengguna = User::where('nomor_registrasi', $request->token)->first();
+            if($pengguna){
+                if($pengguna->role_id == 7 || $pengguna->role_id == 2 || $pengguna->role_id == 1){
+                    $now = Carbon::now()->format('Y-m-d');
+                    $staf = AbsensiStaf::where('staf_id', $pengguna->id)->whereDate('datang', $now)->first();
+                    if(isset($staf)){
+                        Alert::error('Sudah Melakukan Absen');
+                        return redirect()->back();
+                    }else{
+                        AbsensiStaf::create([
+                            'staf_id' => $pengguna->id,
+                            'datang' => Carbon::now(),
+                            'status' => 1,
+                        ]);
+                        Alert::success('Absensi Berhasil');
+                        return redirect()->back();
+                    }
+                }
+                elseif($pengguna->role_id == 3 || $pengguna->role_id == 4){
+                    Alert::error('Anda Bukan Staf','Silakan Ke Menu Absensi Pembelajaran');
+                    return redirect()->back();
+                }
+            }else{
+                Alert::error('Pengguna Tidak Ditemukan','Pengguna Tidak Terdaftar');
+                return redirect()->back();
+            }
+    }
+
+    public function uploadStafPulang(Request $request){
+        $staf = User::where('nomor_registrasi', $request->token)->first();
+        if(!$staf){
+            Alert::error('Pengguna Tidak Ditemukan');
+            return redirect()->back();
+        }else{
+            $now = Carbon::now()->format('Y-m-d');
+            $absensi = AbsensiStaf::where('staf_id',$staf->id)->whereDate('datang',$now)->first();
+            if($absensi){
+                $absensi->update([
+                    'staf_id' => $staf->id,
+                    'pulang' => Carbon::now(),
+                ]);
+                Alert::success('Absensi Pulang Berhasil');
+                return redirect()->back();
+            }else{
+                Alert::error('Anda Belum Absen Kehadiran');
+                return redirect()->back();
+            }
+        }
+
+    }
+
     public function uploadAbsensi(Request $request){
         $pengguna = User::where('nomor_registrasi', $request->token)->first();
             if($pengguna){
@@ -377,34 +458,7 @@ class JadwalAbsensiController extends Controller
         Alert::toast('Hapus Izin Berhasil', 'success');
         return redirect()->back();
     }
-    public function uploadAbsensiStaf(Request $request){
-        $pengguna = User::where('nomor_registrasi', $request->token)->first();
-            if($pengguna){
-                if($pengguna->role_id == 7 || $pengguna->role_id == 2 || $pengguna->role_id == 1){
-                    $now = Carbon::now()->format('Y-m-d');
-                    $staf = AbsensiStaf::where('staf_id', $pengguna->id)->whereDate('datang', $now)->first();
-                    if(isset($staf)){
-                        Alert::toast('Sudah Melakukan Absen','error');
-                        return redirect()->back();
-                    }else{
-                        AbsensiStaf::create([
-                            'staf_id' => $pengguna->id,
-                            'datang' => Carbon::now(),
-                            'status' => $request->status,
-                        ]);
-                        Alert::toast('Absensi Berhasil','success');
-                        return redirect()->back();
-                    }
-                }
-                elseif($pengguna->role_id == 3 || $pengguna->role_id == 4){
-                    Alert::error('Anda Bukan Staf','Silakan Ke Menu Absensi Pembelajaran');
-                    return redirect()->back();
-                }
-            }else{
-                Alert::error('Pengguna Tidak Ditemukan','Pengguna Tidak Terdaftar');
-                return redirect()->back();
-            }
-    }
+
 
     // Pendidik
     public function scanAbsensiPendidik(){

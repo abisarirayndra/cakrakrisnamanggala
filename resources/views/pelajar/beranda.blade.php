@@ -54,28 +54,8 @@
                                     <td class="pl-4">{{$data->sekolah}}</td>
                                 </tr>
                                 <tr>
-                                    <td><b>No. Telpon/WhatsApp</b></td>
-                                    <td class="pl-4">{{$data->wa}}</td>
-                                </tr>
-                                <tr>
                                     <td><b>Nama Wali</b></td>
                                     <td class="pl-4">{{$data->wali}}</td>
-                                </tr>
-                                <tr>
-                                    <td><b>WA Wali</b></td>
-                                    @if ($data->wa_wali == null)
-                                        <td class="pl-4">--Belum Tersedia--</td>
-                                    @else
-                                        <td class="pl-4">{{$data->wa_wali}}</td>
-                                    @endif
-                                </tr>
-                                <tr>
-                                    <td><b>Nama Ibu Kandung</b></td>
-                                    @if ($data->ibu == null)
-                                        <td class="pl-4">--Belum Tersedia--</td>
-                                    @else
-                                        <td class="pl-4">{{$data->ibu}}</td>
-                                    @endif
                                 </tr>
                                 <tr>
                                     <td><b>Tanggal Daftar</b></td>
@@ -84,6 +64,118 @@
                             </table>
                                 {{-- <a href="{{route('pendaftar.cetak_pdf', [$data->id])}}" target="_blank" class="btn btn-success mt-4"><i class="fas fa-cloud-download-alt"></i> Unduh PDF</a> --}}
                                 {{-- <a href="" class="btn btn-warning mt-4 ml-3"><i class="fas fa-edit"></i> Edit</a> --}}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+
+        <!-- Earnings (Monthly) Card Example -->
+        <div class="col-xl-4 col-md-6 col-sm-6 col-xs-6 mb-4">
+            <div class="card border-left-success shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-dark text-uppercase mb-1">
+                                Jumlah Ontime</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ $jumlah_ontime }}</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-calendar fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Earnings (Annual) Card Example -->
+        <div class="col-xl-4 col-md-6 col-sm-6 col-xs-6 mb-4">
+            <div class="card border-left-danger shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-dark text-uppercase mb-1">
+                                Jumlah Terlambat</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ $jumlah_terlambat }}</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-calendar fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tasks Card Example -->
+        <div class="col-xl-4 col-md-6 col-sm-6 col-xs-6 mb-4">
+            <div class="card border-left-info shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-info text-uppercase mb-1">Jumlah Izin
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ $jumlah_izin }}</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-clipboard-list fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+
+        <!-- Earnings (Monthly) Card Example -->
+        <div class="col-xl-4 col-md-6 col-sm-6 col-xs-6 mb-4">
+            <div class="card border-left-success shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-dark text-uppercase mb-1">
+                                SKD tertinggi</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ $skd }}</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-calendar fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Earnings (Annual) Card Example -->
+        <div class="col-xl-4 col-md-6 col-sm-6 col-xs-6 mb-4">
+            <div class="card border-left-danger shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-dark text-uppercase mb-1">
+                                Tes Akademik Tertinggi</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ $akademik }}</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-calendar fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tasks Card Example -->
+        <div class="col-xl-4 col-md-6 col-sm-6 col-xs-6 mb-4">
+            <div class="card border-left-info shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-info text-uppercase mb-1">Psikotes Tertinggi
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ $psikotes }}</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-clipboard-list fa-2x text-gray-300"></i>
+                        </div>
                     </div>
                 </div>
             </div>

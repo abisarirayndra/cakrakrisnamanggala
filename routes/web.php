@@ -231,6 +231,8 @@ Route::group(['prefix' => 'staf-admin', 'middleware' => ['auth','stafadmin-role'
     Route::post('/absensi/upload-absensi/staf','JadwalAbsensiController@uploadAbsensiStaf')->name('staf-admin.absensi.upload-absensi.staf');
     Route::post('/absensi/upload-absensi/izin-staf','JadwalAbsensiController@uploadAbsensiIzinStaf')->name('staf-admin.absensi.upload-izin-staf');
     Route::get('/absensi/hapus/izin-staf/{id}','JadwalAbsensiController@hapusIzinStaf')->name('staf-admin.absensi.hapus-izin-staf');
+    Route::get('/absen/staf/pulang','JadwalAbsensiController@absenPulangStaf')->name('staf-admin.absen.staf-pulang');
+    Route::post('/absen/staf/pulang_upload', 'JadwalAbsensiController@uploadStafPulang')->name('staf-admin.absen.upload-staf-pulang');
 
     Route::get('/absensi/hapus/izin-pelajar/{id}','JadwalAbsensiController@hapusIzinPelajar')->name('staf-admin.absensi.hapus-izin-pelajar');
     Route::post('/absensi/upload-absensi/izin-pelajar','JadwalAbsensiController@uploadAbsensiIzinPelajar')->name('staf-admin.absensi.upload-izin-pelajar');
@@ -241,6 +243,11 @@ Route::group(['prefix' => 'staf-admin', 'middleware' => ['auth','stafadmin-role'
     Route::get('/absen/rekap-pembelajaran/cetak/{id}','JadwalAbsensiController@cetakJurnalHarian')->name('staf-admin.absensi.rekap-pembelajaran.cetak');
     Route::get('/absen/rekap-staf/','JadwalAbsensiController@rekapAbsensiStaf')->name('staf-admin.absensi.rekap-staf');
     Route::get('/absen/rekap-staf/cetak-jurnal','JadwalAbsensiController@cetakJurnalStaf')->name('staf-admin.absensi.rekap-staf.cetak');
+
+    Route::get('/pengguna-pendaftar','PenggunaController@penggunaPendaftar')->name('staf-admin.penggunapendaftar');
+    Route::get('/pengguna-pendaftar/lihat/{id}','PenggunaController@lihatPendaftar')->name('staf-admin.penggunapendaftar.lihat');
+    Route::post('/pengguna-pendaftar/migrasi/{id}','PenggunaController@migrasiPendaftar')->name('staf-admin.penggunapendaftar.migrasi');
+    Route::get('/pengguna-pendaftar/hapus/{id}','PenggunaController@hapusPendaftar')->name('staf-admin.penggunapendaftar.hapus');
 
     Route::get('/pengguna-pelajar','PenggunaController@penggunaPelajar')->name('staf-admin.penggunapelajar');
     Route::get('/pengguna-pelajar/cetak','PenggunaController@cetakPenggunaPelajar')->name('staf-admin.penggunapelajar.cetak');

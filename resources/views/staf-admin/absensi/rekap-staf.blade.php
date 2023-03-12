@@ -51,7 +51,7 @@
                             <th>Tanggal</th>
                             <th>Datang - Pulang</th>
                             <th>Status</th>
-                            <th>Laporan</th>
+                            {{-- <th>Laporan</th> --}}
                         </tr>
                         @php
                             $no = 1;
@@ -75,13 +75,13 @@
                                         <p class="text-success"><i class="fas fa-circle"></i><b> Ontime</b></p>
                                 @endif
                             </td>
-                            <td>
+                            {{-- <td>
                                 @if ($item->jurnal ==  null)
                                     <p class="text-danger"><b> Belum Absen Pulang</b></p>
                                 @else
                                     {{ $item->jurnal }}
                                 @endif
-                            </td>
+                            </td> --}}
                         </tr>
                         @endforeach
                     </table>

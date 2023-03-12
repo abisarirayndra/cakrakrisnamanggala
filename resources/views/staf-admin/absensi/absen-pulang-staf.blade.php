@@ -8,11 +8,11 @@
 <div class="container">
     <div class="card shadow mb-4">
         <div class="card-body">
-            <h5><i class="fas fa-hashtag text-warning"></i> Absensi Kehadiran <b>{{ \Carbon\Carbon::now()->isoFormat('dddd, D MMMM Y') }}</b></h5>
+            <h5><i class="fas fa-hashtag text-warning"></i> Absensi Kepulangan <b>{{ \Carbon\Carbon::now()->isoFormat('dddd, D MMMM Y') }}</b></h5>
             <div class="p-3 mt-3">
                 <div class="row">
                     <div class="col-sm-6">
-                    <form action="{{ route('staf-admin.absensi.upload-absensi.staf') }}" method="POST">
+                    <form action="{{ route('staf-admin.absen.upload-staf-pulang') }}" method="POST">
                         @csrf
                         <div class="form-group ml-7">
                             <label for="token">Scan Token</label>
@@ -22,16 +22,6 @@
                             <button class="btn btn-sm btn-warning" type="submit"><i class="fas fa-pen"></i> Absensi</button>
                         </div>
                     </form>
-                    </div>
-                    <div class="col-sm-6">
-                        <div class="card mb-4">
-                            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between bg-warning">
-                                <h6 class="m-0 font-weight-bold text-white">Izin/Tanpa Keterangan</h6>
-                            </div>
-                            <div class="card-body">
-                                <button class="btn btn-sm btn-danger" data-toggle="modal" data-target="#tambahdata"><i class="fas fa-pen"></i> Staf</button>
-                            </div>
-                        </div>
                     </div>
                 </div>
                 <hr>
@@ -103,40 +93,7 @@
                 </div>
         </div>
     </div>
-    <div class="modal fade" id="tambahdata" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h5 class="modal-title text-dark" id="exampleModalLabel">Izin Staf</h5>
-              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-              </button>
-            </div>
-                <form action="{{ route('staf-admin.absensi.upload-izin-staf') }}" method="POST">
-                    @csrf
-                    <div class="modal-body">
-                        <div class="form-group">
-                            <label>Staf</label>
-                            <select name="staf_id" id="staf_id" class="form-control">
-                                @foreach ($nama_staf as $item)
-                                    <option value="{{ $item->id }}">{{ $item->nama }}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                        <input type="text" name="status" value="2" readonly hidden>
-                        <div class="form-group">
-                            <label>Keterangan</label>
-                            <textarea name="keterangan" id="keterangan" cols="30" rows="10" class="form-control"></textarea>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-danger" data-dismiss="modal">Keluar</button>
-                        <button type="submit" class="btn btn-warning">Simpan</button>
-                    </div>
-                </form>
-          </div>
-        </div>
-    </div>
+
 </div>
 @endsection
 

@@ -88,7 +88,16 @@
             <h5><i class="fas fa-hashtag text-warning"></i> Menu</h5>
             <div class="p-3 mt-3">
                 <div class="row">
-                    <div class="col-xl-3 col-md-3 text-center">
+                    <div class="col-xl-2 col-md-3 text-center">
+                        <a href="{{ route('staf-admin.penggunapendaftar') }}">
+                            <span class="fa-stack fa-3x">
+                                <i class="fas fa-circle fa-stack-2x text-warning"></i>
+                                <i class="fas fa-user-cog fa-stack-1x fa-inverse"></i>
+                            </span>
+                                <h6 class="my-3 text-dark">Data Pendaftar</h6>
+                        </a>
+                    </div>
+                    <div class="col-xl-2 col-md-3 text-center">
                         <a href="{{ route('staf-admin.penggunapelajar') }}">
                             <span class="fa-stack fa-3x">
                                 <i class="fas fa-circle fa-stack-2x text-warning"></i>
@@ -97,7 +106,7 @@
                                 <h6 class="my-3 text-dark">Data Pelajar</h6>
                         </a>
                     </div>
-                    <div class="col-xl-3 col-md-3 text-center">
+                    <div class="col-xl-2 col-md-3 text-center">
                         <form action="{{ route('staf-admin.jadwal') }}" method="GET">
                             @if ($data->markas_id == 1)
                                 <input type="text" value="1" name="kelas" hidden>
@@ -118,7 +127,7 @@
                         </form>
 
                     </div>
-                    <div class="col-xl-3 col-md-3 text-center">
+                    <div class="col-xl-2 col-md-3 text-center">
                         <a href="{{ route('staf-admin.absensi.beranda') }}">
                             <span class="fa-stack fa-3x">
                                 <i class="fas fa-circle fa-stack-2x text-warning"></i>
@@ -127,7 +136,7 @@
                                 <h6 class="my-3 text-dark">Absensi Pembelajaran</h6>
                         </a>
                     </div>
-                    <div class="col-xl-3 col-md-3 text-center">
+                    <div class="col-xl-2 col-md-3 text-center">
                         <form action="{{ route('staf-admin.absensi.rekap-pembelajaran') }}" method="GET">
                             @if ($data->markas_id == 1)
                                 <input type="text" value="1" name="kelas" hidden>
@@ -147,16 +156,17 @@
                             </button>
                         </form>
                     </div>
-                    <div class="col-xl-3 col-md-3 text-center">
-                        <a href="{{ route('staf-admin.absen.staf') }}">
+                    <div class="col-xl-2 col-md-3 text-center">
+                        {{-- <a href="{{ route('staf-admin.absen.staf') }}"> --}}
+                        <button style="background-color: transparent; border: 0px" data-toggle="modal" data-target="#staf-modal">
                             <span class="fa-stack fa-3x">
                                 <i class="fas fa-circle fa-stack-2x text-warning"></i>
                                 <i class="fas fa-qrcode fa-stack-1x fa-inverse"></i>
                             </span>
                                 <h6 class="my-3 text-dark">Absensi Staf</h6>
-                        </a>
+                        </button>
                     </div>
-                    <div class="col-xl-3 col-md-3 text-center">
+                    <div class="col-xl-2 col-md-3 text-center">
                         <form action="{{ route('staf-admin.absensi.rekap-staf') }}" method="GET">
                             <input type="text" value="{{ $sekarang->format('m') }}" hidden name="bulan">
                             <input type="text" value="{{ $sekarang->format('Y') }}" hidden name="tahun">
@@ -269,6 +279,22 @@
                     <div class="text-left mt-4">
                         <p>Token : <b>{{ $token }}</b></p>
                     </div>
+            </div>
+          </div>
+        </div>
+    </div>
+    <div class="modal fade" id="staf-modal" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="exampleModalLongTitle">Absensi Staf</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+                <a href="{{ route('staf-admin.absen.staf') }}" class="btn btn-sm btn-success">Kehadiran</a>
+                <a href="{{ route('staf-admin.absen.staf-pulang') }}" class="btn btn-sm btn-danger">Kepulangan</a>
             </div>
           </div>
         </div>

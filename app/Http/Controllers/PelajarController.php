@@ -6,6 +6,10 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\PaketSoal;
 use App\Pelajar;
+use App\AbsensiPelajar;
+use App\RekapTniPolri;
+use App\RekapDinas;
+use App\RekapPsikotes;
 
 class PelajarController extends Controller
 {
@@ -19,7 +23,13 @@ class PelajarController extends Controller
         $id = Auth::user()->id;
         $user = Auth::user()->nama;
         $data = Pelajar::where('pelajar_id',$id)->first();
-        return view('pelajar.beranda', compact('data','user'));
+        $jumlah_ontime = AbsensiPelajar::where('pelajar_id', $id)->where('status', 1)->count();
+        $jumlah_terlambat = AbsensiPelajar::where('pelajar_id', $id)->where('status', 0)->count();
+        $jumlah_izin = AbsensiPelajar::where('pelajar_id', $id)->where('status', 2)->count();
+        $skd = RekapDinas::where('pelajar_id', $id)->max('total_nilai');
+        $akademik = RekapTniPolri::where('pelajar_id', $id)->max('total_nilai');
+        $psikotes = RekapPsikotes::where('pelajar_id', $id)->max('total_nilai');
+        return view('pelajar.beranda', compact('data','user','jumlah_ontime','jumlah_terlambat','jumlah_izin','skd','akademik','psikotes'));
     }
 
     /**

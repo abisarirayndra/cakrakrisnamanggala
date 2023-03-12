@@ -1,9 +1,5 @@
 @extends('master.super')
 
-@section('title')
-
-@endsection
-
 @section('content')
     <!-- Begin Page Content -->
 <div class="container">
@@ -74,7 +70,11 @@
 
                         </div>
                         <div class="row">
-                            <button data-toggle="modal" data-target="#migrasidata" class="btn btn-warning mt-4 ml-3"><i class="fas fa-edit"></i> Migrasi Data</button>
+                            @if (auth()->user()->role_id == 7)
+                                <button data-toggle="modal" data-target="#migrasidata-staf" class="btn btn-warning mt-4 ml-3"><i class="fas fa-edit"></i> Migrasi Data</button>
+                            @else
+                                <button data-toggle="modal" data-target="#migrasidata" class="btn btn-warning mt-4 ml-3"><i class="fas fa-edit"></i> Migrasi Data</button>
+                            @endif
                         </div>
                     </div>
                 </div>
@@ -100,6 +100,37 @@
                                     <option value="{{$item->id}}">{{$item->nama}}</option>
                                 @endforeach
                             </select>
+                            <input type="text" hidden value="1" name="auth">
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-danger" data-dismiss="modal">Keluar</button>
+                        <button type="submit" class="btn btn-warning">Simpan</button>
+                    </div>
+                </form>
+          </div>
+        </div>
+    </div>
+    <div class="modal fade" id="migrasidata-staf" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title text-warning" id="exampleModalLabel">Migrasi Ke Pelajar</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+                <form action="{{ route('staf-admin.penggunapendaftar.migrasi', [$pendaftar->pelajar_id]) }}" method="POST">
+                    @csrf
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label for="nama">Masukkan ke kelas ?</label>
+                            <select name="kelas_id" class="form-control" required>
+                                @foreach ($kelas as $item)
+                                    <option value="{{$item->id}}">{{$item->nama}}</option>
+                                @endforeach
+                            </select>
+                            <input type="text" hidden value="7" name="auth">
                         </div>
                     </div>
                     <div class="modal-footer">

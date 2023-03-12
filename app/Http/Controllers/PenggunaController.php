@@ -45,15 +45,21 @@ class PenggunaController extends Controller
     }
 
     public function migrasiPendaftar($id, Request $request){
+        // return $request;
         $akun = User::find($id);
         $akun->update([
             'kelas_id' => $request->kelas_id,
             'nomor_registrasi' => Str::random(6),
             'role_id' => 4,
         ]);
+        if($request->auth == 2){
+            Alert::toast('Migrasi Pendaftar ke Pelajar Berhasil');
+            return redirect()->route('super.penggunapelajar');
+        }elseif($request->auth == 7){
+            Alert::toast('Migrasi Pendaftar ke Pelajar Berhasil');
+            return redirect()->route('staf-admin.penggunapelajar');
+        }
 
-        Alert::toast('Migrasi Pendaftar ke Pelajar Berhasil');
-        return redirect()->route('super.penggunapelajar');
 
     }
 
@@ -77,7 +83,7 @@ class PenggunaController extends Controller
                     ->select('users.id','users.nama','kelas.nama as kelas','users.nomor_registrasi','users.email','users.updated_at')
                     ->where('role_id', 4)
                     ->orderBy('users.updated_at', 'desc')
-                    ->paginate(25);
+                    ->get();
         // return $pelajar;
         return view('super.pengguna.pelajar.penggunapelajar', compact('user','pelajar','role'));
     }
@@ -135,8 +141,14 @@ class PenggunaController extends Controller
                 'kelas_id' => $request->kelas_id,
                 'role_id' => $request->role_id,
             ]);
-            Alert::toast('Update Pelajar Berhasil','success');
-            return redirect()->route('super.penggunapelajar');
+            if($request->auth == 2){
+                Alert::toast('Update Pelajar Berhasil','success');
+                return redirect()->route('super.penggunapelajar');
+            }else{
+                Alert::toast('Update Pelajar Berhasil','success');
+                return redirect()->route('staf-admin.penggunapelajar');
+            }
+
         }else{
             $pelajar->update([
                 'nama' => $request->nama,
@@ -145,8 +157,13 @@ class PenggunaController extends Controller
                 'kelas_id' => $request->kelas_id,
                 'role_id' => $request->role_id,
             ]);
-            Alert::toast('Update Pelajar Berhasil','success');
-            return redirect()->route('super.penggunapelajar');
+            if($request->auth == 2){
+                Alert::toast('Update Pelajar Berhasil','success');
+                return redirect()->route('super.penggunapelajar');
+            }else{
+                Alert::toast('Update Pelajar Berhasil','success');
+                return redirect()->route('staf-admin.penggunapelajar');
+            }
         }
     }
 
@@ -165,8 +182,14 @@ class PenggunaController extends Controller
                 'foto' => 'mimes:jpg,jpeg,png|dimensions:ratio=3/2|size:500',
             ]);
             $pelajar->update($request->all());
-            Alert::toast('Update Data Berhasil','success');
-            return redirect()->route('super.penggunapelajar.lihat',$id);
+
+            if($request->auth == 2){
+                Alert::toast('Update Data Berhasil','success');
+                return redirect()->route('super.penggunapelajar.lihat',$pelajar->pelajar_id);
+            }else{
+                Alert::toast('Update Data Berhasil','success');
+                return redirect()->route('staf-admin.penggunapelajar.lihat',$pelajar->pelajar_id);
+            }
         }else{
             $pelajar->update([
                 'tempat_lahir' => $request->tempat_lahir,
@@ -182,7 +205,13 @@ class PenggunaController extends Controller
                 'markas' => $request->markas,
             ]);
             Alert::toast('Update Data Berhasil','success');
-            return redirect()->route('super.penggunapelajar.lihat',$pelajar->pelajar_id);
+            if($request->auth == 2){
+                Alert::toast('Update Data Berhasil','success');
+                return redirect()->route('super.penggunapelajar.lihat',$pelajar->pelajar_id);
+            }else{
+                Alert::toast('Update Data Berhasil','success');
+                return redirect()->route('staf-admin.penggunapelajar.lihat',$pelajar->pelajar_id);
+            }
         }
     }
 

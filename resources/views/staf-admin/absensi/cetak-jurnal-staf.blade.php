@@ -46,8 +46,7 @@
             <th class="sel-head">Jabatan</th>
             <th class="sel-head">Tanggal</th>
             <th class="sel-head">Datang - Pulang</th>
-            <th class="sel-head">Status</th>
-            <th class="sel-head">Laporan</th>
+            {{-- <th class="sel-head">Laporan</th> --}}
         </tr>
         @php
         $no = 1;
@@ -64,20 +63,13 @@
                 @else
                     {{\Carbon\Carbon::parse($item->datang)->isoFormat('HH:mm')}} - {{ \Carbon\Carbon::parse($item->pulang)->isoFormat('HH:mm') }}</td>
                 @endif
-            <td class="sel">
-                @if ($item->status == 0)
-                        <p class="text-danger"><i class="fas fa-circle"></i><b> Terlambat</b></p>
-                @elseif ($item->status == 1)
-                        <p class="text-success"><i class="fas fa-circle"></i><b> Ontime</b></p>
-                @endif
-            </td>
-            <td class="sel">
+            {{-- <td class="sel">
                 @if ($item->jurnal ==  null)
                     <p class="text-danger"><b> Belum Absen Pulang</b></p>
                 @else
                     {{ $item->jurnal }}
                 @endif
-            </td>
+            </td> --}}
         </tr>
         @endforeach
       </table>

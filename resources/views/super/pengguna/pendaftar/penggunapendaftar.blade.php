@@ -14,6 +14,11 @@
         <div class="card-body">
             <h5><i class="fas fa-hashtag text-warning"></i> Daftar Pengguna Pendaftar</h5>
             <div class="p-3 mt-3">
+                @if (auth()->user()->role_id == 2)
+                    <a href="{{ route('admin.beranda') }}" class="btn btn-sm btn-danger mb-4">Kembali</a>
+                @else
+                    <a href="{{ route('staf-admin.beranda') }}" class="btn btn-sm btn-danger mb-4">Kembali</a>
+                @endif
                 <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                     <thead>
                         <tr>
@@ -35,8 +40,13 @@
                             <td>{{ $item->email }}</td>
                             <td>{{ \Carbon\Carbon::parse($item->updated_at)->isoFormat('dddd, D MMMM YYYY HH:mm') }}</td>
                             <td>
-                              <a href="{{ route('super.penggunapendaftar.lihat', [$item->id]) }}" class="btn btn-sm btn-success"><i class="fas fa-eye"></i></a>
-                              <a href="{{ route('super.penggunapendaftar.hapus', [$item->id]) }}" class="btn btn-sm btn-danger" onclick="return confirm('Anda yakin ingin menghapus akun ini ?')"><i class="fas fa-trash"></i></a>
+                                @if (auth()->user()->role_id == 7)
+                                <a href="{{ route('staf-admin.penggunapendaftar.lihat', [$item->id]) }}" class="btn btn-sm btn-success"><i class="fas fa-eye"></i></a>
+                                <a href="{{ route('staf-admin.penggunapendaftar.hapus', [$item->id]) }}" class="btn btn-sm btn-danger" onclick="return confirm('Anda yakin ingin menghapus akun ini ?')"><i class="fas fa-trash"></i></a>
+                                @else
+                                <a href="{{ route('super.penggunapendaftar.lihat', [$item->id]) }}" class="btn btn-sm btn-success"><i class="fas fa-eye"></i></a>
+                                <a href="{{ route('super.penggunapendaftar.hapus', [$item->id]) }}" class="btn btn-sm btn-danger" onclick="return confirm('Anda yakin ingin menghapus akun ini ?')"><i class="fas fa-trash"></i></a>
+                                @endif
                               </td>
                           </tr>
                         @endforeach

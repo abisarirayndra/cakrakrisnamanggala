@@ -25,6 +25,8 @@
                                 <div class="row no-gutters align-items-center">
                                     <div class="col mr-2">
                                         <div class=" font-weight-bold text-dark text-uppercase mb-1">
+                                            Paket {{ $item->nama_paket }}</div>
+                                        <div class=" font-weight-bold text-dark text-uppercase mb-1">
                                             Arsip {{ $item->mapel }}</div>
                                             <div class=" font-weight-bold text-dark mb-1">
                                                 Kode Arsip : {{ $item->kode }}</div>
