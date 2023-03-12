@@ -270,4 +270,34 @@ class HasilDinasController extends Controller
 
     }
 
+    public function capaian(){
+        $id = Auth::user()->id;
+        $user = Auth::user()->nama;
+        $skd = RekapDinas::where('pelajar_id', $id)->max('total_nilai');
+        $akademik = RekapTniPolri::where('pelajar_id', $id)->max('total_nilai');
+        $psikotes = RekapPsikotes::where('pelajar_id', $id)->max('total_nilai');
+        $capaian_skd = RekapDinas::where('pelajar_id', $id)->get();
+
+        foreach($capaian_skd as $item){
+            $skd_categories[] = Carbon::parse($item->created_at)->isoFormat('LL');
+            $skd_data[] = $item->total_nilai;
+        }
+
+        $capaian_akademik = RekapTniPolri::where('pelajar_id', $id)->get();
+        foreach($capaian_akademik as $item){
+            $akademik_categories[] = Carbon::parse($item->created_at)->isoFormat('LL');
+            $akademik_data[] = $item->total_nilai;
+        }
+
+        // $capaian_psikotes = RekapPsikotes::where('pelajar_id', $id)->get();
+        // foreach($capaian_psikotes as $item){
+        //     $psikotes_categories[] = Carbon::parse($item->created_at)->isoFormat('LL');
+        //     $psikotes_data[] = $item->total_nilai;
+        // }
+        return view('pelajar.dinas.capaian', compact('user','skd','akademik','psikotes',
+                                                'skd_categories','skd_data','akademik_categories','akademik_data',
+                                                // 'psikotes_categories','psikotes_data'
+                                            ));
+    }
+
 }

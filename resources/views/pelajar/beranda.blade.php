@@ -125,76 +125,12 @@
             </div>
         </div>
     </div>
-    <div class="row">
-
-        <!-- Earnings (Monthly) Card Example -->
-        <div class="col-xl-4 col-md-6 col-sm-6 col-xs-6 mb-4">
-            <div class="card border-left-success shadow h-100 py-2">
-                <div class="card-body">
-                    <div class="row no-gutters align-items-center">
-                        <div class="col mr-2">
-                            <div class="text-xs font-weight-bold text-dark text-uppercase mb-1">
-                                SKD tertinggi</div>
-                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ $skd }}</div>
-                        </div>
-                        <div class="col-auto">
-                            <i class="fas fa-calendar fa-2x text-gray-300"></i>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Earnings (Annual) Card Example -->
-        <div class="col-xl-4 col-md-6 col-sm-6 col-xs-6 mb-4">
-            <div class="card border-left-danger shadow h-100 py-2">
-                <div class="card-body">
-                    <div class="row no-gutters align-items-center">
-                        <div class="col mr-2">
-                            <div class="text-xs font-weight-bold text-dark text-uppercase mb-1">
-                                Tes Akademik Tertinggi</div>
-                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ $akademik }}</div>
-                        </div>
-                        <div class="col-auto">
-                            <i class="fas fa-calendar fa-2x text-gray-300"></i>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Tasks Card Example -->
-        <div class="col-xl-4 col-md-6 col-sm-6 col-xs-6 mb-4">
-            <div class="card border-left-info shadow h-100 py-2">
-                <div class="card-body">
-                    <div class="row no-gutters align-items-center">
-                        <div class="col mr-2">
-                            <div class="text-xs font-weight-bold text-info text-uppercase mb-1">Psikotes Tertinggi
-                            </div>
-                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ $psikotes }}</div>
-                        </div>
-                        <div class="col-auto">
-                            <i class="fas fa-clipboard-list fa-2x text-gray-300"></i>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
     <div class="card shadow mb-4">
         <div class="card-body">
             <h5><i class="fas fa-hashtag text-warning"></i> Menu</h5>
             <div class="p-3 mt-3">
                 <div class="row">
-                    {{-- <div class="col-xl-3 col-md-3 text-center">
-                        <a href="{{ route('pelajar.dinas.paket') }}">
-                            <span class="fa-stack fa-3x">
-                                <i class="fas fa-circle fa-stack-2x text-warning"></i>
-                                <i class="fas fa-calendar fa-stack-1x fa-inverse"></i>
-                            </span>
-                                <h6 class="my-3 text-dark">Paket Soal</h6>
-                        </a>
-                    </div> --}}
+
                     <div class="col-xl-3 col-md-3 text-center">
                         <a href="{{ route('pelajar.masukkan_token') }}">
                             <span class="fa-stack fa-3x">
@@ -202,6 +138,15 @@
                                 <i class="fas fa-calendar fa-stack-1x fa-inverse"></i>
                             </span>
                                 <h6 class="my-3 text-dark">CAT</h6>
+                        </a>
+                    </div>
+                    <div class="col-xl-3 col-md-3 text-center">
+                        <a href="{{ route('pelajar.capaian') }}">
+                            <span class="fa-stack fa-3x">
+                                <i class="fas fa-circle fa-stack-2x text-warning"></i>
+                                <i class="fas fa-chart-area fa-stack-1x fa-inverse"></i>
+                            </span>
+                                <h6 class="my-3 text-dark">Capaian Tes</h6>
                         </a>
                     </div>
                     <div class="col-xl-3 col-md-3 text-center">

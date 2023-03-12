@@ -211,7 +211,7 @@ Route::group(['prefix' => 'pelajar','middleware' => ['auth','pelajar-role']], fu
     Route::get('/absensi/histori-pembelajaran','JadwalAbsensiController@historiPelajar')->name('pelajar.absensi.histori-pembelajaran');
     Route::get('/masukkan_token','TesDinasController@masukToken')->name('pelajar.masukkan_token');
     Route::post('/submit_token','TesDinasController@submitToken')->name('pelajar.submit_token');
-
+    Route::get('/capaian_tes', 'HasilDinasController@capaian')->name('pelajar.capaian');
 });
 
 Route::group(['prefix' => 'staf-admin', 'middleware' => ['auth','stafadmin-role']], function(){

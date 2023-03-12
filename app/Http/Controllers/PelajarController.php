@@ -26,10 +26,8 @@ class PelajarController extends Controller
         $jumlah_ontime = AbsensiPelajar::where('pelajar_id', $id)->where('status', 1)->count();
         $jumlah_terlambat = AbsensiPelajar::where('pelajar_id', $id)->where('status', 0)->count();
         $jumlah_izin = AbsensiPelajar::where('pelajar_id', $id)->where('status', 2)->count();
-        $skd = RekapDinas::where('pelajar_id', $id)->max('total_nilai');
-        $akademik = RekapTniPolri::where('pelajar_id', $id)->max('total_nilai');
-        $psikotes = RekapPsikotes::where('pelajar_id', $id)->max('total_nilai');
-        return view('pelajar.beranda', compact('data','user','jumlah_ontime','jumlah_terlambat','jumlah_izin','skd','akademik','psikotes'));
+
+        return view('pelajar.beranda', compact('data','user','jumlah_ontime','jumlah_terlambat','jumlah_izin'));
     }
 
     /**
