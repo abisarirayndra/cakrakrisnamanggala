@@ -60,6 +60,8 @@ class PenggunaController extends Controller
             return redirect()->route('staf-admin.penggunapelajar');
         }
 
+        Alert::toast('Migrasi Pendaftar ke Pelajar Berhasil');
+        return redirect()->route('super.penggunapelajar');
 
     }
 
