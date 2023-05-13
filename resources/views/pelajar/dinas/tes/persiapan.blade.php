@@ -116,14 +116,7 @@
                         <div class="text-center mb-4 mt-4">
                             <form action="{{route('pelajar.dinas.soalganda',[$id])}}" method="get">
                                 <input type="text" name="q" value="{{ $ganda->id }}" hidden>
-                                @php
-                                    $now = \Carbon\Carbon::now();
-                                @endphp
-                                @if ($paket->mulai > $now)
-                                    <button type="submit" class="btn btn-danger btn-sm" disabled>Tidak Bisa Dibuka</button>
-                                @else
                                     <button type="submit" class="btn btn-warning btn-sm">Mulai</button>
-                                @endif
                             </form>
                         </div>
                     @elseif (isset($poin))
