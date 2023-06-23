@@ -22,10 +22,18 @@
                         <h6>Hubungi Staf IT untuk validasi</h6>
                     </div>
                     <div class="text-center mt-4">
-                        <a href="https://wa.link/m9o2vu" target="_blank" class="btn btn-success">
+                        @if($ada->markas == "Banyuwangi")
+                        <a href="https://wa.link/x91kkz" target="_blank" class="btn btn-success">
                             <i class="fab fa-whatsapp"></i>
                             Staf IT
                         </a>
+                        @elseif($ada->markas == "Genteng")
+                        <a href="https://wa.link/7f8cs0" target="_blank" class="btn btn-success">
+                            <i class="fab fa-whatsapp"></i>
+                            Staf IT
+                        </a>
+                        @endif
+                        
                     </div>
                 @endif
 
