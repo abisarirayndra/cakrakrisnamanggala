@@ -21,13 +21,34 @@
             </div>
             <div class="text-center">
                 <h4>Biodata Sudah Ada, Silakan Tunggu Validasi</h4>
-                <h6>Download PDF, lalu hubungi Staf IT untuk validasi</h6>
+                <h6>Download PDF, lalu hubungi admin untuk validasi</h6>
             </div>
             <div class="text-center mt-4">
                 <a href="{{route('pendaftar.cetak-formulir-pdf', [$data->id])}}" target="_blank" class="btn btn-success"><i class="fas fa-cloud-download-alt"></i> Unduh PDF</a>
-                <a href="https://wa.link/m9o2vu" target="_blank" class="btn btn-success">
+                @if ($data->markas == "Banyuwangi")
+                <a href="https://wa.link/avyrxr" target="_blank" class="btn btn-success">
                     <i class="fab fa-whatsapp"></i>
-                    Staf IT
+                    Admin
+                </a>
+                @elseif ($data->markas == "Genteng")
+                <a href="https://wa.link/kvov6u" target="_blank" class="btn btn-success">
+                    <i class="fab fa-whatsapp"></i>
+                    Admin
+                </a>
+                @elseif ($data->markas == "Jember")
+                <a href="https://wa.link/dw5alz" target="_blank" class="btn btn-success">
+                    <i class="fab fa-whatsapp"></i>
+                    Admin
+                </a>
+                @elseif ($data->markas == "PDM - Smadatara")
+                <a href="https://wa.link/heeujh" target="_blank" class="btn btn-success">
+                    <i class="fab fa-whatsapp"></i>
+                    Admin
+                </a>
+                @elseif ($data->markas == "PDM - Smanda")
+                <a href="https://wa.link/pqljun" target="_blank" class="btn btn-success">
+                    <i class="fab fa-whatsapp"></i>
+                    Admin
                 </a>
             </div>
             <div class="p-3 mt-3">
