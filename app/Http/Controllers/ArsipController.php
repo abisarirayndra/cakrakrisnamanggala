@@ -102,7 +102,7 @@ class ArsipController extends Controller
         $mapel = TesDinas::join('mapels','mapels.id','=','dn_tes.mapel_id')->where('dn_tes.id', $request->tes_id)->first();
 
         $en_logo = (string) Image::make(public_path('img/krisna.png'))->encode('data-url');
-        $pdf = PDF::loadview('pendidik.dinas.analisis.cetakhasil', ['nilai'=>$nilai,'logo'=>$en_logo,'mapel'=>$mapel])->setPaper('a4','landscape');
+        $pdf = PDF::loadView('pendidik.dinas.analisis.cetakhasil', ['nilai'=>$nilai,'logo'=>$en_logo,'mapel'=>$mapel])->setPaper('a4','landscape');
         return $pdf->stream();
     }
 
@@ -244,7 +244,7 @@ class ArsipController extends Controller
                                                 ->count();
 
             $en_logo = (string) Image::make(public_path('img/krisna.png'))->encode('data-url');
-            $pdf = PDF::loadview('pendidik.dinas.analisis.cetakjawaban', ['soal'=>$soal,'logo'=>$en_logo,'pelajar'=>$pelajar,'soal_terjawab'=>$soal_terjawab,'jawaban'=>$jawaban,'nilai'=>$nilai])->setPaper('a4');
+            $pdf = PDF::loadView('pendidik.dinas.analisis.cetakjawaban', ['soal'=>$soal,'logo'=>$en_logo,'pelajar'=>$pelajar,'soal_terjawab'=>$soal_terjawab,'jawaban'=>$jawaban,'nilai'=>$nilai])->setPaper('a4');
             return $pdf->stream();
     }
 
@@ -272,7 +272,7 @@ class ArsipController extends Controller
                                                 ->whereNotNull('dn_jawabangandapoin.jawaban')
                                                 ->count();
             $en_logo = (string) Image::make(public_path('img/krisna.png'))->encode('data-url');
-            $pdf = PDF::loadview('pendidik.dinas.analisis.cetakjawabanpoin', ['soal'=>$soal,'logo'=>$en_logo,'pelajar'=>$pelajar,'soal_terjawab'=>$soal_terjawab,'jawaban'=>$jawaban,'nilai'=>$nilai])->setPaper('a4');
+            $pdf = PDF::loadView('pendidik.dinas.analisis.cetakjawabanpoin', ['soal'=>$soal,'logo'=>$en_logo,'pelajar'=>$pelajar,'soal_terjawab'=>$soal_terjawab,'jawaban'=>$jawaban,'nilai'=>$nilai])->setPaper('a4');
             return $pdf->stream();
     }
 

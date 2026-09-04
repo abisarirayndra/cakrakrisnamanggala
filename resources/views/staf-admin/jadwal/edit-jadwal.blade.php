@@ -47,11 +47,11 @@
                     </div>
                     <div class="form-group">
                         <label>Mulai</label>
-                        <input type="datetime-local" class="form-control" name="mulai" value="{{ $jadwal->mulai }}" required>
+                        <input type="datetime-local" class="form-control" name="mulai" value="{{ optional($jadwal->mulai)->format('Y-m-d\\TH:i') }}" required>
                     </div>
                     <div class="form-group">
                         <label>Selesai</label>
-                        <input type="datetime-local" class="form-control" name="selesai" value="{{ $jadwal->selesai }}" required>
+                        <input type="datetime-local" class="form-control" name="selesai" value="{{ optional($jadwal->selesai)->format('Y-m-d\\TH:i') }}" required>
                     </div>
                     <div class="text-center mt-4">
                         <button class="btn btn-warning" type="submit">Simpan</button>

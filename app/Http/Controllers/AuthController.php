@@ -31,7 +31,9 @@ class AuthController extends Controller
                 'password' => $request->password,
             ];
 
-            if(Auth::attempt($credentials)){
+            if(Auth::attempt($credentials, $request->boolean('remember'))){
+                $request->session()->regenerate();
+
                 if(auth()->user()->role_id == 1){
                     return abort(403);
                 }
@@ -61,6 +63,8 @@ class AuthController extends Controller
     public function logout(Request $request)
     {
         Auth::logout();
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
         Alert::success('Kamu berhasil keluar', 'Selamat tinggal!');
         return redirect()->route('login');
     }

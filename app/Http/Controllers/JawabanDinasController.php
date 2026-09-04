@@ -17,13 +17,12 @@ use App\RekapTniPolri;
 use App\RekapPsikotes;
 use App\Kelas;
 use App\Mapel;
-use App\TotalAkumulasiTniPolri;
 
 class JawabanDinasController extends Controller
 {
     public function upJawabanGanda($id, Request $request){
         if($request->jawaban == null){
-            return redirect()->back()->withError('Jawaban Kosong Tidak Bisa Disimpan');
+            return redirect()->back()->withErrors(['jawaban' => 'Jawaban Kosong Tidak Bisa Disimpan']);
         }
         $pelajar = Auth::user()->id;
         $soal = SoalDinasGanda::find($id);
@@ -744,7 +743,7 @@ class JawabanDinasController extends Controller
 
     public function upJawabanGandaPoin($id, Request $request){
         if($request->jawaban == null){
-            return redirect()->back()->withError('Jawaban Kosong Tidak Bisa Disimpan');
+            return redirect()->back()->withErrors(['jawaban' => 'Jawaban Kosong Tidak Bisa Disimpan']);
         }
         $pelajar = Auth::user()->id;
         $soal = SoalDinasGandaPoin::find($id);

@@ -662,7 +662,7 @@ class JadwalAbsensiController extends Controller
                                     ->get();
 
         $en_logo = (string) Image::make(public_path('img/krisna.png'))->encode('data-url');
-        $pdf = PDF::loadview('staf-admin.absensi.cetak-jurnal', ['logo'=>$en_logo,
+        $pdf = PDF::loadView('staf-admin.absensi.cetak-jurnal', ['logo'=>$en_logo,
                                 'jadwal'=>$jadwal,
                                 'pelajar'=>$pelajar,
                                 'pendidik'=>$pendidik,
@@ -725,7 +725,7 @@ class JadwalAbsensiController extends Controller
                             ->orderBy('adm_absensi_staf.id', 'desc')
                             ->get();
         $en_logo = (string) Image::make(public_path('img/krisna.png'))->encode('data-url');
-        $pdf = PDF::loadview('staf-admin.absensi.cetak-jurnal-staf', ['logo'=>$en_logo,
+        $pdf = PDF::loadView('staf-admin.absensi.cetak-jurnal-staf', ['logo'=>$en_logo,
                                 'staf'=> $staf,
                                 'bulan'=>$bulan,
                                 'tahun'=>$tahun,

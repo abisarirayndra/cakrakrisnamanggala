@@ -3,10 +3,12 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class RekapTniPolri extends Model
 {
     protected $table = 'dn_rekap_tnipolri';
+
     protected $fillable = [
         'kode_arsip',
         'dn_paket_id',
@@ -21,4 +23,14 @@ class RekapTniPolri extends Model
         'nilai_ipu',
         'total_nilai',
     ];
+
+    public function paket(): BelongsTo
+    {
+        return $this->belongsTo(PaketDinas::class, 'dn_paket_id');
+    }
+
+    public function pelajar(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'pelajar_id');
+    }
 }

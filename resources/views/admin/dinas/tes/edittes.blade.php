@@ -32,11 +32,11 @@
                         </div>
                         <div class="form-group">
                             <label for="nama">Waktu Mulai</label>
-                            <input type="datetime-local" class="form-control" name="mulai" value="{{$tes->mulai}}" required>
+                            <input type="datetime-local" class="form-control" name="mulai" value="{{ optional($tes->mulai)->format('Y-m-d\\TH:i') }}" required>
                         </div>
                         <div class="form-group">
                             <label for="nama">Waktu Selesai</label>
-                            <input type="datetime-local" class="form-control" name="selesai" value="{{$tes->selesai}}" required>
+                            <input type="datetime-local" class="form-control" name="selesai" value="{{ optional($tes->selesai)->format('Y-m-d\\TH:i') }}" required>
                         </div>
                         {{-- <div class="form-group">
                             <label for="nama">Durasi (Dalam Menit)</label>

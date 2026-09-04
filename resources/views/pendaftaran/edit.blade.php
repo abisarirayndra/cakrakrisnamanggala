@@ -44,7 +44,7 @@
                         </div>
                         <div class="col-sm-4">
                             <label for="tanggal">Tanggal Lahir</label>
-                            <input type="date" class="form-control form-control-user" name="tanggal_lahir" value="{{$data->tanggal_lahir}}" required>
+                            <input type="date" class="form-control form-control-user" name="tanggal_lahir" value="{{ optional($data->tanggal_lahir)->format('Y-m-d') }}" required>
                         </div>
                     </div>
                     <div class="form-group row">

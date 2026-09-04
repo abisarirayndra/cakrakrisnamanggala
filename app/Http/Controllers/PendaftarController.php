@@ -178,7 +178,7 @@ class PendaftarController extends Controller
                     ->where('adm_pelajars.id',$id)->first();
         $en_foto = (string) Image::make(public_path('img/pelajar/'. $pendaftar->foto))->encode('data-url');
         $en_logo = (string) Image::make(public_path('img/krisna.png'))->encode('data-url');
-        $pdf = PDF::loadview('pendaftaran.review', ['data' => $pendaftar,'foto' => $en_foto, 'logo' => $en_logo])->setPaper('a4');
+        $pdf = PDF::loadView('pendaftaran.review', ['data' => $pendaftar,'foto' => $en_foto, 'logo' => $en_logo])->setPaper('a4');
         return $pdf->stream();
     }
 

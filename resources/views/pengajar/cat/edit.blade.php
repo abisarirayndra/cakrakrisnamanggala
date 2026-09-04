@@ -31,11 +31,11 @@
                           </div>
                           <div class="form-group">
                             <label for="mulai">Mulai</label>
-                              <input type="datetime-local" class="form-control" name="mulai" value="{{$tema->mulai}}" required>
+                              <input type="datetime-local" class="form-control" name="mulai" value="{{ optional($tema->mulai)->format('Y-m-d\\TH:i') }}" required>
                           </div>
                           <div class="form-group">
                             <label for="tenggat">Tenggat</label>
-                              <input type="datetime-local" class="form-control" name="tenggat" value="{{$tema->tenggat}}" required>
+                              <input type="datetime-local" class="form-control" name="tenggat" value="{{ optional($tema->tenggat)->format('Y-m-d\\TH:i') }}" required>
                           </div>
                           <div class="form-group">
                             <label for="Status">Status</label>

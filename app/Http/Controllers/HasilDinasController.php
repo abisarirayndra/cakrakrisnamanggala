@@ -91,7 +91,7 @@ class HasilDinasController extends Controller
 
 
         $en_logo = (string) Image::make(public_path('img/krisna.png'))->encode('data-url');
-        $pdf = PDF::loadview('pendidik.dinas.hasil.cetak_hasil', ['nilai'=>$nilai,'logo'=>$en_logo,'data'=>$data])->setPaper('a4','landscape');
+        $pdf = PDF::loadView('pendidik.dinas.hasil.cetak_hasil', ['nilai'=>$nilai,'logo'=>$en_logo,'data'=>$data])->setPaper('a4','landscape');
         return $pdf->stream();
     }
 
@@ -121,7 +121,7 @@ class HasilDinasController extends Controller
         $paket = PaketDinas::select('nama_paket')->find($id);
 
         $en_logo = (string) Image::make(public_path('img/krisna.png'))->encode('data-url');
-        $pdf = PDF::loadview('admin.dinas.paket.cetakdinas', ['logo'=>$en_logo,'hasil'=>$hasil,'paket'=>$paket])->setPaper('a4','landscape');
+        $pdf = PDF::loadView('admin.dinas.paket.cetakdinas', ['logo'=>$en_logo,'hasil'=>$hasil,'paket'=>$paket])->setPaper('a4','landscape');
         return $pdf->stream();
     }
 
@@ -150,7 +150,7 @@ class HasilDinasController extends Controller
         $paket = PaketDinas::select('nama_paket')->find($id);
 
         $en_logo = (string) Image::make(public_path('img/krisna.png'))->encode('data-url');
-        $pdf = PDF::loadview('admin.dinas.paket.cetaktnipolri', ['logo'=>$en_logo,'hasil'=>$hasil,'paket'=>$paket])->setPaper('a4','landscape');
+        $pdf = PDF::loadView('admin.dinas.paket.cetaktnipolri', ['logo'=>$en_logo,'hasil'=>$hasil,'paket'=>$paket])->setPaper('a4','landscape');
         return $pdf->stream();
     }
 
@@ -179,7 +179,7 @@ class HasilDinasController extends Controller
         $paket = PaketDinas::select('nama_paket')->find($id);
 
         $en_logo = (string) Image::make(public_path('img/krisna.png'))->encode('data-url');
-        $pdf = PDF::loadview('admin.dinas.paket.cetaktnipolri', ['logo'=>$en_logo,'hasil'=>$hasil,'paket'=>$paket])->setPaper('a4','landscape');
+        $pdf = PDF::loadView('admin.dinas.paket.cetaktnipolri', ['logo'=>$en_logo,'hasil'=>$hasil,'paket'=>$paket])->setPaper('a4','landscape');
         return $pdf->stream();
     }
 

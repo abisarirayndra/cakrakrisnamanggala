@@ -43,7 +43,7 @@
                     </div>
                     <div class="form-group">
                         <label>Tanggal Lahir</label>
-                        <input type="date" class="form-control" name="tanggal_lahir" value="{{$pelajar->tanggal_lahir}}">
+                        <input type="date" class="form-control" name="tanggal_lahir" value="{{ optional($pelajar->tanggal_lahir)->format('Y-m-d') }}">
                     </div>
                     <div class="form-group">
                         <label>Alamat</label>
@@ -118,7 +118,7 @@
                     </div>
                     <div class="form-group">
                         <label>Tanggal Lahir</label>
-                        <input type="date" class="form-control" name="tanggal_lahir" value="{{$pelajar->tanggal_lahir}}">
+                        <input type="date" class="form-control" name="tanggal_lahir" value="{{ optional($pelajar->tanggal_lahir)->format('Y-m-d') }}">
                     </div>
                     <div class="form-group">
                         <label>Alamat</label>

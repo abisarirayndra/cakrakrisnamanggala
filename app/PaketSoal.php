@@ -3,7 +3,7 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
-use App\Kelas;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class PaketSoal extends Model
 {
@@ -14,7 +14,8 @@ class PaketSoal extends Model
         'status',
     ];
 
-    public function kelas(){
-        return $this->belongsTo('App\Kelas', 'kelas_id');
+    public function kelas(): BelongsTo
+    {
+        return $this->belongsTo(Kelas::class, 'kelas_id');
     }
 }

@@ -74,7 +74,7 @@ class SoalDinasController extends Controller
                             ->first();
 
         $en_logo = (string) Image::make(public_path('img/krisna.png'))->encode('data-url');
-        $pdf = PDF::loadview('pendidik.dinas.soal.cetakganda', ['soal'=>$soal,'logo'=>$en_logo,'data'=>$data])->setPaper('a4');
+        $pdf = PDF::loadView('pendidik.dinas.soal.cetakganda', ['soal'=>$soal,'logo'=>$en_logo,'data'=>$data])->setPaper('a4');
         return $pdf->stream();
     }
 
@@ -160,7 +160,7 @@ class SoalDinasController extends Controller
                             ->first();
 
         $en_logo = (string) Image::make(public_path('img/krisna.png'))->encode('data-url');
-        $pdf = PDF::loadview('pendidik.dinas.soal.cetakgandapoin', ['soal'=>$soal,'logo'=>$en_logo,'data'=>$data])->setPaper('a4');
+        $pdf = PDF::loadView('pendidik.dinas.soal.cetakgandapoin', ['soal'=>$soal,'logo'=>$en_logo,'data'=>$data])->setPaper('a4');
         return $pdf->stream();
     }
 
@@ -247,7 +247,7 @@ class SoalDinasController extends Controller
                             ->first();
 
                 $en_logo = (string) Image::make(public_path('img/krisna.png'))->encode('data-url');
-                $pdf = PDF::loadview('pendidik.dinas.soal.cetakgandapoin', ['soal'=>$soal,'logo'=>$en_logo,'data'=>$data])->setPaper('a4');
+                $pdf = PDF::loadView('pendidik.dinas.soal.cetakgandapoin', ['soal'=>$soal,'logo'=>$en_logo,'data'=>$data])->setPaper('a4');
                 return $pdf->stream();
         }elseif(isset($soal_ganda)){
             $soal = SoalDinasGanda::where('dn_tes_id', $id)->get();
@@ -258,7 +258,7 @@ class SoalDinasController extends Controller
                                 ->first();
 
             $en_logo = (string) Image::make(public_path('img/krisna.png'))->encode('data-url');
-            $pdf = PDF::loadview('pendidik.dinas.soal.cetakganda', ['soal'=>$soal,'logo'=>$en_logo,'data'=>$data])->setPaper('a4');
+            $pdf = PDF::loadView('pendidik.dinas.soal.cetakganda', ['soal'=>$soal,'logo'=>$en_logo,'data'=>$data])->setPaper('a4');
             return $pdf->stream();
         }else{
             return abort(404);

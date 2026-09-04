@@ -2,21 +2,20 @@
 
 namespace App\Http\Livewire;
 
-use Livewire\Component;
 use App\Soal;
+use Livewire\Component;
 use Livewire\WithPagination;
-use Illuminate\Http\Request;
 
 class Soalpagination extends Component
 {
     use WithPagination;
 
-    public $soal;
+    protected string $paginationTheme = 'bootstrap';
 
-    public function render(Request $request)
+    public function render()
     {
-        $tema = $request->q;
-        $this->soal = Soal::where('tema_id', $tema)->inRandomOrder()->paginate(5);
+        $tema = request()->query('q');
+        $soal = Soal::where('tema_id', $tema)->inRandomOrder()->paginate(5);
 
         return view('livewire.soalpagination', compact('soal'));
     }
