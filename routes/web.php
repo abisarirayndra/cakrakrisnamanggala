@@ -14,6 +14,7 @@ use App\Http\Controllers\PenggunaController;
 use App\Http\Controllers\SoalDinasController;
 use App\Http\Controllers\SuperController;
 use App\Http\Controllers\TesDinasController;
+use App\Livewire\Admin\MasterAdmin;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -141,7 +142,7 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth','admin-role']], funct
         Route::get('/cetak_soal/{id}',[SoalDinasController::class, 'adminCetakSoalGandaPoin'])->name('admin.cetak_soal');
     });
 
-    Route::get('/pengguna-admin', fn () => abort(403))->middleware('superadmin-role')->name('admin.pengguna.admin');
+    Route::get('/pengguna-admin', MasterAdmin::class)->middleware('superadmin-role')->name('admin.pengguna.admin');
     Route::view('/pengguna-pelajar', 'admin.beranda')->name('admin.pengguna.pelajar');
     Route::view('/pengguna-pendidik', 'admin.beranda')->name('admin.pengguna.pendidik');
 });
