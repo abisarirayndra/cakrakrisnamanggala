@@ -23,11 +23,13 @@
             </a>
 
             <div class="d-flex flex-wrap align-items-center gap-3">
-                <a href="{{ route('admin.beranda') }}" class="small fw-semibold">Beranda</a>
-                <a href="{{ route('admin.pengguna.pelajar') }}" class="small fw-semibold">Pelajar</a>
-                <a href="{{ route('admin.pengguna.pendidik') }}" class="small fw-semibold">Pendidik</a>
+                <a href="{{ route('admin.beranda') }}" data-nav="beranda" class="small fw-semibold">Beranda</a>
                 @if (auth()->user()->isSuperAdmin())
                     <a href="{{ route('admin.pengguna.admin') }}" data-nav="admin" class="small fw-semibold">Admin</a>
+                @endif
+                <a href="{{ route('admin.pengguna.pelajar') }}" data-nav="pelajar" class="small fw-semibold">Pelajar</a>
+                <a href="{{ route('admin.pengguna.pendidik') }}" data-nav="pendidik" class="small fw-semibold">Pendidik</a>
+                @if (auth()->user()->isSuperAdmin())
                     <a href="{{ route('admin.dinas.paket') }}" data-nav="cat" class="small fw-semibold">CAT</a>
                 @endif
             </div>

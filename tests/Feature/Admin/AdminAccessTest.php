@@ -63,8 +63,11 @@ class AdminAccessTest extends TestCase
         $this->actingAs($this->markasAdmin())
             ->get(route('admin.beranda'))
             ->assertOk()
-            ->assertSee('Pelajar')
-            ->assertSee('Pendidik')
+            ->assertSeeInOrder([
+                'data-nav="beranda"',
+                'data-nav="pelajar"',
+                'data-nav="pendidik"',
+            ], false)
             ->assertDontSee('data-nav="admin"', false)
             ->assertDontSee('data-nav="cat"', false);
     }
@@ -75,8 +78,13 @@ class AdminAccessTest extends TestCase
             ->get(route('admin.beranda'))
             ->assertOk()
             ->assertSee('Superadmin')
-            ->assertSee('data-nav="admin"', false)
-            ->assertSee('data-nav="cat"', false);
+            ->assertSeeInOrder([
+                'data-nav="beranda"',
+                'data-nav="admin"',
+                'data-nav="pelajar"',
+                'data-nav="pendidik"',
+                'data-nav="cat"',
+            ], false);
     }
 
     private function superAdmin(): User
