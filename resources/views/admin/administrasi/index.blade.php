@@ -90,7 +90,7 @@
                         </a>
                     </div>
                     <div class="col-xl-3 col-md-3 text-center">
-                        <a href="{{ route('super.penggunapelajar') }}">
+                        <a href="{{ route('admin.pengguna.pelajar') }}">
                             <span class="fa-stack fa-3x">
                                 <i class="fas fa-circle fa-stack-2x text-warning"></i>
                                 <i class="fas fa-user-cog fa-stack-1x fa-inverse"></i>

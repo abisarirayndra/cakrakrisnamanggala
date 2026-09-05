@@ -15,6 +15,7 @@ use App\Http\Controllers\SoalDinasController;
 use App\Http\Controllers\SuperController;
 use App\Http\Controllers\TesDinasController;
 use App\Livewire\Admin\MasterAdmin;
+use App\Livewire\Admin\MasterPelajar;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -108,7 +109,7 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth','admin-role']], funct
         Route::get('/pengguna-pendaftar/hapus/{id}',[PenggunaController::class, 'hapusPendaftar'])->name('super.penggunapendaftar.hapus');
     });
 
-    Route::get('/pengguna-pelajar',[PenggunaController::class, 'penggunaPelajar'])->name('super.penggunapelajar');
+    Route::get('/pengguna-pelajar', MasterPelajar::class)->name('admin.pengguna.pelajar');
     Route::get('/pengguna-pelajar/cetak',[PenggunaController::class, 'cetakPenggunaPelajar'])->name('super.penggunapelajar.cetak');
     Route::get('/pengguna-pelajar/lihat/{id}',[PenggunaController::class, 'lihatPelajar'])->name('super.penggunapelajar.lihat');
     Route::get('/pengguna-pelajar/edit/{id}',[PenggunaController::class, 'editPelajar'])->name('super.penggunapelajar.edit');
@@ -143,7 +144,6 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth','admin-role']], funct
     });
 
     Route::get('/pengguna-admin', MasterAdmin::class)->middleware('superadmin-role')->name('admin.pengguna.admin');
-    Route::view('/pengguna-pelajar', 'admin.beranda')->name('admin.pengguna.pelajar');
     Route::view('/pengguna-pendidik', 'admin.beranda')->name('admin.pengguna.pendidik');
 });
 
