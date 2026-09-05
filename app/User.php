@@ -5,6 +5,7 @@ namespace App;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -21,6 +22,7 @@ class User extends Authenticatable
         'email',
         'password',
         'role_id',
+        'is_super_admin',
         'whatsapp',
         'nomor_registrasi',
         'kelas_id',
@@ -39,6 +41,7 @@ class User extends Authenticatable
     {
         return [
             'email_verified_at' => 'datetime',
+            'is_super_admin' => 'boolean',
         ];
     }
 
@@ -67,9 +70,24 @@ class User extends Authenticatable
         return $this->hasOne(Pendidik::class, 'pendidik_id');
     }
 
+    public function markas(): BelongsToMany
+    {
+        return $this->belongsToMany(Markas::class, 'admin_markas', 'user_id', 'markas_id');
+    }
+
+    public function markasIds(): array
+    {
+        return array_map('intval', $this->markas()->pluck('adm_markas.id')->all());
+    }
+
     public function isSuper(): bool
     {
         return (int) $this->role_id === 1;
+    }
+
+    public function isSuperAdmin(): bool
+    {
+        return (bool) $this->is_super_admin;
     }
 
     public function isAdmin(): bool
@@ -94,6 +112,17 @@ class User extends Authenticatable
 
     public function isStafAdmin(): bool
     {
-        return (int) $this->role_id === 7;
+        return $this->isAdmin();
+    }
+
+    public function dashboardRouteName(): ?string
+    {
+        return match ((int) $this->role_id) {
+            2, 7 => 'admin.beranda',
+            3 => 'pendidik.dinas.beranda',
+            4 => 'pelajar.dinas.beranda',
+            5 => 'pendaftar.profil',
+            default => null,
+        };
     }
 }

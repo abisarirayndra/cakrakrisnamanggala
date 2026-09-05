@@ -7,6 +7,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Pendidik extends Model
 {
+    public const DEFAULT_PASSWORD = 'pendidik123';
+
     protected $table = 'adm_pendidik';
 
     protected $fillable = [
