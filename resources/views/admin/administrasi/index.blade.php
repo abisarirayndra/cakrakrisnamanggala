@@ -99,7 +99,7 @@
                         </a>
                     </div>
                     <div class="col-xl-3 col-md-3 text-center">
-                        <a href="{{ route('super.penggunapendidik') }}">
+                        <a href="{{ route('admin.pengguna.pendidik') }}">
                             <span class="fa-stack fa-3x">
                                 <i class="fas fa-circle fa-stack-2x text-warning"></i>
                                 <i class="fas fa-user-cog fa-stack-1x fa-inverse"></i>
@@ -108,7 +108,7 @@
                         </a>
                     </div>
                     <div class="col-xl-3 col-md-3 text-center">
-                        <a href="{{ route('super.penggunastafadmin') }}">
+                        <a href="{{ route('admin.pengguna.admin') }}">
                             <span class="fa-stack fa-3x">
                                 <i class="fas fa-circle fa-stack-2x text-warning"></i>
                                 <i class="fas fa-user-cog fa-stack-1x fa-inverse"></i>

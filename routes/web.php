@@ -16,6 +16,7 @@ use App\Http\Controllers\SuperController;
 use App\Http\Controllers\TesDinasController;
 use App\Livewire\Admin\MasterAdmin;
 use App\Livewire\Admin\MasterPelajar;
+use App\Livewire\Admin\MasterPendidik;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -125,12 +126,11 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth','admin-role']], funct
         Route::get('/pengguna-pelajar-suspended/cabut-suspend-pelajar/{id}',[PenggunaController::class, 'cabutSuspendPelajar'])->name('super.penggunasuspend.cabutsuspendpelajar');
     });
 
-    Route::get('/pengguna-pendidik',[PenggunaController::class, 'penggunaPendidik'])->name('super.penggunapendidik');
-    Route::post('/pengguna-pendidik/tambah',[PenggunaController::class, 'tambahPendidik'])->name('super.penggunapendidik.tambah');
-    Route::get('/pengguna-pendidik/lihat/{id}',[PenggunaController::class, 'lihatPendidik'])->name('super.penggunapendidik.lihat');
-    Route::get('/pengguna-pendidik/hapus/{id}',[PenggunaController::class, 'hapusPendidik'])->name('super.penggunapendidik.hapus');
-
     Route::middleware('superadmin-role')->group(function () {
+        Route::post('/pengguna-pendidik/tambah',[PenggunaController::class, 'tambahPendidik'])->name('super.penggunapendidik.tambah');
+        Route::get('/pengguna-pendidik/lihat/{id}',[PenggunaController::class, 'lihatPendidik'])->name('super.penggunapendidik.lihat');
+        Route::get('/pengguna-pendidik/hapus/{id}',[PenggunaController::class, 'hapusPendidik'])->name('super.penggunapendidik.hapus');
+
         Route::get('/pengguna-staf-admin',[PenggunaController::class, 'penggunaStafAdmin'])->name('super.penggunastafadmin');
         Route::post('/pengguna-staf-admin/tambah',[PenggunaController::class, 'tambahStafAdmin'])->name('super.penggunastafadmin.tambah');
         Route::get('/pengguna-staf-admin/hapus/{id}',[PenggunaController::class, 'destroyStafAdmin'])->name('super.penggunastafadmin.hapus');
@@ -144,7 +144,7 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth','admin-role']], funct
     });
 
     Route::get('/pengguna-admin', MasterAdmin::class)->middleware('superadmin-role')->name('admin.pengguna.admin');
-    Route::view('/pengguna-pendidik', 'admin.beranda')->name('admin.pengguna.pendidik');
+    Route::get('/pengguna-pendidik', MasterPendidik::class)->name('admin.pengguna.pendidik');
 });
 
 Route::group(['prefix' => 'pendidik','middleware' => ['auth','pengajar-role']], function(){
