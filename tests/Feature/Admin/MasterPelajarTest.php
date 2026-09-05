@@ -141,6 +141,45 @@ class MasterPelajarTest extends TestCase
             ->assertForbidden();
     }
 
+    public function test_non_super_cannot_open_legacy_edit_url(): void
+    {
+        $genteng = Markas::create(['markas' => 'Genteng']);
+        $admin = User::factory()->create(['role_id' => 2, 'is_super_admin' => false]);
+        $admin->markas()->attach($genteng->id);
+        $pelajar = User::factory()->create(['role_id' => 4]);
+        Pelajar::create(['pelajar_id' => $pelajar->id, 'markas_id' => $genteng->id]);
+
+        $this->actingAs($admin)
+            ->get(route('super.penggunapelajar.edit', $pelajar->id))
+            ->assertForbidden();
+    }
+
+    public function test_non_super_cannot_open_legacy_suspend_url(): void
+    {
+        $genteng = Markas::create(['markas' => 'Genteng']);
+        $admin = User::factory()->create(['role_id' => 2, 'is_super_admin' => false]);
+        $admin->markas()->attach($genteng->id);
+        $pelajar = User::factory()->create(['role_id' => 4]);
+        Pelajar::create(['pelajar_id' => $pelajar->id, 'markas_id' => $genteng->id]);
+
+        $this->actingAs($admin)
+            ->get(route('super.penggunapelajar.suspend', $pelajar->id))
+            ->assertForbidden();
+
+        $this->assertSame(4, (int) $pelajar->fresh()->role_id);
+    }
+
+    public function test_super_cannot_open_inactive_pelajar_row(): void
+    {
+        $pelajar = User::factory()->create(['role_id' => 6]);
+        Pelajar::create(['pelajar_id' => $pelajar->id]);
+
+        Livewire::actingAs($this->superAdmin())
+            ->test(MasterPelajar::class)
+            ->call('lihat', $pelajar->id)
+            ->assertNotFound();
+    }
+
     public function test_non_admin_cannot_mount_master_pelajar_directly(): void
     {
         Livewire::actingAs(User::factory()->create(['role_id' => 4]))

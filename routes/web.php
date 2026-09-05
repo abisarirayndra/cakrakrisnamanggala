@@ -110,16 +110,16 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth','admin-role']], funct
     });
 
     Route::get('/pengguna-pelajar', MasterPelajar::class)->name('admin.pengguna.pelajar');
-    Route::get('/pengguna-pelajar/cetak',[PenggunaController::class, 'cetakPenggunaPelajar'])->name('super.penggunapelajar.cetak');
-    Route::get('/pengguna-pelajar/lihat/{id}',[PenggunaController::class, 'lihatPelajar'])->name('super.penggunapelajar.lihat');
-    Route::get('/pengguna-pelajar/edit/{id}',[PenggunaController::class, 'editPelajar'])->name('super.penggunapelajar.edit');
-    Route::post('/pengguna-pelajar/update/{id}',[PenggunaController::class, 'updatePelajar'])->name('super.penggunapelajar.update');
-    Route::get('/pengguna-pelajar/cetak-pdf/{id}',[PenggunaController::class, 'cetakPdfPelajar'])->name('super.penggunapelajar.cetak-pdf');
-    Route::get('/pengguna-pelajar/editdata/{id}',[PenggunaController::class, 'editDataPelajar'])->name('super.penggunapelajar.editdata');
-    Route::post('/pengguna-pelajar/updatedata/{id}',[PenggunaController::class, 'updateDataPelajar'])->name('super.penggunapelajar.updatedata');
-    Route::get('/pengguna-pelajar/suspend/{id}',[PenggunaController::class, 'suspendPelajar'])->name('super.penggunapelajar.suspend');
-    Route::get('/pengguna-pelajar/hapus/{id}',[PenggunaController::class, 'destroyPelajar'])->name('super.penggunapelajar.hapus');
     Route::middleware('superadmin-role')->group(function () {
+        Route::get('/pengguna-pelajar/cetak',[PenggunaController::class, 'cetakPenggunaPelajar'])->name('super.penggunapelajar.cetak');
+        Route::get('/pengguna-pelajar/lihat/{id}',[PenggunaController::class, 'lihatPelajar'])->name('super.penggunapelajar.lihat');
+        Route::get('/pengguna-pelajar/edit/{id}',[PenggunaController::class, 'editPelajar'])->name('super.penggunapelajar.edit');
+        Route::post('/pengguna-pelajar/update/{id}',[PenggunaController::class, 'updatePelajar'])->name('super.penggunapelajar.update');
+        Route::get('/pengguna-pelajar/cetak-pdf/{id}',[PenggunaController::class, 'cetakPdfPelajar'])->name('super.penggunapelajar.cetak-pdf');
+        Route::get('/pengguna-pelajar/editdata/{id}',[PenggunaController::class, 'editDataPelajar'])->name('super.penggunapelajar.editdata');
+        Route::post('/pengguna-pelajar/updatedata/{id}',[PenggunaController::class, 'updateDataPelajar'])->name('super.penggunapelajar.updatedata');
+        Route::get('/pengguna-pelajar/suspend/{id}',[PenggunaController::class, 'suspendPelajar'])->name('super.penggunapelajar.suspend');
+        Route::get('/pengguna-pelajar/hapus/{id}',[PenggunaController::class, 'destroyPelajar'])->name('super.penggunapelajar.hapus');
         Route::get('/pengguna-pelajar-suspended',[PenggunaController::class, 'penggunaPelajarSuspend'])->name('super.penggunasuspend');
         Route::get('/pengguna-pelajar-suspended/lihat/{id}',[PenggunaController::class, 'lihatSuspended'])->name('super.penggunasuspend.lihat');
         Route::get('/pengguna-pelajar-suspended/cabut-suspend-pelajar/{id}',[PenggunaController::class, 'cabutSuspendPelajar'])->name('super.penggunasuspend.cabutsuspendpelajar');

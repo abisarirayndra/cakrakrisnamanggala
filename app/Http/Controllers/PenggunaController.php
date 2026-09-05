@@ -53,14 +53,14 @@ class PenggunaController extends Controller
         ]);
         if($request->auth == 2){
             Alert::toast('Migrasi Pendaftar ke Pelajar Berhasil');
-            return redirect()->route('super.penggunapelajar');
+            return redirect()->route('admin.pengguna.pelajar');
         }elseif($request->auth == 7){
             Alert::toast('Migrasi Pendaftar ke Pelajar Berhasil');
-            return redirect()->route('staf-admin.penggunapelajar');
+            return redirect()->route('admin.pengguna.pelajar');
         }
 
         Alert::toast('Migrasi Pendaftar ke Pelajar Berhasil');
-        return redirect()->route('super.penggunapelajar');
+        return redirect()->route('admin.pengguna.pelajar');
 
     }
 
@@ -144,10 +144,10 @@ class PenggunaController extends Controller
             ]);
             if($request->auth == 2){
                 Alert::toast('Update Pelajar Berhasil','success');
-                return redirect()->route('super.penggunapelajar');
+                return redirect()->route('admin.pengguna.pelajar');
             }else{
                 Alert::toast('Update Pelajar Berhasil','success');
-                return redirect()->route('staf-admin.penggunapelajar');
+                return redirect()->route('admin.pengguna.pelajar');
             }
 
         }else{
@@ -160,10 +160,10 @@ class PenggunaController extends Controller
             ]);
             if($request->auth == 2){
                 Alert::toast('Update Pelajar Berhasil','success');
-                return redirect()->route('super.penggunapelajar');
+                return redirect()->route('admin.pengguna.pelajar');
             }else{
                 Alert::toast('Update Pelajar Berhasil','success');
-                return redirect()->route('staf-admin.penggunapelajar');
+                return redirect()->route('admin.pengguna.pelajar');
             }
         }
     }
@@ -186,10 +186,10 @@ class PenggunaController extends Controller
 
             if($request->auth == 2){
                 Alert::toast('Update Data Berhasil','success');
-                return redirect()->route('super.penggunapelajar.lihat',$pelajar->pelajar_id);
+                return redirect()->route('admin.pengguna.pelajar');
             }else{
                 Alert::toast('Update Data Berhasil','success');
-                return redirect()->route('staf-admin.penggunapelajar.lihat',$pelajar->pelajar_id);
+                return redirect()->route('admin.pengguna.pelajar');
             }
         }else{
             $pelajar->update([
@@ -208,10 +208,10 @@ class PenggunaController extends Controller
             Alert::toast('Update Data Berhasil','success');
             if($request->auth == 2){
                 Alert::toast('Update Data Berhasil','success');
-                return redirect()->route('super.penggunapelajar.lihat',$pelajar->pelajar_id);
+                return redirect()->route('admin.pengguna.pelajar');
             }else{
                 Alert::toast('Update Data Berhasil','success');
-                return redirect()->route('staf-admin.penggunapelajar.lihat',$pelajar->pelajar_id);
+                return redirect()->route('admin.pengguna.pelajar');
             }
         }
     }
@@ -222,7 +222,7 @@ class PenggunaController extends Controller
             'role_id' => 6,
         ]);
         Alert::toast('Akun Pelajar Disuspend','success');
-        return redirect()->route('super.penggunapelajar');
+        return redirect()->route('admin.pengguna.pelajar');
     }
 
     public function destroyPelajar($id){
@@ -235,7 +235,7 @@ class PenggunaController extends Controller
         }
         $akun->delete();
         Alert::toast('Hapus Pendaftar Berhasil', 'success');
-        return redirect()->route('super.penggunapelajar');
+        return redirect()->route('admin.pengguna.pelajar');
     }
 
 // Pendidik
@@ -378,7 +378,7 @@ class PenggunaController extends Controller
             'role_id' => 4,
         ]);
         Alert::toast('Suspend Dicabut','success');
-        return redirect()->route('super.penggunapelajar');
+        return redirect()->route('admin.pengguna.pelajar');
     }
 
     public function hapusSuspendPelajar($id){

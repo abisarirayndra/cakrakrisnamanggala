@@ -200,6 +200,7 @@ class MasterPelajar extends Component
     private function authorizeRow(int $userId): Pelajar
     {
         $actor = auth()->user();
+        abort_unless(User::where('role_id', 4)->whereKey($userId)->exists(), 404);
         $pelajar = Pelajar::where('pelajar_id', $userId)->firstOrFail();
 
         if (! $actor->isSuperAdmin()) {
