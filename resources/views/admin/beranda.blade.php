@@ -1,56 +1,20 @@
-@extends('master.admin')
+@extends('layouts.panel-cakra')
 
-@section('title')
-    <title>Computer Assisted Test - Cakra Krisna Manggala</title>
-    <style>
-        td{
-            font-size: 80%
-        }
-    </style>
-@endsection
+@section('title', 'Beranda Admin - Cakra Krisna Manggala')
 
 @section('content')
-<div class="container">
-    <div class="card shadow mb-4">
-        <div class="card-body">
-            <h5><i class="fas fa-hashtag text-warning"></i> Welcome to Mission Control, Sir !</h5>
-            <div class="p-3 mt-3">
-                <div class="row">
-                    {{-- <div class="col-xl-3 col-md-3 text-center">
-                        <a href="{{ route('pelajar.dinas.paket') }}">
-                            <span class="fa-stack fa-3x">
-                                <i class="fas fa-circle fa-stack-2x text-warning"></i>
-                                <i class="fas fa-calendar fa-stack-1x fa-inverse"></i>
-                            </span>
-                                <h6 class="my-3 text-dark">Paket Soal</h6>
-                        </a>
-                    </div> --}}
-                    <div class="col-xl-3 col-md-3 text-center">
-                        <a href="{{ route('super.administrasi') }}">
-                            <span class="fa-stack fa-3x">
-                                <i class="fas fa-circle fa-stack-2x text-warning"></i>
-                                <i class="fas fa-user-cog fa-stack-1x fa-inverse"></i>
-                            </span>
-                                <h6 class="my-3 text-dark">Administrasi</h6>
-                        </a>
-                    </div>
-                    <div class="col-xl-3 col-md-3 text-center">
-                        <a href="{{ route('admin.dinas.paket') }}">
-                            <span class="fa-stack fa-3x">
-                                <i class="fas fa-circle fa-stack-2x text-warning"></i>
-                                <i class="fas fa-calendar fa-stack-1x fa-inverse"></i>
-                            </span>
-                                <h6 class="my-3 text-dark">CAT</h6>
-                        </a>
-                    </div>
+    <section class="ck-card p-4 p-md-5">
+        <p class="ck-hint mb-2">{{ auth()->user()->isSuperAdmin() ? 'Superadmin' : 'Admin' }}</p>
+        <h1 class="h3 mb-2">Selamat datang, {{ auth()->user()->nama }}</h1>
+        <p class="ck-hint mb-4">Pilih data yang ingin Anda kelola.</p>
 
-                </div>
-            </div>
+        <div class="d-flex flex-wrap gap-2">
+            <a href="{{ route('admin.pengguna.pelajar') }}" class="btn btn-ck">Pelajar</a>
+            <a href="{{ route('admin.pengguna.pendidik') }}" class="btn btn-ck">Pendidik</a>
+            @if (auth()->user()->isSuperAdmin())
+                <a href="{{ route('admin.pengguna.admin') }}" class="btn btn-ck-ghost">Admin</a>
+                <a href="{{ route('admin.dinas.paket') }}" class="btn btn-ck-ghost">CAT</a>
+            @endif
         </div>
-    </div>
-</div>
-@endsection
-
-@section('js')
-
+    </section>
 @endsection

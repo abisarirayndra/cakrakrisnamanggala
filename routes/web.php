@@ -140,6 +140,10 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth','admin-role']], funct
 
         Route::get('/cetak_soal/{id}',[SoalDinasController::class, 'adminCetakSoalGandaPoin'])->name('admin.cetak_soal');
     });
+
+    Route::get('/pengguna-admin', fn () => abort(403))->middleware('superadmin-role')->name('admin.pengguna.admin');
+    Route::view('/pengguna-pelajar', 'admin.beranda')->name('admin.pengguna.pelajar');
+    Route::view('/pengguna-pendidik', 'admin.beranda')->name('admin.pengguna.pendidik');
 });
 
 Route::group(['prefix' => 'pendidik','middleware' => ['auth','pengajar-role']], function(){

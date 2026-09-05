@@ -1,0 +1,238 @@
+:root {
+    --ck-bg: #F6F3EE;
+    --ck-surface: #FFFcf8;
+    --ck-ink: #1B2430;
+    --ck-muted: #5E6B7A;
+    --ck-line: #E4DDD2;
+    --ck-gold: #B8954A;
+    --ck-gold-soft: #F3EAD6;
+    --ck-navy: #243044;
+    --ck-success: #3D6B50;
+    --ck-danger: #A44A46;
+    --bs-primary: #B8954A;
+    --bs-primary-rgb: 184, 149, 74;
+    --bs-body-font-family: "Plus Jakarta Sans", system-ui, sans-serif;
+    --bs-body-color: #1B2430;
+    --bs-border-radius: 0.75rem;
+    --bs-focus-ring-color: rgba(184, 149, 74, 0.28);
+}
+
+html,
+body.ck-body {
+    background: var(--ck-bg);
+    color: var(--ck-ink);
+    font-family: "Plus Jakarta Sans", system-ui, sans-serif;
+    min-height: 100%;
+}
+
+.ck-serif {
+    font-family: "Source Serif 4", Georgia, serif;
+    font-style: italic;
+    font-weight: 550;
+}
+
+.ck-topbar {
+    background: var(--ck-navy);
+    color: #f7f1e6;
+}
+
+.ck-topbar a {
+    color: inherit;
+    text-decoration: none;
+}
+
+.ck-brand {
+    font-weight: 600;
+    letter-spacing: 0.01em;
+}
+
+.ck-shell {
+    max-width: 920px;
+}
+
+.ck-shell-wide {
+    max-width: 1120px;
+}
+
+.ck-login-card {
+    max-width: 440px;
+}
+
+.ck-body .input-group .form-control {
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+}
+
+.ck-body .input-group .btn {
+    border-color: var(--ck-line);
+    color: var(--ck-muted);
+    border-top-right-radius: 0.75rem;
+    border-bottom-right-radius: 0.75rem;
+}
+
+.ck-card {
+    background: var(--ck-surface);
+    border: 1px solid var(--ck-line);
+    border-radius: 1.1rem;
+    box-shadow: 0 10px 30px rgba(27, 36, 48, 0.05);
+}
+
+.ck-steps {
+    display: flex;
+    gap: 1.25rem;
+    padding: 0;
+    margin: 0 0 1.75rem;
+    list-style: none;
+}
+
+.ck-steps li {
+    flex: 1;
+    color: var(--ck-muted);
+    font-size: 0.85rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    padding-bottom: 0.55rem;
+    border-bottom: 2px solid var(--ck-line);
+}
+
+.ck-steps li.is-active {
+    color: var(--ck-navy);
+    border-bottom-color: var(--ck-gold);
+}
+
+.ck-steps li.is-done {
+    color: var(--ck-gold);
+    border-bottom-color: var(--ck-gold-soft);
+}
+
+.form-label {
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--ck-muted);
+}
+
+.form-control,
+.form-select {
+    border-color: var(--ck-line);
+    background-color: #fff;
+    border-radius: 0.75rem;
+    padding: 0.7rem 0.9rem;
+}
+
+.form-control:focus,
+.form-select:focus {
+    border-color: var(--ck-gold);
+    box-shadow: 0 0 0 0.2rem rgba(184, 149, 74, 0.18);
+}
+
+.btn-ck {
+    background: var(--ck-gold);
+    border-color: var(--ck-gold);
+    color: var(--ck-navy);
+    font-weight: 600;
+    border-radius: 999px;
+    padding: 0.65rem 1.35rem;
+}
+
+.btn-ck:hover,
+.btn-ck:focus {
+    background: #a8893f;
+    border-color: #a8893f;
+    color: #fff;
+}
+
+.btn-ck-ghost {
+    background: transparent;
+    border: 1px solid var(--ck-line);
+    color: var(--ck-muted);
+    font-weight: 600;
+    border-radius: 999px;
+    padding: 0.65rem 1.25rem;
+}
+
+.btn-ck-ghost:hover {
+    background: var(--ck-gold-soft);
+    color: var(--ck-navy);
+}
+
+.ck-photo-frame {
+    width: 132px;
+    aspect-ratio: 3 / 4;
+    border: 1px solid var(--ck-line);
+    border-radius: 0.85rem;
+    overflow: hidden;
+    background: var(--ck-gold-soft);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.ck-photo-frame img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.ck-receipt-head {
+    background: var(--ck-navy);
+    color: #f7f1e6;
+    border-radius: 1.1rem 1.1rem 0 0;
+    padding: 1.35rem 1.5rem;
+}
+
+.ck-qr {
+    width: 148px;
+    height: 148px;
+    padding: 8px;
+    background: #fff;
+    border: 1px solid var(--ck-line);
+    border-radius: 0.7rem;
+}
+
+.ck-qr img,
+.ck-qr canvas {
+    width: 100% !important;
+    height: 100% !important;
+}
+
+.ck-meta dt {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--ck-muted);
+    font-weight: 600;
+}
+
+.ck-meta dd {
+    margin-bottom: 0.85rem;
+}
+
+.invalid-feedback,
+.text-danger.ck-error {
+    color: var(--ck-danger) !important;
+}
+
+.alert-ck {
+    background: #f8eceb;
+    color: var(--ck-danger);
+    border: 1px solid #ead4d2;
+    border-radius: 0.85rem;
+}
+
+.ck-hint {
+    color: var(--ck-muted);
+    font-size: 0.92rem;
+}
+
+.ck-cropper-wrap {
+    height: min(58vh, 420px);
+    background: var(--ck-navy);
+    border-radius: 0.75rem;
+    overflow: hidden;
+}
+
+.ck-cropper-wrap img {
+    display: block;
+    max-width: 100%;
+}

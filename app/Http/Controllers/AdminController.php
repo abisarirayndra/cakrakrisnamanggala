@@ -3,8 +3,6 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Auth;
-use App\Pendidik;
 
 class AdminController extends Controller
 {
@@ -15,11 +13,7 @@ class AdminController extends Controller
      */
     public function index()
     {
-        $id = Auth::user()->id;
-        $user = Auth::user()->nama;
-        $data = Pendidik::where('pendidik_id',$id)->first();
-
-        return view('admin.beranda', compact('user','data'));
+        return view('admin.beranda');
     }
 
     /**

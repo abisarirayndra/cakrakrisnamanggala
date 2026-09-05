@@ -58,6 +58,27 @@ class AdminAccessTest extends TestCase
             ->assertRedirect(route('admin.beranda'));
     }
 
+    public function test_beranda_hides_admin_and_cat_from_non_super(): void
+    {
+        $this->actingAs($this->markasAdmin())
+            ->get(route('admin.beranda'))
+            ->assertOk()
+            ->assertSee('Pelajar')
+            ->assertSee('Pendidik')
+            ->assertDontSee('data-nav="admin"', false)
+            ->assertDontSee('data-nav="cat"', false);
+    }
+
+    public function test_beranda_shows_admin_and_cat_for_super(): void
+    {
+        $this->actingAs($this->superAdmin())
+            ->get(route('admin.beranda'))
+            ->assertOk()
+            ->assertSee('Superadmin')
+            ->assertSee('data-nav="admin"', false)
+            ->assertSee('data-nav="cat"', false);
+    }
+
     private function superAdmin(): User
     {
         return User::factory()->create([
