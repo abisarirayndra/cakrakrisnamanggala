@@ -169,6 +169,21 @@ class MasterPelajarTest extends TestCase
         $this->assertSame(4, (int) $pelajar->fresh()->role_id);
     }
 
+    public function test_non_super_cannot_open_legacy_hapus_url(): void
+    {
+        $genteng = Markas::create(['markas' => 'Genteng']);
+        $admin = User::factory()->create(['role_id' => 2, 'is_super_admin' => false]);
+        $admin->markas()->attach($genteng->id);
+        $pelajar = User::factory()->create(['role_id' => 4]);
+        Pelajar::create(['pelajar_id' => $pelajar->id, 'markas_id' => $genteng->id]);
+
+        $this->actingAs($admin)
+            ->get(route('super.penggunapelajar.hapus', $pelajar->id))
+            ->assertForbidden();
+
+        $this->assertDatabaseHas('users', ['id' => $pelajar->id]);
+    }
+
     public function test_super_cannot_open_inactive_pelajar_row(): void
     {
         $pelajar = User::factory()->create(['role_id' => 6]);
