@@ -4,6 +4,7 @@ namespace Tests\Feature\Admin;
 
 use App\Markas;
 use App\User;
+use Illuminate\Support\Facades\Route;
 use Tests\Concerns\CreatesAdminMasterSchema;
 use Tests\TestCase;
 
@@ -51,11 +52,22 @@ class AdminAccessTest extends TestCase
             ->assertForbidden();
     }
 
-    public function test_staf_admin_beranda_redirects_into_admin_panel(): void
+    public function test_staf_admin_operational_routes_are_restored(): void
     {
-        $this->actingAs($this->markasAdmin())
-            ->get('/staf-admin/beranda')
-            ->assertRedirect(route('admin.beranda'));
+        $this->assertTrue(Route::has('staf-admin.jadwal'));
+        $this->assertTrue(Route::has('staf-admin.absen-pulang'));
+    }
+
+    public function test_named_routes_are_unique(): void
+    {
+        $names = collect(app('router')->getRoutes())
+            ->map(fn ($route) => $route->getName())
+            ->filter()
+            ->values();
+
+        $duplicates = $names->duplicates()->unique()->values()->all();
+
+        $this->assertSame([], $duplicates, 'Duplicate route names: '.implode(', ', $duplicates));
     }
 
     public function test_beranda_hides_admin_and_cat_from_non_super(): void

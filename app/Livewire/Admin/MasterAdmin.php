@@ -4,6 +4,7 @@ namespace App\Livewire\Admin;
 
 use App\Markas;
 use App\User;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rule;
 use Livewire\Attributes\Layout;
@@ -60,19 +61,21 @@ class MasterAdmin extends Component
             'markas_id.required' => 'Markas wajib untuk admin non-super',
         ]);
 
-        $user = User::create([
-            'nama' => $validated['nama'],
-            'email' => $validated['email'],
-            'password' => Hash::make($validated['password']),
-            'role_id' => 2,
-            'is_super_admin' => $validated['is_super_admin'],
-        ]);
+        DB::transaction(function () use ($validated): void {
+            $user = User::create([
+                'nama' => $validated['nama'],
+                'email' => $validated['email'],
+                'password' => Hash::make($validated['password']),
+                'role_id' => 2,
+                'is_super_admin' => $validated['is_super_admin'],
+            ]);
 
-        $markasId = $validated['markas_id'] ?? null;
+            $markasId = $validated['markas_id'] ?? null;
 
-        if ($markasId !== '' && $markasId !== null) {
-            $user->markas()->attach((int) $markasId);
-        }
+            if ($markasId !== '' && $markasId !== null) {
+                $user->markas()->attach((int) $markasId);
+            }
+        });
 
         $this->reset(['nama', 'email', 'password', 'is_super_admin', 'markas_id']);
         $this->resetErrorBag();

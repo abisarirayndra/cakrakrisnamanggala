@@ -6,6 +6,7 @@ use App\Markas;
 use App\Pendidik;
 use App\Support\AdminVisibility;
 use App\User;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rule;
 use Livewire\Attributes\Layout;
@@ -67,18 +68,20 @@ class MasterPendidik extends Component
             'markas_id' => $markasRules,
         ]);
 
-        $user = User::create([
-            'nama' => $validated['nama'],
-            'email' => $validated['email'],
-            'password' => Hash::make(Pendidik::DEFAULT_PASSWORD),
-            'role_id' => 3,
-        ]);
+        DB::transaction(function () use ($validated): void {
+            $user = User::create([
+                'nama' => $validated['nama'],
+                'email' => $validated['email'],
+                'password' => Hash::make(Pendidik::DEFAULT_PASSWORD),
+                'role_id' => 3,
+            ]);
 
-        Pendidik::create([
-            'pendidik_id' => $user->id,
-            'mapel_id' => 10,
-            'markas_id' => (int) $validated['markas_id'],
-        ]);
+            Pendidik::create([
+                'pendidik_id' => $user->id,
+                'mapel_id' => 10,
+                'markas_id' => (int) $validated['markas_id'],
+            ]);
+        });
 
         $this->reset(['nama', 'email']);
         $this->resetErrorBag();

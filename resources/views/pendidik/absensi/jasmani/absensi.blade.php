@@ -269,7 +269,7 @@
                 <span aria-hidden="true">&times;</span>
               </button>
             </div>
-                <form action="{{ route('staf-admin.absensi.upload-izin-pendidik') }}" method="POST">
+                <form action="{{ route('pendidik.absensi.upload-izin-pendidik') }}" method="POST">
                     @csrf
                     <div class="modal-body">
                         <div class="form-group">

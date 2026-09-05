@@ -12,6 +12,7 @@ use App\Http\Controllers\PendaftarController;
 use App\Http\Controllers\PengajarController;
 use App\Http\Controllers\PenggunaController;
 use App\Http\Controllers\SoalDinasController;
+use App\Http\Controllers\StafAdminController;
 use App\Http\Controllers\SuperController;
 use App\Http\Controllers\TesDinasController;
 use App\Livewire\Admin\MasterAdmin;
@@ -131,15 +132,6 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth','admin-role']], funct
         Route::get('/pengguna-pendidik/lihat/{id}',[PenggunaController::class, 'lihatPendidik'])->name('super.penggunapendidik.lihat');
         Route::get('/pengguna-pendidik/hapus/{id}',[PenggunaController::class, 'hapusPendidik'])->name('super.penggunapendidik.hapus');
 
-        Route::get('/pengguna-staf-admin',[PenggunaController::class, 'penggunaStafAdmin'])->name('super.penggunastafadmin');
-        Route::post('/pengguna-staf-admin/tambah',[PenggunaController::class, 'tambahStafAdmin'])->name('super.penggunastafadmin.tambah');
-        Route::get('/pengguna-staf-admin/hapus/{id}',[PenggunaController::class, 'destroyStafAdmin'])->name('super.penggunastafadmin.hapus');
-        Route::get('/pengguna-staf-admin/lihat/{id}',[PenggunaController::class, 'lihatStafAdmin'])->name('super.penggunastafadmin.lihat');
-
-        Route::get('/pengguna-pelajar-suspended',[PenggunaController::class, 'penggunaPelajarSuspend'])->name('super.penggunasuspend');
-        Route::get('/pengguna-pelajar-suspended/lihat/{id}',[PenggunaController::class, 'lihatSuspended'])->name('super.penggunasuspend.lihat');
-        Route::get('/pengguna-pelajar-suspended/cabut-suspend-pelajar/{id}',[PenggunaController::class, 'cabutSuspendPelajar'])->name('super.penggunasuspend.cabutsuspendpelajar');
-
         Route::get('/cetak_soal/{id}',[SoalDinasController::class, 'adminCetakSoalGandaPoin'])->name('admin.cetak_soal');
     });
 
@@ -232,6 +224,47 @@ Route::group(['prefix' => 'pelajar','middleware' => ['auth','pelajar-role']], fu
     Route::get('/capaian_tes', [HasilDinasController::class, 'capaian'])->name('pelajar.capaian');
 });
 
-Route::middleware('auth')->prefix('staf-admin')->group(function () {
-    Route::get('/{any?}', fn () => redirect()->route('admin.beranda'))->where('any', '.*');
+Route::group(['prefix' => 'staf-admin', 'middleware' => ['auth','admin-role']], function(){
+    Route::get('/beranda',[StafAdminController::class, 'index'])->name('staf-admin.beranda');
+    Route::post('/update-profil/{id}',[StafAdminController::class, 'update'])->name('staf-admin.update-profil');
+    Route::get('/jadwal',[JadwalAbsensiController::class, 'index'])->name('staf-admin.jadwal');
+    Route::post('/jadwal/tambah',[JadwalAbsensiController::class, 'tambahJadwal'])->name('staf-admin.jadwal.tambah');
+    Route::get('/jadwal/hapus/{id}',[JadwalAbsensiController::class, 'hapusJadwal'])->name('staf-admin.jadwal.hapus');
+    Route::get('/jadwal/edit/{id}',[JadwalAbsensiController::class, 'editJadwal'])->name('staf-admin.jadwal.edit');
+    Route::post('/jadwal/update/{id}',[JadwalAbsensiController::class, 'updateJadwal'])->name('staf-admin.jadwal.update');
+    Route::get('/absensi/beranda',[JadwalAbsensiController::class, 'berandaAbsensi'])->name('staf-admin.absensi.beranda');
+    Route::get('/absensi/{id}',[JadwalAbsensiController::class, 'absensi'])->name('staf-admin.absen');
+    Route::get('/absensi-pulang/{id}',[JadwalAbsensiController::class, 'absensiPulang'])->name('staf-admin.absen-pulang');
+    Route::post('/absensi-pulang/selesai',[JadwalAbsensiController::class, 'selesaiPelajar'])->name('staf-admin.absen-pulang.selesai');
+    Route::get('/absen/staf',[JadwalAbsensiController::class, 'absenStaf'])->name('staf-admin.absen.staf');
+    Route::post('/absensi/upload-absensi',[JadwalAbsensiController::class, 'uploadAbsensi'])->name('staf-admin.absensi.upload-absensi');
+    Route::post('/absensi/upload-absensi/staf',[JadwalAbsensiController::class, 'uploadAbsensiStaf'])->name('staf-admin.absensi.upload-absensi.staf');
+    Route::post('/absensi/upload-absensi/izin-staf',[JadwalAbsensiController::class, 'uploadAbsensiIzinStaf'])->name('staf-admin.absensi.upload-izin-staf');
+    Route::get('/absensi/hapus/izin-staf/{id}',[JadwalAbsensiController::class, 'hapusIzinStaf'])->name('staf-admin.absensi.hapus-izin-staf');
+    Route::get('/absen/staf/pulang',[JadwalAbsensiController::class, 'absenPulangStaf'])->name('staf-admin.absen.staf-pulang');
+    Route::post('/absen/staf/pulang_upload', [JadwalAbsensiController::class, 'uploadStafPulang'])->name('staf-admin.absen.upload-staf-pulang');
+
+    Route::get('/absensi/hapus/izin-pelajar/{id}',[JadwalAbsensiController::class, 'hapusIzinPelajar'])->name('staf-admin.absensi.hapus-izin-pelajar');
+    Route::post('/absensi/upload-absensi/izin-pelajar',[JadwalAbsensiController::class, 'uploadAbsensiIzinPelajar'])->name('staf-admin.absensi.upload-izin-pelajar');
+    Route::post('/absensi/upload-absensi/izin-pendidik',[JadwalAbsensiController::class, 'uploadAbsensiIzinPendidik'])->name('staf-admin.absensi.upload-izin-pendidik');
+    Route::get('/absensi/hapus/izin-pendidik/{id}',[JadwalAbsensiController::class, 'hapusIzinPendidik'])->name('staf-admin.absensi.hapus-izin-pendidik');
+    Route::get('/absen/rekap-pembelajaran/',[JadwalAbsensiController::class, 'rekapAbsensiPembelajaran'])->name('staf-admin.absensi.rekap-pembelajaran');
+    Route::get('/absen/rekap-pembelajaran/lihat/{id}',[JadwalAbsensiController::class, 'lihatRekapAbsensiPembelajaran'])->name('staf-admin.absensi.rekap-pembelajaran.lihat');
+    Route::get('/absen/rekap-pembelajaran/cetak/{id}',[JadwalAbsensiController::class, 'cetakJurnalHarian'])->name('staf-admin.absensi.rekap-pembelajaran.cetak');
+    Route::get('/absen/rekap-staf/',[JadwalAbsensiController::class, 'rekapAbsensiStaf'])->name('staf-admin.absensi.rekap-staf');
+    Route::get('/absen/rekap-staf/cetak-jurnal',[JadwalAbsensiController::class, 'cetakJurnalStaf'])->name('staf-admin.absensi.rekap-staf.cetak');
+
+    Route::get('/pengguna-pendaftar',[PenggunaController::class, 'penggunaPendaftar'])->name('staf-admin.penggunapendaftar');
+    Route::get('/pengguna-pendaftar/lihat/{id}',[PenggunaController::class, 'lihatPendaftar'])->name('staf-admin.penggunapendaftar.lihat');
+    Route::post('/pengguna-pendaftar/migrasi/{id}',[PenggunaController::class, 'migrasiPendaftar'])->name('staf-admin.penggunapendaftar.migrasi');
+    Route::get('/pengguna-pendaftar/hapus/{id}',[PenggunaController::class, 'hapusPendaftar'])->name('staf-admin.penggunapendaftar.hapus');
+
+    Route::get('/pengguna-pelajar',[PenggunaController::class, 'penggunaPelajar'])->name('staf-admin.penggunapelajar');
+    Route::get('/pengguna-pelajar/cetak',[PenggunaController::class, 'cetakPenggunaPelajar'])->name('staf-admin.penggunapelajar.cetak');
+    Route::get('/pengguna-pelajar/lihat/{id}',[PenggunaController::class, 'lihatPelajar'])->name('staf-admin.penggunapelajar.lihat');
+    Route::get('/pengguna-pelajar/edit/{id}',[PenggunaController::class, 'editPelajar'])->name('staf-admin.penggunapelajar.edit');
+    Route::post('/pengguna-pelajar/update/{id}',[PenggunaController::class, 'updatePelajar'])->name('staf-admin.penggunapelajar.update');
+    Route::get('/pengguna-pelajar/cetak-pdf/{id}',[PenggunaController::class, 'cetakPdfPelajar'])->name('staf-admin.penggunapelajar.cetak-pdf');
+    Route::get('/pengguna-pelajar/editdata/{id}',[PenggunaController::class, 'editDataPelajar'])->name('staf-admin.penggunapelajar.editdata');
+    Route::post('/pengguna-pelajar/updatedata/{id}',[PenggunaController::class, 'updateDataPelajar'])->name('staf-admin.penggunapelajar.updatedata');
 });
