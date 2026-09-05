@@ -37,6 +37,13 @@ class MasterAdminTest extends TestCase
             ->assertForbidden();
     }
 
+    public function test_non_super_cannot_mount_master_admin_directly(): void
+    {
+        Livewire::actingAs($this->markasAdmin())
+            ->test(MasterAdmin::class)
+            ->assertForbidden();
+    }
+
     public function test_creating_non_super_admin_requires_markas(): void
     {
         Livewire::actingAs($this->superAdmin())
@@ -48,6 +55,21 @@ class MasterAdminTest extends TestCase
             ->set('markas_id', '')
             ->call('tambah')
             ->assertHasErrors(['markas_id']);
+    }
+
+    public function test_creating_non_super_admin_rejects_invalid_markas(): void
+    {
+        Livewire::actingAs($this->superAdmin())
+            ->test(MasterAdmin::class)
+            ->set('nama', 'Staf Invalid')
+            ->set('email', 'invalid@example.com')
+            ->set('password', 'secret123')
+            ->set('is_super_admin', false)
+            ->set('markas_id', '9999')
+            ->call('tambah')
+            ->assertHasErrors(['markas_id']);
+
+        $this->assertDatabaseMissing('users', ['email' => 'invalid@example.com']);
     }
 
     public function test_creating_super_admin_without_markas_succeeds(): void

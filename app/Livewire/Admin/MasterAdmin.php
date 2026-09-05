@@ -31,6 +31,13 @@ class MasterAdmin extends Component
 
     public ?int $lihatId = null;
 
+    public function boot(): void
+    {
+        $user = auth()->user();
+
+        abort_unless($user && $user->isSuperAdmin(), 403);
+    }
+
     public function updatedCari(): void
     {
         $this->resetPage();
@@ -45,6 +52,9 @@ class MasterAdmin extends Component
             'is_super_admin' => 'boolean',
             'markas_id' => [
                 Rule::requiredIf(! $this->is_super_admin),
+                'nullable',
+                'integer',
+                'exists:adm_markas,id',
             ],
         ], [
             'markas_id.required' => 'Markas wajib untuk admin non-super',
@@ -58,8 +68,10 @@ class MasterAdmin extends Component
             'is_super_admin' => $validated['is_super_admin'],
         ]);
 
-        if ($this->markas_id !== '' && $this->markas_id !== null) {
-            $user->markas()->attach((int) $this->markas_id);
+        $markasId = $validated['markas_id'] ?? null;
+
+        if ($markasId !== '' && $markasId !== null) {
+            $user->markas()->attach((int) $markasId);
         }
 
         $this->reset(['nama', 'email', 'password', 'is_super_admin', 'markas_id']);
@@ -75,7 +87,9 @@ class MasterAdmin extends Component
             return;
         }
 
-        User::where('role_id', 2)->findOrFail($id)->delete();
+        $user = User::where('role_id', 2)->findOrFail($id);
+        $user->markas()->detach();
+        $user->delete();
 
         if ($this->lihatId === $id) {
             $this->kembali();
