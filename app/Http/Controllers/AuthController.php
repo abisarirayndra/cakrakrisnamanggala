@@ -13,10 +13,6 @@ use Str;
 
 class AuthController extends Controller
 {
-    public function tampilLogin(){
-        return view('auth.login');
-    }
-
     public function login(Request $request){
 
         $cek = User::where('email', $request->email)->first();
@@ -33,29 +29,29 @@ class AuthController extends Controller
 
             if(Auth::attempt($credentials, $request->boolean('remember'))){
                 $request->session()->regenerate();
+                $user = auth()->user();
 
-                if(auth()->user()->role_id == 1){
+                if($user->role_id == 1){
                     return abort(403);
                 }
-                elseif (auth()->user()->role_id == 2) {
-                    Alert::success('Selamat datang','Admin');
-                    return redirect()->route('admin.beranda');
+
+                $route = $user->dashboardRouteName();
+
+                if ($route === null) {
+                    return;
                 }
-                elseif (auth()->user()->role_id == 3) {
+
+                if ($user->role_id == 2) {
+                    Alert::success('Selamat datang', $user->isSuperAdmin() ? 'Admin' : 'Admin');
+                }
+                elseif ($user->role_id == 3) {
                     Alert::success('Selamat datang','Pendidik Cakra');
-                    return redirect()->route('pendidik.dinas.beranda');
                 }
-                elseif (auth()->user()->role_id == 4) {
+                elseif ($user->role_id == 4) {
                     Alert::success('Selamat datang','Peserta Didik Cakra');
-                    return redirect()->route('pelajar.dinas.beranda');
                 }
-                elseif(auth()->user()->role_id == 5){
-                    return redirect()->route('pendaftar.profil');
-                }
-                elseif(auth()->user()->role_id == 7 ){
-                    Alert::toast('Selamat Datang Staf Admin','success');
-                    return redirect()->route('staf-admin.beranda');
-                }
+
+                return redirect()->route($route);
             }
 
         }
