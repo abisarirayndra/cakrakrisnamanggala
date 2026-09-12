@@ -19,9 +19,13 @@ class MasterPelajar extends Component
 {
     use WithPagination;
 
+    protected string $paginationTheme = 'bootstrap';
+
     public string $cari = '';
 
     public string $halaman = 'daftar';
+
+    public string $tab = 'aktif';
 
     public ?int $pelajarUserId = null;
 
@@ -56,6 +60,13 @@ class MasterPelajar extends Component
 
     public function updatedCari(): void
     {
+        $this->resetPage();
+    }
+
+    public function pilihTab(string $tab): void
+    {
+        abort_unless(in_array($tab, ['aktif', 'suspended'], true), 404);
+        $this->tab = $tab;
         $this->resetPage();
     }
 
@@ -119,19 +130,20 @@ class MasterPelajar extends Component
 
     public function suspend(int $userId): void
     {
-        $actor = auth()->user();
-        abort_unless($actor->isSuperAdmin(), 403);
-
         $this->authorizeRow($userId);
         User::where('role_id', 4)->findOrFail($userId)->update(['role_id' => 6]);
         $this->kembali();
     }
 
+    public function unsuspend(int $userId): void
+    {
+        $this->authorizeRow($userId);
+        User::where('role_id', 6)->findOrFail($userId)->update(['role_id' => 4]);
+        $this->kembali();
+    }
+
     public function hapus(int $userId): void
     {
-        $actor = auth()->user();
-        abort_unless($actor->isSuperAdmin(), 403);
-
         $pelajar = $this->authorizeRow($userId);
         $user = User::findOrFail($userId);
 
@@ -166,7 +178,8 @@ class MasterPelajar extends Component
     public function render()
     {
         $actor = auth()->user();
-        $pelajars = AdminVisibility::pelajarQuery($actor)
+        $roleId = $this->tab === 'suspended' ? 6 : 4;
+        $pelajars = AdminVisibility::pelajarQuery($actor, $roleId)
             ->with(['pelajar.markas'])
             ->when($this->cari, fn ($query) => $query->where(function ($query) {
                 $search = '%'.$this->cari.'%';
@@ -175,7 +188,7 @@ class MasterPelajar extends Component
                     ->orWhere('users.email', 'like', $search)
                     ->orWhere('users.nomor_registrasi', 'like', $search);
             }))
-            ->orderByDesc('users.id')
+            ->orderBy('users.nama')
             ->paginate(10);
 
         $pelajarAktif = null;
@@ -193,14 +206,13 @@ class MasterPelajar extends Component
             'pelajars' => $pelajars,
             'pelajarAktif' => $pelajarAktif,
             'markasList' => $markasList,
-            'isSuperAdmin' => $actor->isSuperAdmin(),
         ]);
     }
 
     private function authorizeRow(int $userId): Pelajar
     {
         $actor = auth()->user();
-        abort_unless(User::where('role_id', 4)->whereKey($userId)->exists(), 404);
+        abort_unless(User::whereIn('role_id', [4, 6])->whereKey($userId)->exists(), 404);
         $pelajar = Pelajar::where('pelajar_id', $userId)->firstOrFail();
 
         if (! $actor->isSuperAdmin()) {

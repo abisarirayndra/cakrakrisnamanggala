@@ -74,7 +74,7 @@ class PenggunaController extends Controller
         }
         $akun->delete();
         Alert::toast('Hapus Pendaftar Berhasil');
-        return redirect()->route('super.penggunapendaftar');
+        return redirect()->route('admin.pengguna.pendaftar');
     }
 // Pelajar
     public function penggunaPelajar(){

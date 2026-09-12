@@ -18,7 +18,11 @@ class MasterAdmin extends Component
 {
     use WithPagination;
 
+    protected string $paginationTheme = 'bootstrap';
+
     public string $cari = '';
+
+    public string $halaman = 'daftar';
 
     public string $nama = '';
 
@@ -31,6 +35,8 @@ class MasterAdmin extends Component
     public $markas_id = '';
 
     public ?int $lihatId = null;
+
+    public ?int $editId = null;
 
     public function boot(): void
     {
@@ -97,17 +103,97 @@ class MasterAdmin extends Component
         if ($this->lihatId === $id) {
             $this->kembali();
         }
+
+        if ($this->editId === $id) {
+            $this->batal();
+        }
     }
 
     public function lihat(int $id): void
     {
         User::where('role_id', 2)->findOrFail($id);
         $this->lihatId = $id;
+        $this->halaman = 'lihat';
+    }
+
+    public function edit(int $id): void
+    {
+        $user = User::where('role_id', 2)->with('markas')->findOrFail($id);
+        $ids = $user->markasIds();
+
+        $this->halaman = 'daftar';
+        $this->lihatId = null;
+        $this->editId = $id;
+        $this->nama = $user->nama;
+        $this->email = $user->email;
+        $this->password = '';
+        $this->is_super_admin = $user->isSuperAdmin();
+        $this->markas_id = $ids === [] ? '' : (string) $ids[0];
+        $this->resetErrorBag();
+    }
+
+    public function batal(): void
+    {
+        $this->editId = null;
+        $this->reset(['nama', 'email', 'password', 'is_super_admin', 'markas_id']);
+        $this->resetErrorBag();
+    }
+
+    public function simpan(): void
+    {
+        abort_unless($this->editId !== null, 404);
+
+        $user = User::where('role_id', 2)->findOrFail($this->editId);
+
+        if ($this->editId === (int) auth()->id() && $user->isSuperAdmin() && ! $this->is_super_admin) {
+            $this->addError('is_super_admin', 'Tidak bisa mencabut superadmin akun sendiri');
+
+            return;
+        }
+
+        $validated = $this->validate([
+            'nama' => 'required',
+            'email' => ['required', 'email', Rule::unique('users', 'email')->ignore($this->editId)],
+            'password' => 'nullable|min:6',
+            'is_super_admin' => 'boolean',
+            'markas_id' => [
+                Rule::requiredIf(! $this->is_super_admin),
+                'nullable',
+                'integer',
+                'exists:adm_markas,id',
+            ],
+        ], [
+            'markas_id.required' => 'Markas wajib untuk admin non-super',
+        ]);
+
+        $payload = [
+            'nama' => $validated['nama'],
+            'email' => $validated['email'],
+            'is_super_admin' => $validated['is_super_admin'],
+        ];
+
+        if (! empty($validated['password'])) {
+            $payload['password'] = Hash::make($validated['password']);
+        }
+
+        $user->update($payload);
+
+        $markasId = $validated['markas_id'] ?? null;
+
+        if ($markasId !== '' && $markasId !== null) {
+            $user->markas()->sync([(int) $markasId]);
+        } else {
+            $user->markas()->sync([]);
+        }
+
+        $this->batal();
     }
 
     public function kembali(): void
     {
+        $this->halaman = 'daftar';
         $this->lihatId = null;
+        $this->batal();
     }
 
     public function render()
@@ -119,7 +205,7 @@ class MasterAdmin extends Component
                 $q->where('nama', 'like', '%'.$this->cari.'%')
                     ->orWhere('email', 'like', '%'.$this->cari.'%');
             }))
-            ->orderByDesc('id')
+            ->orderBy('nama')
             ->paginate(10);
 
         $adminDilihat = $this->lihatId === null

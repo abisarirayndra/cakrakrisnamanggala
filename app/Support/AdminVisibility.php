@@ -7,11 +7,31 @@ use Illuminate\Database\Eloquent\Builder;
 
 class AdminVisibility
 {
-    public static function pelajarQuery(User $actor): Builder
+    public static function pelajarQuery(User $actor, int $roleId = 4): Builder
     {
         $query = User::query()
             ->join('adm_pelajars', 'adm_pelajars.pelajar_id', '=', 'users.id')
-            ->where('users.role_id', 4)
+            ->where('users.role_id', $roleId)
+            ->select('users.*');
+
+        if (! $actor->isSuperAdmin()) {
+            $ids = $actor->markasIds();
+
+            if ($ids === []) {
+                $query->whereRaw('1 = 0');
+            } else {
+                $query->whereIn('adm_pelajars.markas_id', $ids);
+            }
+        }
+
+        return $query;
+    }
+
+    public static function pendaftarQuery(User $actor): Builder
+    {
+        $query = User::query()
+            ->join('adm_pelajars', 'adm_pelajars.pelajar_id', '=', 'users.id')
+            ->where('users.role_id', 5)
             ->select('users.*');
 
         if (! $actor->isSuperAdmin()) {

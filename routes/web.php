@@ -16,8 +16,14 @@ use App\Http\Controllers\StafAdminController;
 use App\Http\Controllers\SuperController;
 use App\Http\Controllers\TesDinasController;
 use App\Livewire\Admin\MasterAdmin;
+use App\Livewire\Admin\MasterKelas;
+use App\Livewire\Admin\MasterMapel;
+use App\Livewire\Admin\MasterMarkas;
 use App\Livewire\Admin\MasterPelajar;
+use App\Livewire\Admin\MasterPendaftar;
 use App\Livewire\Admin\MasterPendidik;
+use App\Livewire\Auth\FormLogin;
+use App\Livewire\Pendaftaran\WizardPendaftaran;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -32,9 +38,9 @@ use Illuminate\Support\Facades\Route;
 */
 
 
-Route::get('/',[AuthController::class, 'tampilLogin'])->name('landing');
+Route::get('/', FormLogin::class)->name('landing');
 // Dead routes: AuthController@tampilRegister / register were never implemented.
-Route::get('/login',[AuthController::class, 'tampilLogin'])->name('login');
+Route::get('/login', FormLogin::class)->name('login');
 Route::post('/log',[AuthController::class, 'login'])->name('log');
 Route::get('/logout', [AuthController::class, 'logout'])->name('logout');
 Route::get('/reset', [AuthController::class, 'reset'])->name('reset');
@@ -44,9 +50,12 @@ Route::post('/upreset', [AuthController::class, 'upReset'])->name('upreset');
 
 // Pendaftaran
 Route::get('/petunjuk-pendaftaran',[PendaftarController::class, 'petunjuk'])->name('petunjuk');
-Route::get('/register-email',[PendaftarController::class, 'registerEmail'])->name('register-email');
+Route::get('/register-email', WizardPendaftaran::class)->name('register-email');
 Route::post('/upload-register-email',[PendaftarController::class, 'uploadRegisterEmail'])->name('up-register-email');
 Route::post('/up-formulir-pendaftaran',[PendaftarController::class, 'upFormulirPendaftar'])->name('pendaftar.up-formulir-pendaftaran');
+Route::get('/bukti-pendaftaran/{id}', [PendaftarController::class, 'bukti'])
+    ->middleware('signed')
+    ->name('pendaftar.bukti');
     Route::get('/cetak-formulir/{id}',[PendaftarController::class, 'cetak'])->name('pendaftar.cetak-formulir');
     Route::get('/cetak-formulir-pdf/{id}',[PendaftarController::class, 'cetak_pdf'])->name('pendaftar.cetak-formulir-pdf');
     Route::get('/edit-pendaftar/{id}',[PendaftarController::class, 'editPendaftar'])->name('pendaftar.edit-pendaftar');
@@ -69,48 +78,42 @@ Route::group(['prefix' => 'super','middleware' => ['auth','super-role']], functi
 Route::group(['prefix' => 'admin', 'middleware' => ['auth','admin-role']], function(){
     Route::get('/beranda',[AdminController::class, 'index'])->name('admin.beranda');
 
+    Route::get('/paket',[PaketDinasController::class, 'paket'])->name('admin.dinas.paket');
+    Route::get('/tambahpaket',[PaketDinasController::class, 'tambah'])->name('admin.dinas.tambahpaket');
+    Route::post('/uppaket',[PaketDinasController::class, 'up'])->name('admin.dinas.uppaket');
+    Route::get('/lihatpaket/{id}',[PaketDinasController::class, 'lihat'])->name('admin.dinas.lihatpaket');
+    Route::get('/get_token_tes/{id}',[PaketDinasController::class, 'getTesToken'])->name('admin.dinas.get_token_tes');
+    Route::get('/editpaket/{id}',[PaketDinasController::class, 'editPaket'])->name('admin.dinas.editpaket');
+    Route::post('/updatepaket/{id}',[PaketDinasController::class, 'updatePaket'])->name('admin.dinas.updatepaket');
+    Route::get('/admin/hapuspaket/{id}',[PaketDinasController::class, 'hapusPaket'])->name('admin.dinas.hapuspaket');
+    Route::get('/daftar_arsip',[ArsipController::class, 'daftarArsip'])->name('admin.dinas.daftar_arsip');
+
+    Route::post('/tambahkelas/{id}',[PaketDinasController::class, 'tambahKelas'])->name('admin.dinas.tambahkelas');
+    Route::get('/hapuskelas/{id}',[PaketDinasController::class, 'hapusKelas'])->name('admin.dinas.hapuskelas');
+    Route::post('/tambahtes/{id}',[TesDinasController::class, 'tambahTes'])->name('admin.dinas.tambahtes');
+    Route::get('/hapustes/{id}',[TesDinasController::class, 'hapusTes'])->name('admin.dinas.hapustes');
+    Route::get('/edittes/{id}',[TesDinasController::class, 'editTes'])->name('admin.dinas.edittes');
+    Route::post('/updatetes/{id}',[TesDinasController::class, 'updateTes'])->name('admin.dinas.updatetes');
+    Route::get('/hasildinas/{id}',[HasilDinasController::class, 'hasilKedinasanAdmin'])->name('admin.dinas.hasildinas');
+    Route::get('/live_hasildinas/{id}',[HasilDinasController::class, 'liveSkorKedinasan'])->name('admin.dinas.live_hasildinas');
+    Route::get('/hasiltnipolri/{id}',[HasilDinasController::class, 'hasilTniPolriAdmin'])->name('admin.dinas.hasiltnipolri');
+    Route::get('/live_hasiltnipolri/{id}',[HasilDinasController::class, 'liveSkorTniPolri'])->name('admin.dinas.live_hasiltnipolri');
+    Route::get('/cetakhasildinas/{id}',[HasilDinasController::class, 'cetakKedinasanAdmin'])->name('admin.dinas.cetakhasildinas');
+    Route::get('/cetaktnipolri/{id}',[HasilDinasController::class, 'cetakTniPolriAdmin'])->name('admin.dinas.cetakhasiltnipolri');
+    Route::get('/hasil_psikotes/{id}',[HasilDinasController::class, 'hasilPsikotesAdmin'])->name('admin.dinas.hasil_psikotes');
+    Route::get('/cetak_hasil_psikotes/{id}',[HasilDinasController::class, 'cetakPsikotesAdmin'])->name('admin.dinas.cetak_hasil_psikotes');
+    Route::get('/live_hasilpsikotes/{id}',[HasilDinasController::class, 'liveSkorPsikotes'])->name('admin.dinas.live_hasilpsikotes');
+    Route::get('/arsipkan_paket/{id}', [HasilDinasController::class, 'arsipkanPaket'])->name('admin.dinas.arsipkan_paket');
+
     Route::middleware('superadmin-role')->group(function () {
-        Route::get('/paket',[PaketDinasController::class, 'paket'])->name('admin.dinas.paket');
-        Route::get('/tambahpaket',[PaketDinasController::class, 'tambah'])->name('admin.dinas.tambahpaket');
-        Route::post('/uppaket',[PaketDinasController::class, 'up'])->name('admin.dinas.uppaket');
-        Route::get('/lihatpaket/{id}',[PaketDinasController::class, 'lihat'])->name('admin.dinas.lihatpaket');
-        Route::get('/get_token_tes/{id}',[PaketDinasController::class, 'getTesToken'])->name('admin.dinas.get_token_tes');
-        Route::get('/editpaket/{id}',[PaketDinasController::class, 'editPaket'])->name('admin.dinas.editpaket');
-        Route::post('/updatepaket/{id}',[PaketDinasController::class, 'updatePaket'])->name('admin.dinas.updatepaket');
-        Route::get('/admin/hapuspaket/{id}',[PaketDinasController::class, 'hapusPaket'])->name('admin.dinas.hapuspaket');
-        Route::get('/daftar_arsip',[ArsipController::class, 'daftarArsip'])->name('admin.dinas.daftar_arsip');
-
-        Route::post('/tambahkelas/{id}',[PaketDinasController::class, 'tambahKelas'])->name('admin.dinas.tambahkelas');
-        Route::get('/hapuskelas/{id}',[PaketDinasController::class, 'hapusKelas'])->name('admin.dinas.hapuskelas');
-        Route::post('/tambahtes/{id}',[TesDinasController::class, 'tambahTes'])->name('admin.dinas.tambahtes');
-        Route::get('/hapustes/{id}',[TesDinasController::class, 'hapusTes'])->name('admin.dinas.hapustes');
-        Route::get('/edittes/{id}',[TesDinasController::class, 'editTes'])->name('admin.dinas.edittes');
-        Route::post('/updatetes/{id}',[TesDinasController::class, 'updateTes'])->name('admin.dinas.updatetes');
-        Route::get('/hasildinas/{id}',[HasilDinasController::class, 'hasilKedinasanAdmin'])->name('admin.dinas.hasildinas');
-        Route::get('/live_hasildinas/{id}',[HasilDinasController::class, 'liveSkorKedinasan'])->name('admin.dinas.live_hasildinas');
-        Route::get('/hasiltnipolri/{id}',[HasilDinasController::class, 'hasilTniPolriAdmin'])->name('admin.dinas.hasiltnipolri');
-        Route::get('/live_hasiltnipolri/{id}',[HasilDinasController::class, 'liveSkorTniPolri'])->name('admin.dinas.live_hasiltnipolri');
-        Route::get('/cetakhasildinas/{id}',[HasilDinasController::class, 'cetakKedinasanAdmin'])->name('admin.dinas.cetakhasildinas');
-        Route::get('/cetaktnipolri/{id}',[HasilDinasController::class, 'cetakTniPolriAdmin'])->name('admin.dinas.cetakhasiltnipolri');
-        Route::get('/hasil_psikotes/{id}',[HasilDinasController::class, 'hasilPsikotesAdmin'])->name('admin.dinas.hasil_psikotes');
-        Route::get('/cetak_hasil_psikotes/{id}',[HasilDinasController::class, 'cetakPsikotesAdmin'])->name('admin.dinas.cetak_hasil_psikotes');
-        Route::get('/live_hasilpsikotes/{id}',[HasilDinasController::class, 'liveSkorPsikotes'])->name('admin.dinas.live_hasilpsikotes');
-        Route::get('/arsipkan_paket/{id}', [HasilDinasController::class, 'arsipkanPaket'])->name('admin.dinas.arsipkan_paket');
-
-        // Route::get('/monitor_tes',[TesDinasController::class, 'monitor'])->name('admin.monitor_tes');
-        // Route::get('/monitor_tes/lihat/{id}',[TesDinasController::class, 'monitorTes'])->name('admin.monitor_tes.lihat');
-        // Route::post('/monitor_tes/diskualifikasi/{id}',[TesDinasController::class, 'diskualifikasi'])->name('admin.monitor_tes.diskualifikasi');
-
-        // TOEFL routes removed: PaketToeflController does not exist.
-
         Route::get('/opsi_administrasi',[SuperController::class, 'index'])->name('super.administrasi');
 
-        Route::get('/pengguna-pendaftar',[PenggunaController::class, 'penggunaPendaftar'])->name('super.penggunapendaftar');
-        Route::get('/pengguna-pendaftar/lihat/{id}',[PenggunaController::class, 'lihatPendaftar'])->name('super.penggunapendaftar.lihat');
-        Route::post('/pengguna-pendaftar/migrasi/{id}',[PenggunaController::class, 'migrasiPendaftar'])->name('super.penggunapendaftar.migrasi');
-        Route::get('/pengguna-pendaftar/hapus/{id}',[PenggunaController::class, 'hapusPendaftar'])->name('super.penggunapendaftar.hapus');
+        Route::get('/pengguna-pendaftar/lihat/{id}', fn () => redirect()->route('admin.pengguna.pendaftar'))->name('super.penggunapendaftar.lihat');
+        Route::post('/pengguna-pendaftar/migrasi/{id}', fn () => redirect()->route('admin.pengguna.pendaftar'))->name('super.penggunapendaftar.migrasi');
+        Route::get('/pengguna-pendaftar/hapus/{id}', fn () => redirect()->route('admin.pengguna.pendaftar'))->name('super.penggunapendaftar.hapus');
     });
 
+    Route::get('/pengguna-pendaftar', MasterPendaftar::class)->name('admin.pengguna.pendaftar');
     Route::get('/pengguna-pelajar', MasterPelajar::class)->name('admin.pengguna.pelajar');
     Route::middleware('superadmin-role')->group(function () {
         Route::get('/pengguna-pelajar/cetak',[PenggunaController::class, 'cetakPenggunaPelajar'])->name('super.penggunapelajar.cetak');
@@ -136,6 +139,9 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth','admin-role']], funct
     });
 
     Route::get('/pengguna-admin', MasterAdmin::class)->middleware('superadmin-role')->name('admin.pengguna.admin');
+    Route::get('/master-markas', MasterMarkas::class)->middleware('superadmin-role')->name('admin.master.markas');
+    Route::get('/master-kelas', MasterKelas::class)->middleware('superadmin-role')->name('admin.master.kelas');
+    Route::get('/master-mapel', MasterMapel::class)->middleware('superadmin-role')->name('admin.master.mapel');
     Route::get('/pengguna-pendidik', MasterPendidik::class)->name('admin.pengguna.pendidik');
 });
 
@@ -254,10 +260,10 @@ Route::group(['prefix' => 'staf-admin', 'middleware' => ['auth','admin-role']], 
     Route::get('/absen/rekap-staf/',[JadwalAbsensiController::class, 'rekapAbsensiStaf'])->name('staf-admin.absensi.rekap-staf');
     Route::get('/absen/rekap-staf/cetak-jurnal',[JadwalAbsensiController::class, 'cetakJurnalStaf'])->name('staf-admin.absensi.rekap-staf.cetak');
 
-    Route::get('/pengguna-pendaftar',[PenggunaController::class, 'penggunaPendaftar'])->name('staf-admin.penggunapendaftar');
-    Route::get('/pengguna-pendaftar/lihat/{id}',[PenggunaController::class, 'lihatPendaftar'])->name('staf-admin.penggunapendaftar.lihat');
-    Route::post('/pengguna-pendaftar/migrasi/{id}',[PenggunaController::class, 'migrasiPendaftar'])->name('staf-admin.penggunapendaftar.migrasi');
-    Route::get('/pengguna-pendaftar/hapus/{id}',[PenggunaController::class, 'hapusPendaftar'])->name('staf-admin.penggunapendaftar.hapus');
+    Route::get('/pengguna-pendaftar', fn () => redirect()->route('admin.pengguna.pendaftar'))->name('staf-admin.penggunapendaftar');
+    Route::get('/pengguna-pendaftar/lihat/{id}', fn () => redirect()->route('admin.pengguna.pendaftar'))->name('staf-admin.penggunapendaftar.lihat');
+    Route::post('/pengguna-pendaftar/migrasi/{id}', fn () => redirect()->route('admin.pengguna.pendaftar'))->name('staf-admin.penggunapendaftar.migrasi');
+    Route::get('/pengguna-pendaftar/hapus/{id}', fn () => redirect()->route('admin.pengguna.pendaftar'))->name('staf-admin.penggunapendaftar.hapus');
 
     Route::get('/pengguna-pelajar',[PenggunaController::class, 'penggunaPelajar'])->name('staf-admin.penggunapelajar');
     Route::get('/pengguna-pelajar/cetak',[PenggunaController::class, 'cetakPenggunaPelajar'])->name('staf-admin.penggunapelajar.cetak');

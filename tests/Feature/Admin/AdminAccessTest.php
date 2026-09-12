@@ -28,11 +28,12 @@ class AdminAccessTest extends TestCase
         $this->setUpAdminMasterSchema();
     }
 
-    public function test_non_super_admin_is_forbidden_on_cat_paket(): void
+    public function test_non_super_admin_can_open_cat_paket(): void
     {
-        $this->actingAs($this->markasAdmin())
-            ->get(route('admin.dinas.paket'))
-            ->assertForbidden();
+        $response = $this->actingAs($this->markasAdmin())
+            ->get(route('admin.dinas.paket'));
+
+        $this->assertNotSame(403, $response->status());
     }
 
     public function test_super_admin_can_open_cat_paket_route(): void
@@ -70,18 +71,29 @@ class AdminAccessTest extends TestCase
         $this->assertSame([], $duplicates, 'Duplicate route names: '.implode(', ', $duplicates));
     }
 
-    public function test_beranda_hides_admin_and_cat_from_non_super(): void
+    public function test_beranda_hides_admin_from_non_super_and_shows_sidebar_nav(): void
     {
         $this->actingAs($this->markasAdmin())
             ->get(route('admin.beranda'))
             ->assertOk()
+            ->assertSee('ck-sidebar', false)
             ->assertSeeInOrder([
                 'data-nav="beranda"',
+                'data-nav="pendaftar"',
                 'data-nav="pelajar"',
                 'data-nav="pendidik"',
+                'data-nav="jadwal"',
+                'data-nav="absensi"',
+                'data-nav="cat"',
             ], false)
             ->assertDontSee('data-nav="admin"', false)
-            ->assertDontSee('data-nav="cat"', false);
+            ->assertDontSee('data-nav="markas"', false)
+            ->assertDontSee('data-nav="kelas"', false)
+            ->assertDontSee('data-nav="mapel"', false)
+            ->assertSee(route('admin.pengguna.pendaftar', absolute: false), false)
+            ->assertSee(route('staf-admin.jadwal', absolute: false), false)
+            ->assertSee(route('staf-admin.absensi.beranda', absolute: false), false)
+            ->assertSee(route('admin.dinas.paket', absolute: false), false);
     }
 
     public function test_beranda_shows_admin_and_cat_for_super(): void
@@ -90,11 +102,18 @@ class AdminAccessTest extends TestCase
             ->get(route('admin.beranda'))
             ->assertOk()
             ->assertSee('Superadmin')
+            ->assertSee('ck-sidebar', false)
             ->assertSeeInOrder([
                 'data-nav="beranda"',
-                'data-nav="admin"',
+                'data-nav="pendaftar"',
                 'data-nav="pelajar"',
                 'data-nav="pendidik"',
+                'data-nav="admin"',
+                'data-nav="markas"',
+                'data-nav="kelas"',
+                'data-nav="mapel"',
+                'data-nav="jadwal"',
+                'data-nav="absensi"',
                 'data-nav="cat"',
             ], false);
     }

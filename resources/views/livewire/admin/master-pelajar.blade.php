@@ -125,16 +125,37 @@
 
             <div class="d-flex flex-wrap gap-2">
                 <button type="button" class="btn btn-ck" wire:click="edit({{ $pelajarAktif->pelajar_id }})">Edit biodata</button>
-                @if ($isSuperAdmin)
+                @if ((int) $pelajarAktif->user->role_id === 6)
+                    <button type="button" class="btn btn-ck" wire:click="unsuspend({{ $pelajarAktif->pelajar_id }})" wire:confirm="Cabut suspend akun ini?">Unsuspend</button>
+                @else
                     <button type="button" class="btn btn-outline-danger rounded-pill" wire:click="suspend({{ $pelajarAktif->pelajar_id }})" wire:confirm="Suspend akun ini?">Suspend</button>
-                    <button type="button" class="btn btn-outline-danger rounded-pill" wire:click="hapus({{ $pelajarAktif->pelajar_id }})" wire:confirm="Hapus akun ini?">Hapus</button>
                 @endif
+                <button type="button" class="btn btn-outline-danger rounded-pill" wire:click="hapus({{ $pelajarAktif->pelajar_id }})" wire:confirm="Hapus akun ini?">Hapus</button>
             </div>
         </section>
     @else
         <section class="ck-card p-4">
             <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-4">
-                <h2 class="h5 mb-0">Daftar pelajar</h2>
+                <div class="ck-tabs" role="tablist" aria-label="Status pelajar">
+                    <button
+                        type="button"
+                        class="ck-tab {{ $tab === 'aktif' ? 'active' : '' }}"
+                        wire:click="pilihTab('aktif')"
+                        role="tab"
+                        aria-selected="{{ $tab === 'aktif' ? 'true' : 'false' }}"
+                    >
+                        Pelajar aktif
+                    </button>
+                    <button
+                        type="button"
+                        class="ck-tab {{ $tab === 'suspended' ? 'active' : '' }}"
+                        wire:click="pilihTab('suspended')"
+                        role="tab"
+                        aria-selected="{{ $tab === 'suspended' ? 'true' : 'false' }}"
+                    >
+                        Suspended
+                    </button>
+                </div>
                 <input
                     type="search"
                     class="form-control"
@@ -167,10 +188,12 @@
                                     <div class="d-flex justify-content-end gap-2">
                                         <button type="button" class="btn btn-sm btn-ck-ghost" wire:click="lihat({{ $pelajar->id }})">Lihat</button>
                                         <button type="button" class="btn btn-sm btn-ck-ghost" wire:click="edit({{ $pelajar->id }})">Edit</button>
-                                        @if ($isSuperAdmin)
+                                        @if ($tab === 'suspended')
+                                            <button type="button" class="btn btn-sm btn-ck" wire:click="unsuspend({{ $pelajar->id }})" wire:confirm="Cabut suspend akun ini?">Unsuspend</button>
+                                        @else
                                             <button type="button" class="btn btn-sm btn-outline-danger rounded-pill" wire:click="suspend({{ $pelajar->id }})" wire:confirm="Suspend akun ini?">Suspend</button>
-                                            <button type="button" class="btn btn-sm btn-outline-danger rounded-pill" wire:click="hapus({{ $pelajar->id }})" wire:confirm="Hapus akun ini?">Hapus</button>
                                         @endif
+                                        <button type="button" class="btn btn-sm btn-outline-danger rounded-pill" wire:click="hapus({{ $pelajar->id }})" wire:confirm="Hapus akun ini?">Hapus</button>
                                     </div>
                                 </td>
                             </tr>

@@ -14,40 +14,49 @@
     <link href="https://cdn.jsdelivr.net/npm/cropperjs@1.6.2/dist/cropper.min.css" rel="stylesheet">
     @livewireStyles
 </head>
-<body class="ck-body">
-    <nav class="ck-topbar py-3">
-        <div class="container ck-shell-wide d-flex flex-wrap align-items-center gap-3">
-            <a href="{{ route('admin.beranda') }}" class="ck-brand d-flex align-items-center gap-2 me-auto">
-                <img src="{{ asset('assets/img/favicon.ico') }}" width="36" height="36" alt="Cakra Krisna Manggala">
+<body class="ck-body ck-app">
+    <aside class="ck-sidebar d-none d-lg-flex flex-column">
+        <a href="{{ route('admin.beranda') }}" class="ck-sidebar-brand d-flex align-items-center gap-2">
+            <img src="{{ asset('assets/img/favicon.ico') }}" width="36" height="36" alt="Cakra Krisna Manggala">
+            <span>Cakra Krisna Manggala</span>
+        </a>
+        <nav class="ck-sidebar-nav flex-grow-1">
+            @include('layouts.partials.admin-sidebar-nav')
+        </nav>
+    </aside>
+
+    <div class="offcanvas offcanvas-start ck-offcanvas d-lg-none" tabindex="-1" id="ckSidebar" aria-labelledby="ckSidebarLabel">
+        <div class="offcanvas-header">
+            <a href="{{ route('admin.beranda') }}" id="ckSidebarLabel" class="ck-sidebar-brand d-flex align-items-center gap-2">
+                <img src="{{ asset('assets/img/favicon.ico') }}" width="32" height="32" alt="Cakra Krisna Manggala">
                 <span>Cakra Krisna Manggala</span>
             </a>
-
-            <div class="d-flex flex-wrap align-items-center gap-3">
-                <a href="{{ route('admin.beranda') }}" data-nav="beranda" class="small fw-semibold">Beranda</a>
-                @if (auth()->user()->isSuperAdmin())
-                    <a href="{{ route('admin.pengguna.admin') }}" data-nav="admin" class="small fw-semibold">Admin</a>
-                @endif
-                <a href="{{ route('admin.pengguna.pelajar') }}" data-nav="pelajar" class="small fw-semibold">Pelajar</a>
-                <a href="{{ route('admin.pengguna.pendidik') }}" data-nav="pendidik" class="small fw-semibold">Pendidik</a>
-                @if (auth()->user()->isSuperAdmin())
-                    <a href="{{ route('admin.dinas.paket') }}" data-nav="cat" class="small fw-semibold">CAT</a>
-                @endif
-            </div>
-
-            <div class="d-flex align-items-center gap-3 ms-md-2">
-                <span class="small">{{ auth()->user()->nama }}</span>
-                <a href="{{ route('logout') }}" class="small fw-semibold">Keluar</a>
-            </div>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Tutup menu"></button>
         </div>
-    </nav>
+        <div class="offcanvas-body pt-0">
+            <nav class="ck-sidebar-nav">
+                @include('layouts.partials.admin-sidebar-nav')
+            </nav>
+        </div>
+    </div>
 
-    <main class="container ck-shell-wide py-4 py-md-5">
-        @isset($slot)
-            {{ $slot }}
-        @else
-            @yield('content')
-        @endisset
-    </main>
+    <div class="ck-main">
+        <header class="ck-topbar ck-main-topbar">
+            <button class="ck-menu-toggle d-lg-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#ckSidebar" aria-controls="ckSidebar" aria-label="Buka menu">
+                <i class="bi bi-list"></i>
+            </button>
+            <span class="small ms-auto">{{ auth()->user()->nama }}</span>
+            <a href="{{ route('logout') }}" class="small fw-semibold">Keluar</a>
+        </header>
+
+        <main class="ck-main-content">
+            @isset($slot)
+                {{ $slot }}
+            @else
+                @yield('content')
+            @endisset
+        </main>
+    </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/cropperjs@1.6.2/dist/cropper.min.js"></script>

@@ -55,6 +55,13 @@ return [
             'visibility' => 'public',
         ],
 
+        'pelajar_foto' => [
+            'driver' => 'local',
+            'root' => public_path('img/pelajar'),
+            'url' => env('APP_URL').'/img/pelajar',
+            'visibility' => 'public',
+        ],
+
         's3' => [
             'driver' => 's3',
             'key' => env('AWS_ACCESS_KEY_ID'),

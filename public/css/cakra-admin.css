@@ -225,6 +225,22 @@ body.ck-body {
     font-size: 0.92rem;
 }
 
+.ck-body .pagination {
+    --bs-pagination-color: var(--ck-navy);
+    --bs-pagination-hover-color: var(--ck-navy);
+    --bs-pagination-hover-bg: var(--ck-gold-soft);
+    --bs-pagination-hover-border-color: var(--ck-line);
+    --bs-pagination-focus-color: var(--ck-navy);
+    --bs-pagination-focus-bg: var(--ck-gold-soft);
+    --bs-pagination-focus-box-shadow: 0 0 0 0.2rem rgba(184, 149, 74, 0.28);
+    --bs-pagination-active-color: #fff;
+    --bs-pagination-active-bg: var(--ck-navy);
+    --bs-pagination-active-border-color: var(--ck-navy);
+    --bs-pagination-disabled-color: var(--ck-muted);
+    --bs-pagination-disabled-bg: var(--ck-surface);
+    margin-bottom: 0;
+}
+
 .ck-cropper-wrap {
     height: min(58vh, 420px);
     background: var(--ck-navy);
@@ -235,4 +251,175 @@ body.ck-body {
 .ck-cropper-wrap img {
     display: block;
     max-width: 100%;
+}
+
+.ck-modal-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 1050;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 4rem 1rem 2rem;
+    background: rgba(27, 36, 48, 0.45);
+}
+
+.ck-app {
+    min-height: 100vh;
+}
+
+.ck-sidebar {
+    position: fixed;
+    inset: 0 auto 0 0;
+    width: 260px;
+    background: var(--ck-navy);
+    color: #f7f1e6;
+    z-index: 1030;
+    padding: 1.25rem 0.9rem 1.5rem;
+}
+
+.ck-sidebar-brand,
+.ck-offcanvas .ck-sidebar-brand {
+    color: inherit;
+    text-decoration: none;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+    padding: 0.15rem 0.6rem 1rem;
+}
+
+.ck-sidebar-brand img,
+.ck-offcanvas .ck-sidebar-brand img {
+    flex-shrink: 0;
+}
+
+.ck-sidebar-brand span,
+.ck-offcanvas .ck-sidebar-brand span {
+    font-size: 0.9rem;
+    line-height: 1.25;
+}
+
+.ck-sidebar-nav {
+    overflow-y: auto;
+}
+
+.ck-nav-section {
+    font-size: 0.68rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: rgba(247, 241, 230, 0.45);
+    padding: 0.95rem 0.85rem 0.3rem;
+    margin: 0;
+    font-weight: 600;
+}
+
+.ck-nav-link {
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+    padding: 0.55rem 0.85rem;
+    border-radius: 0.65rem;
+    color: rgba(247, 241, 230, 0.82);
+    text-decoration: none;
+    font-size: 0.92rem;
+    font-weight: 500;
+}
+
+.ck-nav-link i {
+    font-size: 1.05rem;
+    width: 1.15rem;
+    text-align: center;
+}
+
+.ck-nav-link:hover,
+.ck-nav-link.active {
+    color: #fff;
+    background: rgba(184, 149, 74, 0.18);
+}
+
+.ck-nav-link.active {
+    box-shadow: inset 3px 0 0 var(--ck-gold);
+}
+
+.ck-offcanvas {
+    width: 260px;
+    background: var(--ck-navy);
+    color: #f7f1e6;
+}
+
+.ck-offcanvas .offcanvas-header {
+    border-bottom: 1px solid rgba(247, 241, 230, 0.08);
+}
+
+.ck-main-topbar {
+    position: sticky;
+    top: 0;
+    z-index: 1020;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.85rem 1.25rem;
+}
+
+.ck-menu-toggle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.25rem;
+    height: 2.25rem;
+    border: 0;
+    border-radius: 0.65rem;
+    background: transparent;
+    color: inherit;
+    font-size: 1.45rem;
+}
+
+.ck-main-content {
+    padding: 1.5rem 1.25rem 2.5rem;
+}
+
+@media (min-width: 992px) {
+    .ck-main {
+        margin-left: 260px;
+    }
+
+    .ck-main-content {
+        padding: 2rem 2rem 3rem;
+    }
+}
+
+.ck-modal-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 1050;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 4rem 1rem 2rem;
+    background: rgba(27, 36, 48, 0.45);
+}
+
+.ck-tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.45rem;
+}
+
+.ck-tab {
+    background: transparent;
+    border: 1px solid var(--ck-line);
+    color: var(--ck-muted);
+    font-weight: 600;
+    border-radius: 999px;
+    padding: 0.5rem 1.1rem;
+}
+
+.ck-tab:hover {
+    background: var(--ck-gold-soft);
+    color: var(--ck-navy);
+}
+
+.ck-tab.active {
+    background: var(--ck-navy);
+    border-color: var(--ck-navy);
+    color: #fff;
 }

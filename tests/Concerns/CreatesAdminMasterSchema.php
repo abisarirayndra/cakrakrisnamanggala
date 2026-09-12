@@ -9,9 +9,14 @@ trait CreatesAdminMasterSchema
 {
     protected function setUpAdminMasterSchema(): void
     {
+        Schema::dropIfExists('adm_jadwal');
+        Schema::dropIfExists('temas');
+        Schema::dropIfExists('dn_tes');
         Schema::dropIfExists('admin_markas');
         Schema::dropIfExists('adm_pelajars');
         Schema::dropIfExists('adm_pendidik');
+        Schema::dropIfExists('mapels');
+        Schema::dropIfExists('kelas');
         Schema::dropIfExists('adm_markas');
         Schema::dropIfExists('users');
 
@@ -34,6 +39,13 @@ trait CreatesAdminMasterSchema
         Schema::create('adm_markas', function (Blueprint $table) {
             $table->increments('id');
             $table->string('markas');
+            $table->timestamps();
+        });
+
+        Schema::create('kelas', function (Blueprint $table) {
+            $table->increments('id');
+            $table->string('nama');
+            $table->unsignedInteger('markas_id')->nullable();
             $table->timestamps();
         });
 
@@ -64,6 +76,11 @@ trait CreatesAdminMasterSchema
             $table->timestamps();
         });
 
+        Schema::create('mapels', function (Blueprint $table) {
+            $table->increments('id');
+            $table->string('mapel');
+        });
+
         Schema::create('adm_pendidik', function (Blueprint $table) {
             $table->increments('id');
             $table->unsignedInteger('pendidik_id');
@@ -78,6 +95,21 @@ trait CreatesAdminMasterSchema
             $table->string('ibu')->nullable();
             $table->string('foto')->nullable();
             $table->timestamps();
+        });
+
+        Schema::create('dn_tes', function (Blueprint $table) {
+            $table->increments('id');
+            $table->unsignedInteger('mapel_id')->nullable();
+        });
+
+        Schema::create('temas', function (Blueprint $table) {
+            $table->increments('id');
+            $table->unsignedInteger('mapel_id')->nullable();
+        });
+
+        Schema::create('adm_jadwal', function (Blueprint $table) {
+            $table->increments('id');
+            $table->unsignedInteger('mapel_id')->nullable();
         });
     }
 }

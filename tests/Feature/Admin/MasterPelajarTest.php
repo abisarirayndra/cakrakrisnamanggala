@@ -66,7 +66,42 @@ class MasterPelajarTest extends TestCase
             ->assertSee('Belum Ada Markas');
     }
 
-    public function test_non_super_cannot_suspend_or_delete(): void
+    public function test_admin_can_suspend_pelajar_in_own_markas(): void
+    {
+        $genteng = Markas::create(['markas' => 'Genteng']);
+        $admin = User::factory()->create(['role_id' => 2, 'is_super_admin' => false]);
+        $admin->markas()->attach($genteng->id);
+        $pelajar = User::factory()->create(['role_id' => 4, 'nama' => 'Pelajar Genteng']);
+        Pelajar::create(['pelajar_id' => $pelajar->id, 'markas_id' => $genteng->id]);
+
+        Livewire::actingAs($admin)
+            ->test(MasterPelajar::class)
+            ->assertSeeHtml('>Suspend</button>')
+            ->assertSeeHtml('>Hapus</button>')
+            ->call('suspend', $pelajar->id)
+            ->assertHasNoErrors();
+
+        $this->assertSame(6, (int) $pelajar->fresh()->role_id);
+    }
+
+    public function test_admin_cannot_suspend_pelajar_in_another_markas(): void
+    {
+        $genteng = Markas::create(['markas' => 'Genteng']);
+        $jember = Markas::create(['markas' => 'Jember']);
+        $admin = User::factory()->create(['role_id' => 2, 'is_super_admin' => false]);
+        $admin->markas()->attach($genteng->id);
+        $pelajar = User::factory()->create(['role_id' => 4]);
+        Pelajar::create(['pelajar_id' => $pelajar->id, 'markas_id' => $jember->id]);
+
+        Livewire::actingAs($admin)
+            ->test(MasterPelajar::class)
+            ->call('suspend', $pelajar->id)
+            ->assertForbidden();
+
+        $this->assertSame(4, (int) $pelajar->fresh()->role_id);
+    }
+
+    public function test_admin_can_hapus_pelajar_in_own_markas(): void
     {
         $genteng = Markas::create(['markas' => 'Genteng']);
         $admin = User::factory()->create(['role_id' => 2, 'is_super_admin' => false]);
@@ -76,15 +111,27 @@ class MasterPelajarTest extends TestCase
 
         Livewire::actingAs($admin)
             ->test(MasterPelajar::class)
-            ->call('suspend', $pelajar->id)
-            ->assertForbidden();
+            ->call('hapus', $pelajar->id)
+            ->assertHasNoErrors();
+
+        $this->assertDatabaseMissing('users', ['id' => $pelajar->id]);
+    }
+
+    public function test_admin_cannot_hapus_pelajar_in_another_markas(): void
+    {
+        $genteng = Markas::create(['markas' => 'Genteng']);
+        $jember = Markas::create(['markas' => 'Jember']);
+        $admin = User::factory()->create(['role_id' => 2, 'is_super_admin' => false]);
+        $admin->markas()->attach($genteng->id);
+        $pelajar = User::factory()->create(['role_id' => 4]);
+        Pelajar::create(['pelajar_id' => $pelajar->id, 'markas_id' => $jember->id]);
 
         Livewire::actingAs($admin)
             ->test(MasterPelajar::class)
             ->call('hapus', $pelajar->id)
             ->assertForbidden();
 
-        $this->assertSame(4, (int) $pelajar->fresh()->role_id);
+        $this->assertDatabaseHas('users', ['id' => $pelajar->id]);
     }
 
     public function test_super_can_suspend_pelajar(): void
@@ -184,15 +231,107 @@ class MasterPelajarTest extends TestCase
         $this->assertDatabaseHas('users', ['id' => $pelajar->id]);
     }
 
-    public function test_super_cannot_open_inactive_pelajar_row(): void
+    public function test_list_shows_active_and_suspended_tabs(): void
     {
+        Livewire::actingAs($this->superAdmin())
+            ->test(MasterPelajar::class)
+            ->assertSee('Pelajar aktif')
+            ->assertSee('Suspended');
+    }
+
+    public function test_active_tab_hides_suspended_pelajar(): void
+    {
+        $markas = Markas::create(['markas' => 'Genteng']);
+        $aktif = User::factory()->create(['role_id' => 4, 'nama' => 'Masih Aktif']);
+        $suspend = User::factory()->create(['role_id' => 6, 'nama' => 'Sudah Suspend']);
+        Pelajar::create(['pelajar_id' => $aktif->id, 'markas_id' => $markas->id]);
+        Pelajar::create(['pelajar_id' => $suspend->id, 'markas_id' => $markas->id]);
+
+        Livewire::actingAs($this->superAdmin())
+            ->test(MasterPelajar::class)
+            ->assertSee('Masih Aktif')
+            ->assertDontSee('Sudah Suspend')
+            ->assertDontSee('Unsuspend');
+    }
+
+    public function test_suspended_tab_shows_only_suspended_and_unsuspend(): void
+    {
+        $markas = Markas::create(['markas' => 'Genteng']);
+        $aktif = User::factory()->create(['role_id' => 4, 'nama' => 'Masih Aktif']);
+        $suspend = User::factory()->create(['role_id' => 6, 'nama' => 'Sudah Suspend']);
+        Pelajar::create(['pelajar_id' => $aktif->id, 'markas_id' => $markas->id]);
+        Pelajar::create(['pelajar_id' => $suspend->id, 'markas_id' => $markas->id]);
+
+        Livewire::actingAs($this->superAdmin())
+            ->test(MasterPelajar::class)
+            ->call('pilihTab', 'suspended')
+            ->assertSee('Sudah Suspend')
+            ->assertDontSee('Masih Aktif')
+            ->assertSee('Unsuspend');
+    }
+
+    public function test_admin_sees_suspended_only_in_own_markas(): void
+    {
+        $genteng = Markas::create(['markas' => 'Genteng']);
+        $jember = Markas::create(['markas' => 'Jember']);
+        $admin = User::factory()->create(['role_id' => 2, 'is_super_admin' => false]);
+        $admin->markas()->attach($genteng->id);
+
+        $a = User::factory()->create(['role_id' => 6, 'nama' => 'Genteng Suspend']);
+        $b = User::factory()->create(['role_id' => 6, 'nama' => 'Jember Suspend']);
+        Pelajar::create(['pelajar_id' => $a->id, 'markas_id' => $genteng->id]);
+        Pelajar::create(['pelajar_id' => $b->id, 'markas_id' => $jember->id]);
+
+        Livewire::actingAs($admin)
+            ->test(MasterPelajar::class)
+            ->call('pilihTab', 'suspended')
+            ->assertSee('Genteng Suspend')
+            ->assertDontSee('Jember Suspend');
+    }
+
+    public function test_admin_can_unsuspend_pelajar_in_own_markas(): void
+    {
+        $genteng = Markas::create(['markas' => 'Genteng']);
+        $admin = User::factory()->create(['role_id' => 2, 'is_super_admin' => false]);
+        $admin->markas()->attach($genteng->id);
+        $pelajar = User::factory()->create(['role_id' => 6, 'nama' => 'Alumni Genteng']);
+        Pelajar::create(['pelajar_id' => $pelajar->id, 'markas_id' => $genteng->id]);
+
+        Livewire::actingAs($admin)
+            ->test(MasterPelajar::class)
+            ->call('unsuspend', $pelajar->id)
+            ->assertHasNoErrors();
+
+        $this->assertSame(4, (int) $pelajar->fresh()->role_id);
+    }
+
+    public function test_admin_cannot_unsuspend_pelajar_in_another_markas(): void
+    {
+        $genteng = Markas::create(['markas' => 'Genteng']);
+        $jember = Markas::create(['markas' => 'Jember']);
+        $admin = User::factory()->create(['role_id' => 2, 'is_super_admin' => false]);
+        $admin->markas()->attach($genteng->id);
         $pelajar = User::factory()->create(['role_id' => 6]);
+        Pelajar::create(['pelajar_id' => $pelajar->id, 'markas_id' => $jember->id]);
+
+        Livewire::actingAs($admin)
+            ->test(MasterPelajar::class)
+            ->call('unsuspend', $pelajar->id)
+            ->assertForbidden();
+
+        $this->assertSame(6, (int) $pelajar->fresh()->role_id);
+    }
+
+    public function test_super_can_open_suspended_pelajar(): void
+    {
+        $pelajar = User::factory()->create(['role_id' => 6, 'nama' => 'Alumni Suspend']);
         Pelajar::create(['pelajar_id' => $pelajar->id]);
 
         Livewire::actingAs($this->superAdmin())
             ->test(MasterPelajar::class)
             ->call('lihat', $pelajar->id)
-            ->assertNotFound();
+            ->assertSee('Alumni Suspend')
+            ->assertSee('Unsuspend');
     }
 
     public function test_non_admin_cannot_mount_master_pelajar_directly(): void
@@ -200,6 +339,34 @@ class MasterPelajarTest extends TestCase
         Livewire::actingAs(User::factory()->create(['role_id' => 4]))
             ->test(MasterPelajar::class)
             ->assertForbidden();
+    }
+
+    public function test_list_is_sorted_by_nama_ascending(): void
+    {
+        $markas = Markas::create(['markas' => 'Genteng']);
+        $alpha = User::factory()->create(['role_id' => 4, 'nama' => 'Alpha Pelajar']);
+        $zeta = User::factory()->create(['role_id' => 4, 'nama' => 'Zeta Pelajar']);
+        Pelajar::create(['pelajar_id' => $alpha->id, 'markas_id' => $markas->id]);
+        Pelajar::create(['pelajar_id' => $zeta->id, 'markas_id' => $markas->id]);
+
+        Livewire::actingAs($this->superAdmin())
+            ->test(MasterPelajar::class)
+            ->assertSeeInOrder(['Alpha Pelajar', 'Zeta Pelajar']);
+    }
+
+    public function test_list_pagination_uses_bootstrap_markup(): void
+    {
+        $markas = Markas::create(['markas' => 'Genteng']);
+
+        for ($i = 1; $i <= 11; $i++) {
+            $user = User::factory()->create(['role_id' => 4, 'nama' => "Pelajar {$i}"]);
+            Pelajar::create(['pelajar_id' => $user->id, 'markas_id' => $markas->id]);
+        }
+
+        Livewire::actingAs($this->superAdmin())
+            ->test(MasterPelajar::class)
+            ->assertSeeHtml('<ul class="pagination">')
+            ->assertDontSeeHtml('inline-flex items-center');
     }
 
     private function superAdmin(): User

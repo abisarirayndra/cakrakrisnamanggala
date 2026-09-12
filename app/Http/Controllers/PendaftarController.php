@@ -157,25 +157,21 @@ class PendaftarController extends Controller
     }
 
     public function cetak($id){
-
-        $data = Pelajar::select('adm_markas.markas','adm_pelajars.id','adm_pelajars.nik','adm_pelajars.nisn','adm_pelajars.tempat_lahir','adm_pelajars.tanggal_lahir','adm_pelajars.alamat',
-                                'adm_pelajars.sekolah','adm_pelajars.status_sekolah','adm_pelajars.wa','adm_pelajars.wali','adm_pelajars.wa_wali','adm_pelajars.ibu',
-                                'adm_pelajars.created_at','adm_pelajars.foto','users.nama','users.email')
-                        ->join('adm_markas','adm_markas.id','=','adm_pelajars.markas_id')
-                        ->join('users','users.id','=','adm_pelajars.pelajar_id')
-                        ->where('adm_pelajars.id',$id)->first();
+        $data = Pelajar::buktiPendaftaran($id);
 
         return view('pendaftaran.cetak', compact('data'));
     }
 
+    public function bukti($id)
+    {
+        $data = Pelajar::buktiPendaftaran($id);
+
+        return view('pendaftaran.bukti', compact('data'));
+    }
+
     public function cetak_pdf($id)
     {
-        $pendaftar = Pelajar::select('adm_markas.markas','adm_pelajars.id','adm_pelajars.nik','adm_pelajars.nisn','adm_pelajars.tempat_lahir','adm_pelajars.tanggal_lahir','adm_pelajars.alamat',
-                    'adm_pelajars.sekolah','adm_pelajars.status_sekolah','adm_pelajars.wa','adm_pelajars.wali','adm_pelajars.wa_wali','adm_pelajars.ibu',
-                    'adm_pelajars.created_at','adm_pelajars.foto','users.nama','users.email')
-                    ->join('adm_markas','adm_markas.id','=','adm_pelajars.markas_id')
-                    ->join('users','users.id','=','adm_pelajars.pelajar_id')
-                    ->where('adm_pelajars.id',$id)->first();
+        $pendaftar = Pelajar::buktiPendaftaran($id);
         $en_foto = (string) Image::make(public_path('img/pelajar/'. $pendaftar->foto))->encode('data-url');
         $en_logo = (string) Image::make(public_path('img/krisna.png'))->encode('data-url');
         $pdf = PDF::loadView('pendaftaran.review', ['data' => $pendaftar,'foto' => $en_foto, 'logo' => $en_logo])->setPaper('a4');

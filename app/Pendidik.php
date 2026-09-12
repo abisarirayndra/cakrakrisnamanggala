@@ -48,4 +48,19 @@ class Pendidik extends Model
     {
         return $this->belongsTo(Markas::class, 'markas_id');
     }
+
+    public function namaMarkas(): ?string
+    {
+        $related = $this->relations['markas'] ?? null;
+
+        if ($related instanceof Markas) {
+            return $related->markas;
+        }
+
+        if ($this->markas_id === null) {
+            return null;
+        }
+
+        return Markas::query()->whereKey($this->markas_id)->value('markas');
+    }
 }

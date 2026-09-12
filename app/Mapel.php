@@ -7,6 +7,12 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Mapel extends Model
 {
+    public $timestamps = false;
+
+    protected $fillable = [
+        'mapel',
+    ];
+
     public function tes(): HasMany
     {
         return $this->hasMany(TesDinas::class, 'mapel_id');
@@ -20,5 +26,10 @@ class Mapel extends Model
     public function pendidik(): HasMany
     {
         return $this->hasMany(Pendidik::class, 'mapel_id');
+    }
+
+    public function jadwal(): HasMany
+    {
+        return $this->hasMany(Jadwal::class, 'mapel_id');
     }
 }
