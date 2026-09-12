@@ -2,6 +2,8 @@
 
 namespace Tests\Feature\Admin;
 
+use App\AbsensiPelajar;
+use App\AbsensiPendidik;
 use App\Jadwal;
 use App\Kelas;
 use App\Livewire\Admin\JadwalMingguan;
@@ -188,6 +190,296 @@ class JadwalMingguanTest extends TestCase
             ->set('jam_selesai', '09:00')
             ->call('simpan')
             ->assertHasErrors(['kelas_id']);
+    }
+
+    public function test_can_update_slot_times(): void
+    {
+        [$admin, $kelas, $mapel, $guru] = $this->ownMarkasFixture();
+        $row = Jadwal::create([
+            'staf_id' => $admin->id,
+            'mapel_id' => $mapel->id,
+            'pendidik_id' => $guru->id,
+            'kelas_id' => $kelas->id,
+            'mulai' => '2026-09-14 08:00:00',
+            'selesai' => '2026-09-14 09:00:00',
+        ]);
+
+        Livewire::actingAs($admin)
+            ->test(JadwalMingguan::class)
+            ->call('ubah', $row->id)
+            ->set('jam_mulai', '10:00')
+            ->set('jam_selesai', '11:00')
+            ->call('simpan')
+            ->assertHasNoErrors();
+
+        $fresh = $row->fresh();
+        $this->assertSame('10:00', $fresh->mulai->format('H:i'));
+        $this->assertSame('2026-09-14 10:00:00', $fresh->mulai->format('Y-m-d H:i:s'));
+        $this->assertSame('2026-09-14 11:00:00', $fresh->selesai->format('Y-m-d H:i:s'));
+        $this->assertSame(1, Jadwal::count());
+    }
+
+    public function test_update_does_not_change_staf_id(): void
+    {
+        [$admin, $kelas, $mapel, $guru] = $this->ownMarkasFixture();
+        $creator = User::factory()->create(['role_id' => 2]);
+        $row = Jadwal::create([
+            'staf_id' => $creator->id,
+            'mapel_id' => $mapel->id,
+            'pendidik_id' => $guru->id,
+            'kelas_id' => $kelas->id,
+            'mulai' => '2026-09-14 08:00:00',
+            'selesai' => '2026-09-14 09:00:00',
+        ]);
+
+        Livewire::actingAs($admin)
+            ->test(JadwalMingguan::class)
+            ->call('ubah', $row->id)
+            ->set('jam_mulai', '10:00')
+            ->set('jam_selesai', '11:00')
+            ->call('simpan')
+            ->assertHasNoErrors();
+
+        $this->assertSame($creator->id, (int) $row->fresh()->staf_id);
+    }
+
+    public function test_ubah_fills_form_and_shows_edit_ui(): void
+    {
+        [$admin, $kelas, $mapel, $guru] = $this->ownMarkasFixture();
+        $row = Jadwal::create([
+            'staf_id' => $admin->id,
+            'mapel_id' => $mapel->id,
+            'pendidik_id' => $guru->id,
+            'kelas_id' => $kelas->id,
+            'mulai' => '2026-09-14 08:00:00',
+            'selesai' => '2026-09-14 09:00:00',
+        ]);
+
+        Livewire::actingAs($admin)
+            ->test(JadwalMingguan::class)
+            ->set('kelas_id', (string) $kelas->id)
+            ->set('senin', '2026-09-14')
+            ->call('ubah', $row->id)
+            ->assertSet('editId', $row->id)
+            ->assertSet('hari', '0')
+            ->assertSet('mapel_id', (string) $mapel->id)
+            ->assertSet('pendidik_id', (string) $guru->id)
+            ->assertSet('jam_mulai', '08:00')
+            ->assertSet('jam_selesai', '09:00')
+            ->assertSee('Ubah slot')
+            ->assertSee('Simpan perubahan')
+            ->assertSee('Batal')
+            ->assertSeeHtml('wire:confirm="Hapus slot ini?"');
+    }
+
+    public function test_can_hapus_unused_slot(): void
+    {
+        [$admin, $kelas, $mapel, $guru] = $this->ownMarkasFixture();
+        $row = Jadwal::create([
+            'staf_id' => $admin->id,
+            'mapel_id' => $mapel->id,
+            'pendidik_id' => $guru->id,
+            'kelas_id' => $kelas->id,
+            'mulai' => '2026-09-14 08:00:00',
+            'selesai' => '2026-09-14 09:00:00',
+        ]);
+
+        Livewire::actingAs($admin)
+            ->test(JadwalMingguan::class)
+            ->call('hapus', $row->id)
+            ->assertHasNoErrors();
+
+        $this->assertDatabaseMissing('adm_jadwal', ['id' => $row->id]);
+    }
+
+    public function test_hapus_blocked_when_absensi_exists(): void
+    {
+        [$admin, $kelas, $mapel, $guru] = $this->ownMarkasFixture();
+        $row = Jadwal::create([
+            'staf_id' => $admin->id,
+            'mapel_id' => $mapel->id,
+            'pendidik_id' => $guru->id,
+            'kelas_id' => $kelas->id,
+            'mulai' => '2026-09-14 08:00:00',
+            'selesai' => '2026-09-14 09:00:00',
+        ]);
+        AbsensiPelajar::create([
+            'jadwal_id' => $row->id,
+            'pelajar_id' => User::factory()->create(['role_id' => 4])->id,
+            'datang' => '2026-09-14 08:00:00',
+            'status' => 1,
+        ]);
+
+        Livewire::actingAs($admin)
+            ->test(JadwalMingguan::class)
+            ->call('hapus', $row->id)
+            ->assertHasErrors(['jadwal']);
+
+        $this->assertDatabaseHas('adm_jadwal', ['id' => $row->id]);
+    }
+
+    public function test_hapus_blocked_when_absensi_pendidik_exists(): void
+    {
+        [$admin, $kelas, $mapel, $guru] = $this->ownMarkasFixture();
+        $row = Jadwal::create([
+            'staf_id' => $admin->id,
+            'mapel_id' => $mapel->id,
+            'pendidik_id' => $guru->id,
+            'kelas_id' => $kelas->id,
+            'mulai' => '2026-09-14 08:00:00',
+            'selesai' => '2026-09-14 09:00:00',
+        ]);
+        AbsensiPendidik::create([
+            'jadwal_id' => $row->id,
+            'pendidik_id' => $guru->id,
+            'datang' => '2026-09-14 08:00:00',
+            'status' => 1,
+        ]);
+
+        Livewire::actingAs($admin)
+            ->test(JadwalMingguan::class)
+            ->call('hapus', $row->id)
+            ->assertHasErrors(['jadwal']);
+
+        $this->assertDatabaseHas('adm_jadwal', ['id' => $row->id]);
+    }
+
+    public function test_ubah_and_update_blocked_when_absensi_exists(): void
+    {
+        [$admin, $kelas, $mapel, $guru] = $this->ownMarkasFixture();
+        $row = Jadwal::create([
+            'staf_id' => $admin->id,
+            'mapel_id' => $mapel->id,
+            'pendidik_id' => $guru->id,
+            'kelas_id' => $kelas->id,
+            'mulai' => '2026-09-14 08:00:00',
+            'selesai' => '2026-09-14 09:00:00',
+        ]);
+        AbsensiPelajar::create([
+            'jadwal_id' => $row->id,
+            'pelajar_id' => User::factory()->create(['role_id' => 4])->id,
+            'datang' => '2026-09-14 08:00:00',
+            'status' => 1,
+        ]);
+
+        Livewire::actingAs($admin)
+            ->test(JadwalMingguan::class)
+            ->call('ubah', $row->id)
+            ->assertHasErrors(['jadwal'])
+            ->assertSet('editId', null);
+
+        Livewire::actingAs($admin)
+            ->test(JadwalMingguan::class)
+            ->set('kelas_id', (string) $kelas->id)
+            ->set('senin', '2026-09-14')
+            ->set('hari', '0')
+            ->set('mapel_id', (string) $mapel->id)
+            ->set('pendidik_id', (string) $guru->id)
+            ->set('jam_mulai', '10:00')
+            ->set('jam_selesai', '11:00')
+            ->set('editId', $row->id)
+            ->call('simpan')
+            ->assertHasErrors(['jadwal']);
+
+        $this->assertSame('2026-09-14 08:00:00', $row->fresh()->mulai->format('Y-m-d H:i:s'));
+    }
+
+    public function test_admin_cannot_hapus_other_markas_slot(): void
+    {
+        $genteng = Markas::create(['markas' => 'Genteng']);
+        $jember = Markas::create(['markas' => 'Jember']);
+        $admin = User::factory()->create(['role_id' => 2, 'is_super_admin' => false]);
+        $admin->markas()->attach($genteng->id);
+        $kelas = Kelas::create(['nama' => 'B', 'markas_id' => $jember->id]);
+        $mapel = Mapel::create(['mapel' => 'Matematika']);
+        $guru = User::factory()->create(['role_id' => 3]);
+        $row = Jadwal::create([
+            'staf_id' => $admin->id,
+            'mapel_id' => $mapel->id,
+            'pendidik_id' => $guru->id,
+            'kelas_id' => $kelas->id,
+            'mulai' => '2026-09-14 08:00:00',
+            'selesai' => '2026-09-14 09:00:00',
+        ]);
+
+        Livewire::actingAs($admin)
+            ->test(JadwalMingguan::class)
+            ->call('hapus', $row->id)
+            ->assertForbidden();
+
+        $this->assertDatabaseHas('adm_jadwal', ['id' => $row->id]);
+    }
+
+    public function test_tampered_edit_id_cannot_edit_other_markas_slot(): void
+    {
+        [$admin, $kelas, $mapel, $guru] = $this->ownMarkasFixture();
+        $jember = Markas::create(['markas' => 'Jember']);
+        $kelasLain = Kelas::create(['nama' => 'B', 'markas_id' => $jember->id]);
+        $row = Jadwal::create([
+            'staf_id' => $admin->id,
+            'mapel_id' => $mapel->id,
+            'pendidik_id' => $guru->id,
+            'kelas_id' => $kelasLain->id,
+            'mulai' => '2026-09-14 08:00:00',
+            'selesai' => '2026-09-14 09:00:00',
+        ]);
+
+        Livewire::actingAs($admin)
+            ->test(JadwalMingguan::class)
+            ->set('kelas_id', (string) $kelas->id)
+            ->set('senin', '2026-09-14')
+            ->set('hari', '0')
+            ->set('mapel_id', (string) $mapel->id)
+            ->set('pendidik_id', (string) $guru->id)
+            ->set('jam_mulai', '10:00')
+            ->set('jam_selesai', '11:00')
+            ->set('editId', $row->id)
+            ->call('simpan')
+            ->assertForbidden();
+
+        $this->assertSame('2026-09-14 08:00:00', $row->fresh()->mulai->format('Y-m-d H:i:s'));
+        $this->assertSame(1, Jadwal::count());
+    }
+
+    public function test_sudah_ada_absensi_detects_pelajar_and_pendidik(): void
+    {
+        [$admin, $kelas, $mapel, $guru] = $this->ownMarkasFixture();
+        $row = Jadwal::create([
+            'staf_id' => $admin->id,
+            'mapel_id' => $mapel->id,
+            'pendidik_id' => $guru->id,
+            'kelas_id' => $kelas->id,
+            'mulai' => '2026-09-14 08:00:00',
+            'selesai' => '2026-09-14 09:00:00',
+        ]);
+
+        $this->assertFalse($row->sudahAdaAbsensi());
+
+        AbsensiPelajar::create([
+            'jadwal_id' => $row->id,
+            'pelajar_id' => User::factory()->create(['role_id' => 4])->id,
+            'datang' => '2026-09-14 08:00:00',
+            'status' => 1,
+        ]);
+
+        $this->assertTrue($row->fresh()->sudahAdaAbsensi());
+
+        $lain = Jadwal::create([
+            'staf_id' => $admin->id,
+            'mapel_id' => $mapel->id,
+            'pendidik_id' => $guru->id,
+            'kelas_id' => $kelas->id,
+            'mulai' => '2026-09-15 08:00:00',
+            'selesai' => '2026-09-15 09:00:00',
+        ]);
+        AbsensiPendidik::create([
+            'jadwal_id' => $lain->id,
+            'pendidik_id' => $guru->id,
+            'datang' => '2026-09-15 08:00:00',
+            'status' => 1,
+        ]);
+
+        $this->assertTrue($lain->fresh()->sudahAdaAbsensi());
     }
 
     private function ownMarkasFixture(): array

@@ -51,4 +51,9 @@ class Jadwal extends Model
     {
         return $this->hasMany(AbsensiPendidik::class, 'jadwal_id');
     }
+
+    public function sudahAdaAbsensi(): bool
+    {
+        return $this->absensiPelajar()->exists() || $this->absensiPendidik()->exists();
+    }
 }

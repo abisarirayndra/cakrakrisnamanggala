@@ -57,6 +57,45 @@ class JadwalMingguan extends Component
         $this->resetErrorBag();
     }
 
+    public function ubah(int $id): void
+    {
+        $row = $this->authorizeRow($id);
+
+        $this->resetErrorBag();
+
+        if ($row->sudahAdaAbsensi()) {
+            $this->addError('jadwal', 'Jadwal sudah dipakai absensi');
+
+            return;
+        }
+
+        $this->editId = $row->id;
+        $this->kelas_id = (string) $row->kelas_id;
+        $this->senin = $row->mulai->copy()->startOfWeek(Carbon::MONDAY)->toDateString();
+        $this->hari = (string) ($row->mulai->dayOfWeekIso - 1);
+        $this->mapel_id = (string) $row->mapel_id;
+        $this->pendidik_id = (string) $row->pendidik_id;
+        $this->jam_mulai = $row->mulai->format('H:i');
+        $this->jam_selesai = $row->selesai->format('H:i');
+    }
+
+    public function hapus(int $id): void
+    {
+        $row = $this->authorizeRow($id);
+
+        if ($row->sudahAdaAbsensi()) {
+            $this->addError('jadwal', 'Jadwal sudah dipakai absensi');
+
+            return;
+        }
+
+        $row->delete();
+
+        if ($this->editId === $id) {
+            $this->batal();
+        }
+    }
+
     public function simpan(): void
     {
         $actor = auth()->user();
@@ -83,6 +122,17 @@ class JadwalMingguan extends Component
 
         $this->kelasTerpilih();
 
+        $row = null;
+        if ($this->editId !== null) {
+            $row = $this->authorizeRow($this->editId);
+
+            if ($row->sudahAdaAbsensi()) {
+                $this->addError('jadwal', 'Jadwal sudah dipakai absensi');
+
+                return;
+            }
+        }
+
         $mulai = Carbon::parse($this->senin)->startOfWeek(Carbon::MONDAY)
             ->addDays((int) $this->hari)
             ->setTimeFromTimeString($this->jam_mulai);
@@ -101,14 +151,24 @@ class JadwalMingguan extends Component
             return;
         }
 
-        Jadwal::create([
-            'staf_id' => auth()->id(),
-            'mapel_id' => $this->mapel_id,
-            'pendidik_id' => $this->pendidik_id,
-            'kelas_id' => $this->kelas_id,
-            'mulai' => $mulai,
-            'selesai' => $selesai,
-        ]);
+        if ($row !== null) {
+            $row->update([
+                'mapel_id' => $this->mapel_id,
+                'pendidik_id' => $this->pendidik_id,
+                'kelas_id' => $this->kelas_id,
+                'mulai' => $mulai,
+                'selesai' => $selesai,
+            ]);
+        } else {
+            Jadwal::create([
+                'staf_id' => auth()->id(),
+                'mapel_id' => $this->mapel_id,
+                'pendidik_id' => $this->pendidik_id,
+                'kelas_id' => $this->kelas_id,
+                'mulai' => $mulai,
+                'selesai' => $selesai,
+            ]);
+        }
 
         $this->batal();
     }
@@ -158,5 +218,18 @@ class JadwalMingguan extends Component
         return AdminVisibility::kelasForJadwal(auth()->user())
             ->whereKey($this->kelas_id)
             ->firstOrFail();
+    }
+
+    private function authorizeRow(int $id): Jadwal
+    {
+        abort_unless(Jadwal::whereKey($id)->exists(), 404);
+
+        $row = AdminVisibility::jadwalQuery(auth()->user())
+            ->where('adm_jadwal.id', $id)
+            ->first();
+
+        abort_unless($row !== null, 403);
+
+        return $row;
     }
 }

@@ -29,6 +29,9 @@
 
         <div class="row g-4">
             <div class="col-lg-8">
+                @error('jadwal')
+                    <div class="alert alert-ck" role="alert">{{ $message }}</div>
+                @enderror
                 @if ($kelas_id === '')
                     <p class="ck-hint mb-0">Pilih kelas</p>
                 @else
@@ -46,7 +49,20 @@
                                             <p class="fw-semibold mb-0">{{ $slot->mapel?->mapel }}</p>
                                             <p class="ck-hint mb-0">{{ $slot->pendidik?->nama }}</p>
                                         </div>
-                                        <p class="mb-0">{{ $slot->mulai->format('H:i') }}–{{ $slot->selesai->format('H:i') }}</p>
+                                        <div class="d-flex flex-wrap align-items-center gap-2">
+                                            <p class="mb-0">{{ $slot->mulai->format('H:i') }}–{{ $slot->selesai->format('H:i') }}</p>
+                                            <button type="button" class="btn btn-sm btn-ck-ghost" wire:click="ubah({{ $slot->id }})">
+                                                Ubah
+                                            </button>
+                                            <button
+                                                type="button"
+                                                class="btn btn-sm btn-outline-danger rounded-pill"
+                                                wire:click="hapus({{ $slot->id }})"
+                                                wire:confirm="Hapus slot ini?"
+                                            >
+                                                Hapus
+                                            </button>
+                                        </div>
                                     </div>
                                 @empty
                                     <p class="ck-hint mb-0">Tidak ada slot</p>
@@ -57,7 +73,7 @@
                 @endif
             </div>
             <div class="col-lg-4">
-                <h2 class="h5 mb-4">Tambah slot</h2>
+                <h2 class="h5 mb-4">{{ $editId ? 'Ubah slot' : 'Tambah slot' }}</h2>
                 <form wire:submit="simpan" novalidate>
                     <div class="mb-3">
                         <label for="hari" class="form-label">Hari</label>
@@ -98,9 +114,14 @@
                         <input id="jam_selesai" type="time" class="form-control @error('jam_selesai') is-invalid @enderror" wire:model="jam_selesai" @disabled($kelas_id === '')>
                         @error('jam_selesai') <div class="invalid-feedback">{{ $message }}</div> @enderror
                     </div>
-                    <button type="submit" class="btn btn-ck w-100" wire:loading.attr="disabled" @disabled($kelas_id === '')>
-                        Tambah slot
-                    </button>
+                    <div class="d-flex flex-column gap-2">
+                        <button type="submit" class="btn btn-ck w-100" wire:loading.attr="disabled" @disabled($kelas_id === '')>
+                            {{ $editId ? 'Simpan perubahan' : 'Tambah slot' }}
+                        </button>
+                        @if ($editId)
+                            <button type="button" class="btn btn-ck-ghost w-100" wire:click="batal">Batal</button>
+                        @endif
+                    </div>
                 </form>
             </div>
         </div>
