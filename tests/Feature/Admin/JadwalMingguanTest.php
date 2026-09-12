@@ -7,6 +7,7 @@ use App\Kelas;
 use App\Livewire\Admin\JadwalMingguan;
 use App\Mapel;
 use App\Markas;
+use App\Pendidik;
 use App\Support\AdminVisibility;
 use App\User;
 use Livewire\Livewire;
@@ -116,6 +117,90 @@ class JadwalMingguanTest extends TestCase
             ->assertSee('Guru Satu')
             ->assertSee('08:00')
             ->assertDontSee('2026-09-21');
+    }
+
+    public function test_admin_can_create_slot_in_own_markas(): void
+    {
+        [$admin, $kelas, $mapel, $guru] = $this->ownMarkasFixture();
+
+        Livewire::actingAs($admin)
+            ->test(JadwalMingguan::class)
+            ->set('kelas_id', (string) $kelas->id)
+            ->set('senin', '2026-09-14')
+            ->set('hari', '0')
+            ->set('mapel_id', (string) $mapel->id)
+            ->set('pendidik_id', (string) $guru->id)
+            ->set('jam_mulai', '08:00')
+            ->set('jam_selesai', '09:30')
+            ->call('simpan')
+            ->assertHasNoErrors();
+
+        $row = Jadwal::firstOrFail();
+        $this->assertSame($admin->id, (int) $row->staf_id);
+        $this->assertSame('2026-09-14 08:00:00', $row->mulai->format('Y-m-d H:i:s'));
+        $this->assertSame('2026-09-14 09:30:00', $row->selesai->format('Y-m-d H:i:s'));
+    }
+
+    public function test_overlapping_slot_is_rejected(): void
+    {
+        [$admin, $kelas, $mapel, $guru] = $this->ownMarkasFixture();
+        Jadwal::create([
+            'staf_id' => $admin->id,
+            'mapel_id' => $mapel->id,
+            'pendidik_id' => $guru->id,
+            'kelas_id' => $kelas->id,
+            'mulai' => '2026-09-14 08:00:00',
+            'selesai' => '2026-09-14 09:00:00',
+        ]);
+
+        Livewire::actingAs($admin)
+            ->test(JadwalMingguan::class)
+            ->set('kelas_id', (string) $kelas->id)
+            ->set('senin', '2026-09-14')
+            ->set('hari', '0')
+            ->set('mapel_id', (string) $mapel->id)
+            ->set('pendidik_id', (string) $guru->id)
+            ->set('jam_mulai', '08:30')
+            ->set('jam_selesai', '09:30')
+            ->call('simpan')
+            ->assertHasErrors(['jam_mulai']);
+    }
+
+    public function test_admin_cannot_create_slot_for_other_markas_kelas(): void
+    {
+        $genteng = Markas::create(['markas' => 'Genteng']);
+        $jember = Markas::create(['markas' => 'Jember']);
+        $admin = User::factory()->create(['role_id' => 2, 'is_super_admin' => false]);
+        $admin->markas()->attach($genteng->id);
+        $kelas = Kelas::create(['nama' => 'B', 'markas_id' => $jember->id]);
+        $mapel = Mapel::create(['mapel' => 'Matematika']);
+        $guru = User::factory()->create(['role_id' => 3]);
+        Pendidik::create(['pendidik_id' => $guru->id, 'markas_id' => $jember->id]);
+
+        Livewire::actingAs($admin)
+            ->test(JadwalMingguan::class)
+            ->set('kelas_id', (string) $kelas->id)
+            ->set('senin', '2026-09-14')
+            ->set('hari', '0')
+            ->set('mapel_id', (string) $mapel->id)
+            ->set('pendidik_id', (string) $guru->id)
+            ->set('jam_mulai', '08:00')
+            ->set('jam_selesai', '09:00')
+            ->call('simpan')
+            ->assertHasErrors(['kelas_id']);
+    }
+
+    private function ownMarkasFixture(): array
+    {
+        $genteng = Markas::create(['markas' => 'Genteng']);
+        $admin = User::factory()->create(['role_id' => 2, 'is_super_admin' => false]);
+        $admin->markas()->attach($genteng->id);
+        $kelas = Kelas::create(['nama' => 'A', 'markas_id' => $genteng->id]);
+        $mapel = Mapel::create(['mapel' => 'Matematika']);
+        $guru = User::factory()->create(['role_id' => 3]);
+        Pendidik::create(['pendidik_id' => $guru->id, 'markas_id' => $genteng->id]);
+
+        return [$admin, $kelas, $mapel, $guru];
     }
 
     private function superAdmin(): User

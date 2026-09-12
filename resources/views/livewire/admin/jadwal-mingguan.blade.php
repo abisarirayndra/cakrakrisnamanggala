@@ -27,31 +27,82 @@
             </div>
         </div>
 
-        @if ($kelas_id === '')
-            <p class="ck-hint mb-0">Pilih kelas</p>
-        @else
-            <div class="d-flex flex-column gap-3">
-                @for ($offset = 0; $offset < 7; $offset++)
-                    @php
-                        $tanggal = $seninCarbon->copy()->addDays($offset);
-                        $hariSlots = $slotsByDay->get($tanggal->toDateString(), collect());
-                    @endphp
-                    <section class="border rounded-3 p-3" wire:key="hari-{{ $offset }}">
-                        <h2 class="h6 mb-3">{{ $hariList[$offset] }}, {{ $tanggal->format('d M Y') }}</h2>
-                        @forelse ($hariSlots as $slot)
-                            <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 py-2" wire:key="slot-{{ $slot->id }}">
-                                <div>
-                                    <p class="fw-semibold mb-0">{{ $slot->mapel?->mapel }}</p>
-                                    <p class="ck-hint mb-0">{{ $slot->pendidik?->nama }}</p>
-                                </div>
-                                <p class="mb-0">{{ $slot->mulai->format('H:i') }}–{{ $slot->selesai->format('H:i') }}</p>
-                            </div>
-                        @empty
-                            <p class="ck-hint mb-0">Tidak ada slot</p>
-                        @endforelse
-                    </section>
-                @endfor
+        <div class="row g-4">
+            <div class="col-lg-8">
+                @if ($kelas_id === '')
+                    <p class="ck-hint mb-0">Pilih kelas</p>
+                @else
+                    <div class="d-flex flex-column gap-3">
+                        @for ($offset = 0; $offset < 7; $offset++)
+                            @php
+                                $tanggal = $seninCarbon->copy()->addDays($offset);
+                                $hariSlots = $slotsByDay->get($tanggal->toDateString(), collect());
+                            @endphp
+                            <section class="border rounded-3 p-3" wire:key="hari-{{ $offset }}">
+                                <h2 class="h6 mb-3">{{ $hariList[$offset] }}, {{ $tanggal->format('d M Y') }}</h2>
+                                @forelse ($hariSlots as $slot)
+                                    <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 py-2" wire:key="slot-{{ $slot->id }}">
+                                        <div>
+                                            <p class="fw-semibold mb-0">{{ $slot->mapel?->mapel }}</p>
+                                            <p class="ck-hint mb-0">{{ $slot->pendidik?->nama }}</p>
+                                        </div>
+                                        <p class="mb-0">{{ $slot->mulai->format('H:i') }}–{{ $slot->selesai->format('H:i') }}</p>
+                                    </div>
+                                @empty
+                                    <p class="ck-hint mb-0">Tidak ada slot</p>
+                                @endforelse
+                            </section>
+                        @endfor
+                    </div>
+                @endif
             </div>
-        @endif
+            <div class="col-lg-4">
+                <h2 class="h5 mb-4">Tambah slot</h2>
+                <form wire:submit="simpan" novalidate>
+                    <div class="mb-3">
+                        <label for="hari" class="form-label">Hari</label>
+                        <select id="hari" class="form-select @error('hari') is-invalid @enderror" wire:model="hari" @disabled($kelas_id === '')>
+                            @foreach ($hariList as $offset => $namaHari)
+                                <option value="{{ $offset }}">{{ $namaHari }}</option>
+                            @endforeach
+                        </select>
+                        @error('hari') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                    </div>
+                    <div class="mb-3">
+                        <label for="mapel_id" class="form-label">Mapel</label>
+                        <select id="mapel_id" class="form-select @error('mapel_id') is-invalid @enderror" wire:model="mapel_id" @disabled($kelas_id === '')>
+                            <option value="">Pilih mapel</option>
+                            @foreach ($mapelList as $mapel)
+                                <option value="{{ $mapel->id }}">{{ $mapel->mapel }}</option>
+                            @endforeach
+                        </select>
+                        @error('mapel_id') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                    </div>
+                    <div class="mb-3">
+                        <label for="pendidik_id" class="form-label">Pendidik</label>
+                        <select id="pendidik_id" class="form-select @error('pendidik_id') is-invalid @enderror" wire:model="pendidik_id" @disabled($kelas_id === '')>
+                            <option value="">Pilih pendidik</option>
+                            @foreach ($pendidikList as $pendidik)
+                                <option value="{{ $pendidik->id }}">{{ $pendidik->nama }}</option>
+                            @endforeach
+                        </select>
+                        @error('pendidik_id') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                    </div>
+                    <div class="mb-3">
+                        <label for="jam_mulai" class="form-label">Jam mulai</label>
+                        <input id="jam_mulai" type="time" class="form-control @error('jam_mulai') is-invalid @enderror" wire:model="jam_mulai" @disabled($kelas_id === '')>
+                        @error('jam_mulai') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                    </div>
+                    <div class="mb-4">
+                        <label for="jam_selesai" class="form-label">Jam selesai</label>
+                        <input id="jam_selesai" type="time" class="form-control @error('jam_selesai') is-invalid @enderror" wire:model="jam_selesai" @disabled($kelas_id === '')>
+                        @error('jam_selesai') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                    </div>
+                    <button type="submit" class="btn btn-ck w-100" wire:loading.attr="disabled" @disabled($kelas_id === '')>
+                        Tambah slot
+                    </button>
+                </form>
+            </div>
+        </div>
     </section>
 </div>

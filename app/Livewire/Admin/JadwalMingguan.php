@@ -3,9 +3,11 @@
 namespace App\Livewire\Admin;
 
 use App\Jadwal;
+use App\Kelas;
 use App\Mapel;
 use App\Support\AdminVisibility;
 use Carbon\Carbon;
+use Illuminate\Validation\Rule;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
 use Livewire\Component;
@@ -55,6 +57,62 @@ class JadwalMingguan extends Component
         $this->resetErrorBag();
     }
 
+    public function simpan(): void
+    {
+        $actor = auth()->user();
+        $kelasVisible = AdminVisibility::kelasForJadwal($actor)->whereKey($this->kelas_id)->first();
+
+        $this->validate([
+            'kelas_id' => [
+                'required',
+                'exists:kelas,id',
+                Rule::in(AdminVisibility::kelasForJadwal($actor)->pluck('id')->all()),
+            ],
+            'hari' => ['required', 'integer', 'between:0,6'],
+            'mapel_id' => ['required', 'exists:mapels,id'],
+            'pendidik_id' => [
+                'required',
+                'exists:users,id',
+                Rule::in($kelasVisible
+                    ? AdminVisibility::pendidikForKelas($kelasVisible)->pluck('users.id')->all()
+                    : []),
+            ],
+            'jam_mulai' => ['required', 'date_format:H:i'],
+            'jam_selesai' => ['required', 'date_format:H:i', 'after:jam_mulai'],
+        ]);
+
+        $this->kelasTerpilih();
+
+        $mulai = Carbon::parse($this->senin)->startOfWeek(Carbon::MONDAY)
+            ->addDays((int) $this->hari)
+            ->setTimeFromTimeString($this->jam_mulai);
+        $selesai = $mulai->copy()->setTimeFromTimeString($this->jam_selesai);
+
+        $bentrok = AdminVisibility::jadwalQuery($actor)
+            ->where('adm_jadwal.kelas_id', $this->kelas_id)
+            ->where('adm_jadwal.id', '!=', $this->editId ?? 0)
+            ->where('adm_jadwal.mulai', '<', $selesai)
+            ->where('adm_jadwal.selesai', '>', $mulai)
+            ->exists();
+
+        if ($bentrok) {
+            $this->addError('jam_mulai', 'Jam bentrok dengan slot lain');
+
+            return;
+        }
+
+        Jadwal::create([
+            'staf_id' => auth()->id(),
+            'mapel_id' => $this->mapel_id,
+            'pendidik_id' => $this->pendidik_id,
+            'kelas_id' => $this->kelas_id,
+            'mulai' => $mulai,
+            'selesai' => $selesai,
+        ]);
+
+        $this->batal();
+    }
+
     public function render()
     {
         $actor = auth()->user();
@@ -93,5 +151,12 @@ class JadwalMingguan extends Component
             'slotsByDay' => $slots->groupBy(fn (Jadwal $row) => $row->mulai->toDateString()),
             'seninCarbon' => $start,
         ]);
+    }
+
+    private function kelasTerpilih(): Kelas
+    {
+        return AdminVisibility::kelasForJadwal(auth()->user())
+            ->whereKey($this->kelas_id)
+            ->firstOrFail();
     }
 }
