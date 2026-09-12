@@ -127,6 +127,7 @@ trait CreatesAdminMasterSchema
             $table->dateTime('datang')->nullable();
             $table->dateTime('pulang')->nullable();
             $table->integer('status')->nullable();
+            $table->string('keterangan')->nullable();
             $table->timestamps();
         });
 
@@ -137,6 +138,8 @@ trait CreatesAdminMasterSchema
             $table->dateTime('datang')->nullable();
             $table->dateTime('pulang')->nullable();
             $table->integer('status')->nullable();
+            $table->string('keterangan')->nullable();
+            $table->text('jurnal')->nullable();
             $table->timestamps();
         });
     }

@@ -104,4 +104,12 @@ class AdminVisibility
             ->select('users.*')
             ->orderBy('users.nama');
     }
+
+    public static function pelajarForKelas(Kelas $kelas): Builder
+    {
+        return User::query()
+            ->where('users.role_id', 4)
+            ->where('users.kelas_id', $kelas->id)
+            ->orderBy('users.nama');
+    }
 }
