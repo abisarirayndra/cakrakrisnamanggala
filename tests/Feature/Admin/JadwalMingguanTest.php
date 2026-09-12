@@ -12,6 +12,7 @@ use App\Markas;
 use App\Pendidik;
 use App\Support\AdminVisibility;
 use App\User;
+use Carbon\Carbon;
 use Livewire\Livewire;
 use Tests\Concerns\CreatesAdminMasterSchema;
 use Tests\TestCase;
@@ -92,7 +93,10 @@ class JadwalMingguanTest extends TestCase
     {
         $genteng = Markas::create(['markas' => 'Genteng']);
         $kelas = Kelas::create(['nama' => 'A', 'markas_id' => $genteng->id]);
+        $kelasLain = Kelas::create(['nama' => 'B', 'markas_id' => $genteng->id]);
         $mapel = Mapel::create(['mapel' => 'Matematika']);
+        $fisika = Mapel::create(['mapel' => 'Fisika']);
+        $kimia = Mapel::create(['mapel' => 'Kimia']);
         $guru = User::factory()->create(['role_id' => 3, 'nama' => 'Guru Satu']);
         Jadwal::create([
             'staf_id' => 1,
@@ -104,11 +108,19 @@ class JadwalMingguanTest extends TestCase
         ]);
         Jadwal::create([
             'staf_id' => 1,
-            'mapel_id' => $mapel->id,
+            'mapel_id' => $fisika->id,
             'pendidik_id' => $guru->id,
             'kelas_id' => $kelas->id,
             'mulai' => '2026-09-21 08:00:00',
             'selesai' => '2026-09-21 09:00:00',
+        ]);
+        Jadwal::create([
+            'staf_id' => 1,
+            'mapel_id' => $kimia->id,
+            'pendidik_id' => $guru->id,
+            'kelas_id' => $kelasLain->id,
+            'mulai' => '2026-09-14 08:00:00',
+            'selesai' => '2026-09-14 09:00:00',
         ]);
 
         Livewire::actingAs($this->superAdmin())
@@ -118,7 +130,32 @@ class JadwalMingguanTest extends TestCase
             ->assertSee('Matematika')
             ->assertSee('Guru Satu')
             ->assertSee('08:00')
-            ->assertDontSee('2026-09-21');
+            ->assertDontSeeHtml('<p class="fw-semibold mb-0">Fisika</p>')
+            ->assertDontSeeHtml('<p class="fw-semibold mb-0">Kimia</p>');
+    }
+
+    public function test_empty_senin_falls_back_to_monday_heading(): void
+    {
+        [$admin, $kelas, $mapel, $guru] = $this->ownMarkasFixture();
+        $monday = now()->startOfWeek(Carbon::MONDAY);
+
+        Livewire::actingAs($admin)
+            ->test(JadwalMingguan::class)
+            ->set('kelas_id', (string) $kelas->id)
+            ->set('senin', '')
+            ->assertSee('Senin')
+            ->assertSee($monday->format('d M Y'))
+            ->set('hari', '0')
+            ->set('mapel_id', (string) $mapel->id)
+            ->set('pendidik_id', (string) $guru->id)
+            ->set('jam_mulai', '08:00')
+            ->set('jam_selesai', '09:00')
+            ->call('simpan')
+            ->assertHasNoErrors();
+
+        $row = Jadwal::firstOrFail();
+        $this->assertSame($monday->toDateString(), $row->mulai->toDateString());
+        $this->assertSame(Carbon::MONDAY, $row->mulai->dayOfWeek);
     }
 
     public function test_admin_can_create_slot_in_own_markas(): void
@@ -165,7 +202,36 @@ class JadwalMingguanTest extends TestCase
             ->set('jam_mulai', '08:30')
             ->set('jam_selesai', '09:30')
             ->call('simpan')
-            ->assertHasErrors(['jam_mulai']);
+            ->assertHasErrors(['jam_mulai' => 'Jam bentrok dengan slot lain']);
+
+        $this->assertSame(1, Jadwal::count());
+    }
+
+    public function test_adjacent_slots_are_allowed(): void
+    {
+        [$admin, $kelas, $mapel, $guru] = $this->ownMarkasFixture();
+        Jadwal::create([
+            'staf_id' => $admin->id,
+            'mapel_id' => $mapel->id,
+            'pendidik_id' => $guru->id,
+            'kelas_id' => $kelas->id,
+            'mulai' => '2026-09-14 08:00:00',
+            'selesai' => '2026-09-14 09:00:00',
+        ]);
+
+        Livewire::actingAs($admin)
+            ->test(JadwalMingguan::class)
+            ->set('kelas_id', (string) $kelas->id)
+            ->set('senin', '2026-09-14')
+            ->set('hari', '0')
+            ->set('mapel_id', (string) $mapel->id)
+            ->set('pendidik_id', (string) $guru->id)
+            ->set('jam_mulai', '09:00')
+            ->set('jam_selesai', '10:00')
+            ->call('simpan')
+            ->assertHasNoErrors();
+
+        $this->assertSame(2, Jadwal::count());
     }
 
     public function test_admin_cannot_create_slot_for_other_markas_kelas(): void
@@ -189,7 +255,38 @@ class JadwalMingguanTest extends TestCase
             ->set('jam_mulai', '08:00')
             ->set('jam_selesai', '09:00')
             ->call('simpan')
-            ->assertHasErrors(['kelas_id']);
+            ->assertHasErrors(['kelas_id'])
+            ->assertSee('The selected kelas id is invalid.');
+    }
+
+    public function test_admin_cannot_assign_pendidik_from_other_markas(): void
+    {
+        $genteng = Markas::create(['markas' => 'Genteng']);
+        $jember = Markas::create(['markas' => 'Jember']);
+        $admin = User::factory()->create(['role_id' => 2, 'is_super_admin' => false]);
+        $admin->markas()->attach($genteng->id);
+        $kelas = Kelas::create(['nama' => 'A', 'markas_id' => $genteng->id]);
+        $mapel = Mapel::create(['mapel' => 'Matematika']);
+        $guruGenteng = User::factory()->create(['role_id' => 3, 'nama' => 'Guru Genteng']);
+        $guruJember = User::factory()->create(['role_id' => 3, 'nama' => 'Guru Jember']);
+        Pendidik::create(['pendidik_id' => $guruGenteng->id, 'markas_id' => $genteng->id]);
+        Pendidik::create(['pendidik_id' => $guruJember->id, 'markas_id' => $jember->id]);
+
+        Livewire::actingAs($admin)
+            ->test(JadwalMingguan::class)
+            ->set('kelas_id', (string) $kelas->id)
+            ->assertSee('Guru Genteng')
+            ->assertDontSee('Guru Jember')
+            ->set('senin', '2026-09-14')
+            ->set('hari', '0')
+            ->set('mapel_id', (string) $mapel->id)
+            ->set('pendidik_id', (string) $guruJember->id)
+            ->set('jam_mulai', '08:00')
+            ->set('jam_selesai', '09:00')
+            ->call('simpan')
+            ->assertHasErrors(['pendidik_id']);
+
+        $this->assertSame(0, Jadwal::count());
     }
 
     public function test_can_update_slot_times(): void
@@ -313,9 +410,46 @@ class JadwalMingguanTest extends TestCase
         Livewire::actingAs($admin)
             ->test(JadwalMingguan::class)
             ->call('hapus', $row->id)
-            ->assertHasErrors(['jadwal']);
+            ->assertHasErrors(['jadwal' => 'Jadwal sudah dipakai absensi']);
 
         $this->assertDatabaseHas('adm_jadwal', ['id' => $row->id]);
+    }
+
+    public function test_hapus_clears_stale_jadwal_error_banner(): void
+    {
+        [$admin, $kelas, $mapel, $guru] = $this->ownMarkasFixture();
+        $locked = Jadwal::create([
+            'staf_id' => $admin->id,
+            'mapel_id' => $mapel->id,
+            'pendidik_id' => $guru->id,
+            'kelas_id' => $kelas->id,
+            'mulai' => '2026-09-14 08:00:00',
+            'selesai' => '2026-09-14 09:00:00',
+        ]);
+        AbsensiPelajar::create([
+            'jadwal_id' => $locked->id,
+            'pelajar_id' => User::factory()->create(['role_id' => 4])->id,
+            'datang' => '2026-09-14 08:00:00',
+            'status' => 1,
+        ]);
+        $ok = Jadwal::create([
+            'staf_id' => $admin->id,
+            'mapel_id' => $mapel->id,
+            'pendidik_id' => $guru->id,
+            'kelas_id' => $kelas->id,
+            'mulai' => '2026-09-14 10:00:00',
+            'selesai' => '2026-09-14 11:00:00',
+        ]);
+
+        Livewire::actingAs($admin)
+            ->test(JadwalMingguan::class)
+            ->call('hapus', $locked->id)
+            ->assertHasErrors(['jadwal' => 'Jadwal sudah dipakai absensi'])
+            ->call('hapus', $ok->id)
+            ->assertHasNoErrors();
+
+        $this->assertDatabaseMissing('adm_jadwal', ['id' => $ok->id]);
+        $this->assertDatabaseHas('adm_jadwal', ['id' => $locked->id]);
     }
 
     public function test_hapus_blocked_when_absensi_pendidik_exists(): void
@@ -339,7 +473,7 @@ class JadwalMingguanTest extends TestCase
         Livewire::actingAs($admin)
             ->test(JadwalMingguan::class)
             ->call('hapus', $row->id)
-            ->assertHasErrors(['jadwal']);
+            ->assertHasErrors(['jadwal' => 'Jadwal sudah dipakai absensi']);
 
         $this->assertDatabaseHas('adm_jadwal', ['id' => $row->id]);
     }
@@ -365,7 +499,7 @@ class JadwalMingguanTest extends TestCase
         Livewire::actingAs($admin)
             ->test(JadwalMingguan::class)
             ->call('ubah', $row->id)
-            ->assertHasErrors(['jadwal'])
+            ->assertHasErrors(['jadwal' => 'Jadwal sudah dipakai absensi'])
             ->assertSet('editId', null);
 
         Livewire::actingAs($admin)
@@ -379,7 +513,7 @@ class JadwalMingguanTest extends TestCase
             ->set('jam_selesai', '11:00')
             ->set('editId', $row->id)
             ->call('simpan')
-            ->assertHasErrors(['jadwal']);
+            ->assertHasErrors(['jadwal' => 'Jadwal sudah dipakai absensi']);
 
         $this->assertSame('2026-09-14 08:00:00', $row->fresh()->mulai->format('Y-m-d H:i:s'));
     }

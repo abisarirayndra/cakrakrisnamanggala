@@ -424,8 +424,3 @@ body.ck-body {
     color: #fff;
 }
 
-.ck-day-block + .ck-day-block {
-    margin-top: 1.25rem;
-    padding-top: 1.25rem;
-    border-top: 1px solid var(--ck-line);
-}

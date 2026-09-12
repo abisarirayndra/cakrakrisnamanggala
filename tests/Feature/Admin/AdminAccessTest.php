@@ -2,6 +2,9 @@
 
 namespace Tests\Feature\Admin;
 
+use App\Jadwal;
+use App\Kelas;
+use App\Mapel;
 use App\Markas;
 use App\User;
 use Illuminate\Support\Facades\Route;
@@ -56,6 +59,10 @@ class AdminAccessTest extends TestCase
     public function test_staf_admin_operational_routes_are_restored(): void
     {
         $this->assertTrue(Route::has('staf-admin.jadwal'));
+        $this->assertTrue(Route::has('staf-admin.jadwal.tambah'));
+        $this->assertTrue(Route::has('staf-admin.jadwal.hapus'));
+        $this->assertTrue(Route::has('staf-admin.jadwal.edit'));
+        $this->assertTrue(Route::has('staf-admin.jadwal.update'));
         $this->assertTrue(Route::has('staf-admin.absen-pulang'));
     }
 
@@ -64,6 +71,28 @@ class AdminAccessTest extends TestCase
         $this->actingAs($this->markasAdmin())
             ->get(route('staf-admin.jadwal'))
             ->assertRedirect(route('admin.jadwal'));
+    }
+
+    public function test_legacy_jadwal_hapus_redirects_and_does_not_delete(): void
+    {
+        $admin = $this->markasAdmin();
+        $kelas = Kelas::create(['nama' => 'A', 'markas_id' => $admin->markasIds()[0]]);
+        $mapel = Mapel::create(['mapel' => 'Matematika']);
+        $guru = User::factory()->create(['role_id' => 3]);
+        $row = Jadwal::create([
+            'staf_id' => $admin->id,
+            'mapel_id' => $mapel->id,
+            'pendidik_id' => $guru->id,
+            'kelas_id' => $kelas->id,
+            'mulai' => '2026-09-14 08:00:00',
+            'selesai' => '2026-09-14 09:00:00',
+        ]);
+
+        $this->actingAs($admin)
+            ->get(route('staf-admin.jadwal.hapus', $row->id))
+            ->assertRedirect(route('admin.jadwal'));
+
+        $this->assertDatabaseHas('adm_jadwal', ['id' => $row->id]);
     }
 
     public function test_named_routes_are_unique(): void

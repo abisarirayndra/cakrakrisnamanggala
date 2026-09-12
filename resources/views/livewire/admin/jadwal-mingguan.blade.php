@@ -11,7 +11,7 @@
         <div class="row g-3 align-items-end mb-4">
             <div class="col-md-6">
                 <label for="kelas_id" class="form-label">Kelas</label>
-                <select id="kelas_id" class="form-select" wire:model.live="kelas_id">
+                <select id="kelas_id" class="form-select @error('kelas_id') is-invalid @enderror" wire:model.live="kelas_id">
                     <option value="">Pilih kelas</option>
                     @foreach ($kelasList as $kelas)
                         <option value="{{ $kelas->id }}">
@@ -19,6 +19,7 @@
                         </option>
                     @endforeach
                 </select>
+                @error('kelas_id') <div class="invalid-feedback">{{ $message }}</div> @enderror
             </div>
             <div class="col-md-6">
                 <label for="senin" class="form-label">Senin</label>

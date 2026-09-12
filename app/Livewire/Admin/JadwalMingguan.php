@@ -3,7 +3,6 @@
 namespace App\Livewire\Admin;
 
 use App\Jadwal;
-use App\Kelas;
 use App\Mapel;
 use App\Support\AdminVisibility;
 use Carbon\Carbon;
@@ -37,10 +36,7 @@ class JadwalMingguan extends Component
 
     public function updatedSenin(): void
     {
-        if ($this->senin === '') {
-            return;
-        }
-        $this->senin = Carbon::parse($this->senin)->startOfWeek(Carbon::MONDAY)->toDateString();
+        $this->senin = $this->seninMinggu()->toDateString();
         $this->batal();
     }
 
@@ -89,6 +85,7 @@ class JadwalMingguan extends Component
             return;
         }
 
+        $this->resetErrorBag();
         $row->delete();
 
         if ($this->editId === $id) {
@@ -99,6 +96,18 @@ class JadwalMingguan extends Component
     public function simpan(): void
     {
         $actor = auth()->user();
+
+        $row = null;
+        if ($this->editId !== null) {
+            $row = $this->authorizeRow($this->editId);
+
+            if ($row->sudahAdaAbsensi()) {
+                $this->addError('jadwal', 'Jadwal sudah dipakai absensi');
+
+                return;
+            }
+        }
+
         $kelasVisible = AdminVisibility::kelasForJadwal($actor)->whereKey($this->kelas_id)->first();
 
         $this->validate([
@@ -120,20 +129,7 @@ class JadwalMingguan extends Component
             'jam_selesai' => ['required', 'date_format:H:i', 'after:jam_mulai'],
         ]);
 
-        $this->kelasTerpilih();
-
-        $row = null;
-        if ($this->editId !== null) {
-            $row = $this->authorizeRow($this->editId);
-
-            if ($row->sudahAdaAbsensi()) {
-                $this->addError('jadwal', 'Jadwal sudah dipakai absensi');
-
-                return;
-            }
-        }
-
-        $mulai = Carbon::parse($this->senin)->startOfWeek(Carbon::MONDAY)
+        $mulai = $this->seninMinggu()
             ->addDays((int) $this->hari)
             ->setTimeFromTimeString($this->jam_mulai);
         $selesai = $mulai->copy()->setTimeFromTimeString($this->jam_selesai);
@@ -176,7 +172,7 @@ class JadwalMingguan extends Component
     public function render()
     {
         $actor = auth()->user();
-        $start = Carbon::parse($this->senin)->startOfDay();
+        $start = $this->seninMinggu()->startOfDay();
         $end = $start->copy()->addDays(6)->endOfDay();
 
         $slots = collect();
@@ -213,11 +209,17 @@ class JadwalMingguan extends Component
         ]);
     }
 
-    private function kelasTerpilih(): Kelas
+    private function seninMinggu(): Carbon
     {
-        return AdminVisibility::kelasForJadwal(auth()->user())
-            ->whereKey($this->kelas_id)
-            ->firstOrFail();
+        if ($this->senin !== '') {
+            try {
+                return Carbon::parse($this->senin)->startOfWeek(Carbon::MONDAY);
+            } catch (\Throwable) {
+                // fall through to current Monday
+            }
+        }
+
+        return now()->startOfWeek(Carbon::MONDAY);
     }
 
     private function authorizeRow(int $id): Jadwal
