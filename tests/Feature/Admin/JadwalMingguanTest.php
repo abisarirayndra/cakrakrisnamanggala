@@ -4,10 +4,12 @@ namespace Tests\Feature\Admin;
 
 use App\Jadwal;
 use App\Kelas;
+use App\Livewire\Admin\JadwalMingguan;
 use App\Mapel;
 use App\Markas;
 use App\Support\AdminVisibility;
 use App\User;
+use Livewire\Livewire;
 use Tests\Concerns\CreatesAdminMasterSchema;
 use Tests\TestCase;
 
@@ -74,5 +76,53 @@ class JadwalMingguanTest extends TestCase
 
         $ids = AdminVisibility::jadwalQuery($admin)->pluck('adm_jadwal.id')->all();
         $this->assertEquals([$mine->id], $ids);
+    }
+
+    public function test_non_admin_cannot_mount_jadwal_mingguan(): void
+    {
+        Livewire::actingAs(User::factory()->create(['role_id' => 4]))
+            ->test(JadwalMingguan::class)
+            ->assertForbidden();
+    }
+
+    public function test_list_shows_only_slots_in_selected_week_and_kelas(): void
+    {
+        $genteng = Markas::create(['markas' => 'Genteng']);
+        $kelas = Kelas::create(['nama' => 'A', 'markas_id' => $genteng->id]);
+        $mapel = Mapel::create(['mapel' => 'Matematika']);
+        $guru = User::factory()->create(['role_id' => 3, 'nama' => 'Guru Satu']);
+        Jadwal::create([
+            'staf_id' => 1,
+            'mapel_id' => $mapel->id,
+            'pendidik_id' => $guru->id,
+            'kelas_id' => $kelas->id,
+            'mulai' => '2026-09-14 08:00:00',
+            'selesai' => '2026-09-14 09:00:00',
+        ]);
+        Jadwal::create([
+            'staf_id' => 1,
+            'mapel_id' => $mapel->id,
+            'pendidik_id' => $guru->id,
+            'kelas_id' => $kelas->id,
+            'mulai' => '2026-09-21 08:00:00',
+            'selesai' => '2026-09-21 09:00:00',
+        ]);
+
+        Livewire::actingAs($this->superAdmin())
+            ->test(JadwalMingguan::class)
+            ->set('kelas_id', (string) $kelas->id)
+            ->set('senin', '2026-09-14')
+            ->assertSee('Matematika')
+            ->assertSee('Guru Satu')
+            ->assertSee('08:00')
+            ->assertDontSee('2026-09-21');
+    }
+
+    private function superAdmin(): User
+    {
+        return User::factory()->create([
+            'role_id' => 2,
+            'is_super_admin' => true,
+        ]);
     }
 }

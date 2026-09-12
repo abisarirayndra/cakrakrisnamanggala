@@ -15,6 +15,7 @@ use App\Http\Controllers\SoalDinasController;
 use App\Http\Controllers\StafAdminController;
 use App\Http\Controllers\SuperController;
 use App\Http\Controllers\TesDinasController;
+use App\Livewire\Admin\JadwalMingguan;
 use App\Livewire\Admin\MasterAdmin;
 use App\Livewire\Admin\MasterKelas;
 use App\Livewire\Admin\MasterMapel;
@@ -143,6 +144,7 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth','admin-role']], funct
     Route::get('/master-kelas', MasterKelas::class)->middleware('superadmin-role')->name('admin.master.kelas');
     Route::get('/master-mapel', MasterMapel::class)->middleware('superadmin-role')->name('admin.master.mapel');
     Route::get('/pengguna-pendidik', MasterPendidik::class)->name('admin.pengguna.pendidik');
+    Route::get('/jadwal', JadwalMingguan::class)->name('admin.jadwal');
 });
 
 Route::group(['prefix' => 'pendidik','middleware' => ['auth','pengajar-role']], function(){
