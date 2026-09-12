@@ -9,6 +9,8 @@ trait CreatesAdminMasterSchema
 {
     protected function setUpAdminMasterSchema(): void
     {
+        Schema::dropIfExists('adm_absensi_pendidik');
+        Schema::dropIfExists('adm_absensi_pelajar');
         Schema::dropIfExists('adm_jadwal');
         Schema::dropIfExists('temas');
         Schema::dropIfExists('dn_tes');
@@ -109,7 +111,33 @@ trait CreatesAdminMasterSchema
 
         Schema::create('adm_jadwal', function (Blueprint $table) {
             $table->increments('id');
+            $table->unsignedInteger('staf_id')->nullable();
             $table->unsignedInteger('mapel_id')->nullable();
+            $table->unsignedInteger('pendidik_id')->nullable();
+            $table->unsignedInteger('kelas_id')->nullable();
+            $table->dateTime('mulai')->nullable();
+            $table->dateTime('selesai')->nullable();
+            $table->timestamps();
+        });
+
+        Schema::create('adm_absensi_pelajar', function (Blueprint $table) {
+            $table->increments('id');
+            $table->unsignedInteger('jadwal_id');
+            $table->unsignedInteger('pelajar_id')->nullable();
+            $table->dateTime('datang')->nullable();
+            $table->dateTime('pulang')->nullable();
+            $table->integer('status')->nullable();
+            $table->timestamps();
+        });
+
+        Schema::create('adm_absensi_pendidik', function (Blueprint $table) {
+            $table->increments('id');
+            $table->unsignedInteger('jadwal_id');
+            $table->unsignedInteger('pendidik_id')->nullable();
+            $table->dateTime('datang')->nullable();
+            $table->dateTime('pulang')->nullable();
+            $table->integer('status')->nullable();
+            $table->timestamps();
         });
     }
 }
