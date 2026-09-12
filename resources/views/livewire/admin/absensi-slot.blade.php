@@ -66,6 +66,22 @@
             <section class="ck-card ck-sticky-card p-4">
                 <h2 class="h5 mb-4">Scan</h2>
                 <fieldset @disabled($slot === null)>
+                    <div class="d-flex flex-wrap gap-2 mb-3">
+                        <button
+                            type="button"
+                            class="btn btn-sm {{ $mode === 'datang' ? 'btn-ck' : 'btn-ck-ghost' }}"
+                            wire:click="$set('mode', 'datang')"
+                        >
+                            Datang
+                        </button>
+                        <button
+                            type="button"
+                            class="btn btn-sm {{ $mode === 'pulang' ? 'btn-ck' : 'btn-ck-ghost' }}"
+                            wire:click="$set('mode', 'pulang')"
+                        >
+                            Pulang
+                        </button>
+                    </div>
                     <form wire:submit="scan">
                         <label for="token" class="form-label">Nomor registrasi</label>
                         <input
@@ -78,6 +94,19 @@
                         @error('token')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
+                        @if ($mode === 'pulang')
+                            <label for="jurnal" class="form-label mt-3">Jurnal</label>
+                            <textarea
+                                id="jurnal"
+                                class="form-control @error('jurnal') is-invalid @enderror"
+                                wire:model="jurnal"
+                                rows="3"
+                            ></textarea>
+                            @error('jurnal')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                            <p class="ck-hint mb-0 mt-2">Hanya dipakai saat scan guru utama</p>
+                        @endif
                     </form>
                     @if ($pesan !== '')
                         <p class="ck-hint mt-3 mb-0">{{ $pesan }}</p>

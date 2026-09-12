@@ -82,6 +82,12 @@ class AbsensiSlot extends Component
             return;
         }
 
+        if ($this->mode === 'pulang') {
+            $this->scanPulang($slot, $user, $isPelajar);
+
+            return;
+        }
+
         if ($this->mode !== 'datang') {
             return;
         }
@@ -122,6 +128,55 @@ class AbsensiSlot extends Component
 
         $this->token = '';
         $this->pesan = $user->nama.' — Datang';
+    }
+
+    protected function scanPulang(Jadwal $slot, User $user, bool $isPelajar): void
+    {
+        if ($isPelajar) {
+            $existing = AbsensiPelajar::query()
+                ->where('jadwal_id', $slot->id)
+                ->where('pelajar_id', $user->id)
+                ->first();
+        } else {
+            $existing = AbsensiPendidik::query()
+                ->where('jadwal_id', $slot->id)
+                ->where('pendidik_id', $user->id)
+                ->first();
+        }
+
+        if ($existing?->datang === null) {
+            $this->addError('token', 'Belum absen datang');
+
+            return;
+        }
+
+        if ($existing->pulang !== null) {
+            $this->addError('token', 'Sudah absen pulang');
+
+            return;
+        }
+
+        $guruUtama = ! $isPelajar && $user->id === (int) $slot->pendidik_id;
+
+        if ($guruUtama && trim($this->jurnal) === '') {
+            $this->addError('jurnal', 'Jurnal wajib diisi');
+
+            return;
+        }
+
+        $payload = [
+            'pulang' => now(),
+            'status' => AbsensiStatus::HADIR,
+        ];
+
+        if ($guruUtama) {
+            $payload['jurnal'] = $this->jurnal;
+        }
+
+        $existing->update($payload);
+
+        $this->token = '';
+        $this->pesan = $user->nama.' — Pulang';
     }
 
     public function slotAktif(): Jadwal
