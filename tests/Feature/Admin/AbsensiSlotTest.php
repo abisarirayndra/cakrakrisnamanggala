@@ -2,6 +2,8 @@
 
 namespace Tests\Feature\Admin;
 
+use App\AbsensiPelajar;
+use App\AbsensiPendidik;
 use App\Jadwal;
 use App\Kelas;
 use App\Livewire\Admin\AbsensiSlot;
@@ -9,6 +11,7 @@ use App\Mapel;
 use App\Markas;
 use App\Pelajar;
 use App\Pendidik;
+use App\Support\AbsensiStatus;
 use App\Support\AdminVisibility;
 use App\User;
 use Carbon\Carbon;
@@ -91,6 +94,125 @@ class AbsensiSlotTest extends TestCase
             ->assertSee('Matematika')
             ->assertSee('08:00')
             ->assertDontSee('Fisika');
+    }
+
+    public function test_scan_datang_writes_hadir_for_pelajar(): void
+    {
+        Carbon::setTestNow('2026-09-14 08:30:00');
+        [$admin, $kelas, $mapel, $guru, $slot, $siswa] = $this->slotFixture();
+
+        Livewire::actingAs($admin)
+            ->test(AbsensiSlot::class)
+            ->set('kelas_id', (string) $kelas->id)
+            ->set('jadwal_id', (string) $slot->id)
+            ->set('mode', 'datang')
+            ->set('token', 'ABC123')
+            ->call('scan')
+            ->assertHasNoErrors()
+            ->assertSet('token', '')
+            ->assertSet('pesan', $siswa->nama.' — Datang');
+
+        $row = AbsensiPelajar::firstOrFail();
+        $this->assertSame($siswa->id, (int) $row->pelajar_id);
+        $this->assertSame(AbsensiStatus::HADIR, (int) $row->status);
+        $this->assertNotNull($row->datang);
+        $this->assertNull($row->pulang);
+    }
+
+    public function test_second_datang_is_rejected(): void
+    {
+        Carbon::setTestNow('2026-09-14 08:30:00');
+        [$admin, $kelas, $mapel, $guru, $slot, $siswa] = $this->slotFixture();
+        AbsensiPelajar::create([
+            'jadwal_id' => $slot->id,
+            'pelajar_id' => $siswa->id,
+            'datang' => '2026-09-14 08:05:00',
+            'status' => AbsensiStatus::HADIR,
+        ]);
+
+        Livewire::actingAs($admin)
+            ->test(AbsensiSlot::class)
+            ->set('kelas_id', (string) $kelas->id)
+            ->set('jadwal_id', (string) $slot->id)
+            ->set('mode', 'datang')
+            ->set('token', 'ABC123')
+            ->call('scan')
+            ->assertHasErrors(['token' => 'Sudah absen datang']);
+    }
+
+    public function test_unknown_token_is_rejected(): void
+    {
+        Carbon::setTestNow('2026-09-14 08:30:00');
+        [$admin, $kelas, $mapel, $guru, $slot] = $this->slotFixture();
+
+        Livewire::actingAs($admin)
+            ->test(AbsensiSlot::class)
+            ->set('kelas_id', (string) $kelas->id)
+            ->set('jadwal_id', (string) $slot->id)
+            ->set('token', 'NOPE99')
+            ->call('scan')
+            ->assertHasErrors(['token' => 'Nomor registrasi tidak ditemukan']);
+    }
+
+    public function test_pelajar_other_kelas_is_rejected(): void
+    {
+        Carbon::setTestNow('2026-09-14 08:30:00');
+        [$admin, $kelas, $mapel, $guru, $slot] = $this->slotFixture();
+        $lain = Kelas::create(['nama' => 'B', 'markas_id' => $kelas->markas_id]);
+        User::factory()->create([
+            'role_id' => 4,
+            'kelas_id' => $lain->id,
+            'nomor_registrasi' => 'XYZ789',
+        ]);
+
+        Livewire::actingAs($admin)
+            ->test(AbsensiSlot::class)
+            ->set('kelas_id', (string) $kelas->id)
+            ->set('jadwal_id', (string) $slot->id)
+            ->set('token', 'XYZ789')
+            ->call('scan')
+            ->assertHasErrors(['token' => 'Bukan pelajar kelas ini']);
+    }
+
+    public function test_scan_datang_writes_hadir_for_pendidik(): void
+    {
+        Carbon::setTestNow('2026-09-14 08:30:00');
+        [$admin, $kelas, $mapel, $guru, $slot] = $this->slotFixture();
+        $guru->update(['nomor_registrasi' => 'GURU01']);
+
+        Livewire::actingAs($admin)
+            ->test(AbsensiSlot::class)
+            ->set('kelas_id', (string) $kelas->id)
+            ->set('jadwal_id', (string) $slot->id)
+            ->set('mode', 'datang')
+            ->set('token', 'GURU01')
+            ->call('scan')
+            ->assertHasNoErrors();
+
+        $row = AbsensiPendidik::firstOrFail();
+        $this->assertSame($guru->id, (int) $row->pendidik_id);
+        $this->assertSame(AbsensiStatus::HADIR, (int) $row->status);
+    }
+
+    private function slotFixture(): array
+    {
+        [$admin, $kelas, $mapel, $guru] = $this->ownMarkasFixture();
+        $slot = Jadwal::create([
+            'staf_id' => $admin->id,
+            'mapel_id' => $mapel->id,
+            'pendidik_id' => $guru->id,
+            'kelas_id' => $kelas->id,
+            'mulai' => '2026-09-14 08:00:00',
+            'selesai' => '2026-09-14 09:00:00',
+        ]);
+        $siswa = User::factory()->create([
+            'role_id' => 4,
+            'kelas_id' => $kelas->id,
+            'nomor_registrasi' => 'ABC123',
+        ]);
+        Pelajar::create(['pelajar_id' => $siswa->id, 'markas_id' => $kelas->markas_id]);
+
+        return [$admin, $kelas, $mapel, $guru, $slot, $siswa];
     }
 
     private function ownMarkasFixture(): array

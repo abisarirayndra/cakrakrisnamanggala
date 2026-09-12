@@ -66,7 +66,23 @@
             <section class="ck-card ck-sticky-card p-4">
                 <h2 class="h5 mb-4">Scan</h2>
                 <fieldset @disabled($slot === null)>
-                    <p class="ck-hint mb-0">{{ $slot ? 'Siap mencatat absensi.' : 'Pilih slot' }}</p>
+                    <form wire:submit="scan">
+                        <label for="token" class="form-label">Nomor registrasi</label>
+                        <input
+                            id="token"
+                            class="form-control @error('token') is-invalid @enderror"
+                            wire:model="token"
+                            autofocus
+                            autocomplete="off"
+                        >
+                        @error('token')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
+                    </form>
+                    @if ($pesan !== '')
+                        <p class="ck-hint mt-3 mb-0">{{ $pesan }}</p>
+                    @endif
+                    <p class="ck-hint mb-0 mt-3">{{ $slot ? 'Siap mencatat absensi.' : 'Pilih slot' }}</p>
                 </fieldset>
             </section>
         </div>
