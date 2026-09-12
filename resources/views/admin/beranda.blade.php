@@ -18,7 +18,7 @@
                 <a href="{{ route('admin.master.kelas') }}" class="btn btn-ck-ghost">Kelas</a>
                 <a href="{{ route('admin.master.mapel') }}" class="btn btn-ck-ghost">Mapel</a>
             @endif
-            <a href="{{ route('staf-admin.jadwal') }}" class="btn btn-ck-ghost">Jadwal</a>
+            <a href="{{ route('admin.jadwal') }}" class="btn btn-ck-ghost">Jadwal</a>
             <a href="{{ route('staf-admin.absensi.beranda') }}" class="btn btn-ck-ghost">Absensi</a>
             <a href="{{ route('admin.dinas.paket') }}" class="btn btn-ck-ghost">CAT</a>
         </div>

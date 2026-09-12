@@ -235,7 +235,7 @@ Route::group(['prefix' => 'pelajar','middleware' => ['auth','pelajar-role']], fu
 Route::group(['prefix' => 'staf-admin', 'middleware' => ['auth','admin-role']], function(){
     Route::get('/beranda',[StafAdminController::class, 'index'])->name('staf-admin.beranda');
     Route::post('/update-profil/{id}',[StafAdminController::class, 'update'])->name('staf-admin.update-profil');
-    Route::get('/jadwal',[JadwalAbsensiController::class, 'index'])->name('staf-admin.jadwal');
+    Route::get('/jadwal', fn () => redirect()->route('admin.jadwal'))->name('staf-admin.jadwal');
     Route::post('/jadwal/tambah',[JadwalAbsensiController::class, 'tambahJadwal'])->name('staf-admin.jadwal.tambah');
     Route::get('/jadwal/hapus/{id}',[JadwalAbsensiController::class, 'hapusJadwal'])->name('staf-admin.jadwal.hapus');
     Route::get('/jadwal/edit/{id}',[JadwalAbsensiController::class, 'editJadwal'])->name('staf-admin.jadwal.edit');

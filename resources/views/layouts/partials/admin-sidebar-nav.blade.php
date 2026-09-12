@@ -45,7 +45,7 @@
 @endif
 
 <p class="ck-nav-section">Operasional</p>
-<a href="{{ route('staf-admin.jadwal') }}" data-nav="jadwal" class="ck-nav-link {{ $active('staf-admin.jadwal*') }}">
+<a href="{{ route('admin.jadwal') }}" data-nav="jadwal" class="ck-nav-link {{ $active('admin.jadwal') }}">
     <i class="bi bi-calendar3"></i>
     <span>Jadwal</span>
 </a>

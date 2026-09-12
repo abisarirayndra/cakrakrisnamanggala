@@ -41,7 +41,7 @@
                                 $tanggal = $seninCarbon->copy()->addDays($offset);
                                 $hariSlots = $slotsByDay->get($tanggal->toDateString(), collect());
                             @endphp
-                            <section class="border rounded-3 p-3" wire:key="hari-{{ $offset }}">
+                            <section class="ck-day-block border rounded-3 p-3" wire:key="hari-{{ $offset }}">
                                 <h2 class="h6 mb-3">{{ $hariList[$offset] }}, {{ $tanggal->format('d M Y') }}</h2>
                                 @forelse ($hariSlots as $slot)
                                     <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 py-2" wire:key="slot-{{ $slot->id }}">

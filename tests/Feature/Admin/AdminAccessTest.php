@@ -59,6 +59,13 @@ class AdminAccessTest extends TestCase
         $this->assertTrue(Route::has('staf-admin.absen-pulang'));
     }
 
+    public function test_legacy_jadwal_index_redirects_to_admin_jadwal(): void
+    {
+        $this->actingAs($this->markasAdmin())
+            ->get(route('staf-admin.jadwal'))
+            ->assertRedirect(route('admin.jadwal'));
+    }
+
     public function test_named_routes_are_unique(): void
     {
         $names = collect(app('router')->getRoutes())
@@ -91,7 +98,7 @@ class AdminAccessTest extends TestCase
             ->assertDontSee('data-nav="kelas"', false)
             ->assertDontSee('data-nav="mapel"', false)
             ->assertSee(route('admin.pengguna.pendaftar', absolute: false), false)
-            ->assertSee(route('staf-admin.jadwal', absolute: false), false)
+            ->assertSee(route('admin.jadwal', absolute: false), false)
             ->assertSee(route('staf-admin.absensi.beranda', absolute: false), false)
             ->assertSee(route('admin.dinas.paket', absolute: false), false);
     }
