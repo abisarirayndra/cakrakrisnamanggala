@@ -179,6 +179,68 @@ class AbsensiSlot extends Component
         $this->pesan = $user->nama.' — Pulang';
     }
 
+    public function simpanIzin(): void
+    {
+        $slot = $this->slotAktif();
+        $kelas = $slot->kelas;
+        $allowedIds = AdminVisibility::pelajarForKelas($kelas)->pluck('id')
+            ->merge(AdminVisibility::pendidikForKelas($kelas)->pluck('id'))
+            ->map(fn ($id) => (string) $id)
+            ->all();
+
+        $this->validate([
+            'izin_user_id' => 'required|in:'.implode(',', $allowedIds),
+            'izin_status' => 'required|in:2,3,4',
+        ]);
+
+        if ((int) $this->izin_status === AbsensiStatus::IZIN && trim($this->izin_keterangan) === '') {
+            $this->addError('izin_keterangan', 'Keterangan wajib untuk izin');
+
+            return;
+        }
+
+        $user = User::query()->findOrFail($this->izin_user_id);
+        $isPelajar = (int) $user->role_id === 4;
+
+        if ($isPelajar) {
+            $existing = AbsensiPelajar::query()
+                ->where('jadwal_id', $slot->id)
+                ->where('pelajar_id', $user->id)
+                ->first();
+        } else {
+            $existing = AbsensiPendidik::query()
+                ->where('jadwal_id', $slot->id)
+                ->where('pendidik_id', $user->id)
+                ->first();
+        }
+
+        if ($existing && (int) $existing->status === AbsensiStatus::HADIR && $existing->datang !== null) {
+            $this->addError('izin_user_id', 'Sudah hadir, ubah lewat scan pulang atau biarkan');
+
+            return;
+        }
+
+        $payload = [
+            'status' => (int) $this->izin_status,
+            'keterangan' => trim($this->izin_keterangan) === '' ? null : $this->izin_keterangan,
+        ];
+
+        if ($isPelajar) {
+            AbsensiPelajar::updateOrCreate(
+                ['jadwal_id' => $slot->id, 'pelajar_id' => $user->id],
+                $payload
+            );
+        } else {
+            AbsensiPendidik::updateOrCreate(
+                ['jadwal_id' => $slot->id, 'pendidik_id' => $user->id],
+                $payload
+            );
+        }
+
+        $this->reset(['izin_user_id', 'izin_keterangan']);
+        $this->izin_status = '2';
+    }
+
     public function slotAktif(): Jadwal
     {
         return AdminVisibility::jadwalQuery(auth()->user())
