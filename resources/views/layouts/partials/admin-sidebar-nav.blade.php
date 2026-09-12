@@ -49,7 +49,7 @@
     <i class="bi bi-calendar3"></i>
     <span>Jadwal</span>
 </a>
-<a href="{{ route('staf-admin.absensi.beranda') }}" data-nav="absensi" class="ck-nav-link {{ $active('staf-admin.absensi*', 'staf-admin.absen*') }}">
+<a href="{{ route('admin.absensi') }}" data-nav="absensi" class="ck-nav-link {{ $active('admin.absensi') }}">
     <i class="bi bi-check2-square"></i>
     <span>Absensi</span>
 </a>

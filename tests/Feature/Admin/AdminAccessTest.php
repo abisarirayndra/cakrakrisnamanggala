@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\Admin;
 
+use App\AbsensiPelajar;
 use App\Jadwal;
 use App\Kelas;
 use App\Mapel;
@@ -64,6 +65,8 @@ class AdminAccessTest extends TestCase
         $this->assertTrue(Route::has('staf-admin.jadwal.edit'));
         $this->assertTrue(Route::has('staf-admin.jadwal.update'));
         $this->assertTrue(Route::has('staf-admin.absen-pulang'));
+        $this->assertTrue(Route::has('staf-admin.absensi.beranda'));
+        $this->assertTrue(Route::has('staf-admin.absensi.upload-absensi'));
     }
 
     public function test_legacy_jadwal_index_redirects_to_admin_jadwal(): void
@@ -128,8 +131,24 @@ class AdminAccessTest extends TestCase
             ->assertDontSee('data-nav="mapel"', false)
             ->assertSee(route('admin.pengguna.pendaftar', absolute: false), false)
             ->assertSee(route('admin.jadwal', absolute: false), false)
-            ->assertSee(route('staf-admin.absensi.beranda', absolute: false), false)
+            ->assertSee(route('admin.absensi', absolute: false), false)
             ->assertSee(route('admin.dinas.paket', absolute: false), false);
+    }
+
+    public function test_legacy_absensi_beranda_redirects_to_admin_absensi(): void
+    {
+        $this->actingAs($this->markasAdmin())
+            ->get(route('staf-admin.absensi.beranda'))
+            ->assertRedirect(route('admin.absensi'));
+    }
+
+    public function test_legacy_absensi_upload_redirects_and_does_not_write(): void
+    {
+        $this->actingAs($this->markasAdmin())
+            ->post(route('staf-admin.absensi.upload-absensi'), ['token' => 'ABC123'])
+            ->assertRedirect(route('admin.absensi'));
+
+        $this->assertSame(0, AbsensiPelajar::count());
     }
 
     public function test_beranda_shows_admin_and_cat_for_super(): void
