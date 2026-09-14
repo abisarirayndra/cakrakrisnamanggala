@@ -112,11 +112,11 @@ class AbsensiSlotTest extends TestCase
             ->call('scan')
             ->assertHasNoErrors()
             ->assertSet('token', '')
-            ->assertSet('pesan', $siswa->nama.' — Datang');
+            ->assertSet('pesan', $siswa->nama.' — Telat');
 
         $row = AbsensiPelajar::firstOrFail();
         $this->assertSame($siswa->id, (int) $row->pelajar_id);
-        $this->assertSame(AbsensiStatus::HADIR, (int) $row->status);
+        $this->assertSame(0, (int) $row->status);
         $this->assertNotNull($row->datang);
         $this->assertNull($row->pulang);
     }
@@ -193,7 +193,7 @@ class AbsensiSlotTest extends TestCase
 
         $row = AbsensiPendidik::firstOrFail();
         $this->assertSame($guru->id, (int) $row->pendidik_id);
-        $this->assertSame(AbsensiStatus::HADIR, (int) $row->status);
+        $this->assertSame(0, (int) $row->status);
     }
 
     public function test_pulang_without_datang_is_rejected(): void
@@ -359,7 +359,7 @@ class AbsensiSlotTest extends TestCase
             ->assertHasNoErrors();
 
         $row = AbsensiPelajar::first();
-        $this->assertSame(AbsensiStatus::HADIR, (int) $row->status);
+        $this->assertSame(0, (int) $row->status);
         $this->assertNotNull($row->datang);
     }
 
@@ -383,7 +383,113 @@ class AbsensiSlotTest extends TestCase
             ->assertSee('Siswa Roster Hadir')
             ->assertSee('08:30')
             ->assertSee('Guru utama')
-            ->assertDontSee('Belum ada absensi');
+            ->assertSee('Telat')
+            ->assertDontSee('Belum ada absensi')
+            ->assertDispatched('fokus-token');
+    }
+
+    public function test_late_row_stored_as_hadir_still_shows_telat(): void
+    {
+        Carbon::setTestNow('2026-09-14 08:30:00');
+        [$admin, $kelas, $mapel, $guru, $slot, $siswa] = $this->slotFixture();
+        $siswa->update(['nama' => 'Siswa Data Lama']);
+        AbsensiPelajar::create([
+            'jadwal_id' => $slot->id,
+            'pelajar_id' => $siswa->id,
+            'datang' => '2026-09-14 08:30:00',
+            'status' => AbsensiStatus::HADIR,
+        ]);
+
+        Livewire::actingAs($admin)
+            ->test(AbsensiSlot::class)
+            ->set('kelas_id', (string) $kelas->id)
+            ->set('jadwal_id', (string) $slot->id)
+            ->assertSee('Telat')
+            ->assertDontSee('Hadir');
+    }
+
+    public function test_scan_before_mulai_shows_ontime(): void
+    {
+        Carbon::setTestNow('2026-09-14 07:30:00');
+        [$admin, $kelas, $mapel, $guru, $slot, $siswa] = $this->slotFixture();
+        $siswa->update(['nama' => 'Siswa Ontime Roster']);
+
+        Livewire::actingAs($admin)
+            ->test(AbsensiSlot::class)
+            ->set('kelas_id', (string) $kelas->id)
+            ->set('jadwal_id', (string) $slot->id)
+            ->set('mode', 'datang')
+            ->set('token', 'ABC123')
+            ->call('scan')
+            ->assertHasNoErrors()
+            ->assertSee('Ontime')
+            ->assertDontSee('Telat')
+            ->assertSet('pesan', 'Siswa Ontime Roster — Ontime');
+
+        $this->assertSame(1, (int) AbsensiPelajar::first()->status);
+    }
+
+    public function test_pulang_keeps_telat_status(): void
+    {
+        Carbon::setTestNow('2026-09-14 08:30:00');
+        [$admin, $kelas, $mapel, $guru, $slot, $siswa] = $this->slotFixture();
+        AbsensiPelajar::create([
+            'jadwal_id' => $slot->id,
+            'pelajar_id' => $siswa->id,
+            'datang' => '2026-09-14 08:30:00',
+            'status' => 0,
+        ]);
+
+        Livewire::actingAs($admin)
+            ->test(AbsensiSlot::class)
+            ->set('kelas_id', (string) $kelas->id)
+            ->set('jadwal_id', (string) $slot->id)
+            ->set('mode', 'pulang')
+            ->set('token', 'ABC123')
+            ->call('scan')
+            ->assertHasNoErrors();
+
+        $this->assertSame(0, (int) AbsensiPelajar::first()->status);
+        $this->assertNotNull(AbsensiPelajar::first()->pulang);
+    }
+
+    public function test_izin_form_is_outside_scan_card(): void
+    {
+        [$admin] = $this->ownMarkasFixture();
+
+        $html = Livewire::actingAs($admin)
+            ->test(AbsensiSlot::class)
+            ->html();
+
+        $scanPos = strpos($html, '>Scan</h2>');
+        $izinPos = strpos($html, 'Izin / Sakit / Alpa');
+        $scanSectionEnd = $scanPos === false ? false : strpos($html, '</section>', $scanPos);
+
+        $this->assertNotFalse($scanPos);
+        $this->assertNotFalse($izinPos);
+        $this->assertNotFalse($scanSectionEnd);
+        $this->assertLessThan(
+            $izinPos,
+            $scanSectionEnd,
+            'Form izin harus kartu terpisah, bukan di dalam kartu scan.'
+        );
+    }
+
+    public function test_izin_appears_on_roster_immediately(): void
+    {
+        Carbon::setTestNow('2026-09-14 08:30:00');
+        [$admin, $kelas, $mapel, $guru, $slot, $siswa] = $this->slotFixture();
+        $siswa->update(['nama' => 'Siswa Izin Roster']);
+
+        Livewire::actingAs($admin)
+            ->test(AbsensiSlot::class)
+            ->set('kelas_id', (string) $kelas->id)
+            ->set('jadwal_id', (string) $slot->id)
+            ->set('izin_user_id', (string) $siswa->id)
+            ->set('izin_status', (string) AbsensiStatus::SAKIT)
+            ->call('simpanIzin')
+            ->assertHasNoErrors()
+            ->assertSeeHtml('wire:key="absensi-pelajar-'.$siswa->id.'"');
     }
 
     public function test_other_markas_slot_returns_404_and_writes_nothing(): void

@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Admin;
 
+use App\Kelas;
 use App\Markas;
 use App\Pelajar;
 use App\Support\AdminVisibility;
@@ -51,6 +52,8 @@ class MasterPelajar extends Component
 
     public $markas_id = null;
 
+    public $kelas_id = null;
+
     public function boot(): void
     {
         $actor = auth()->user();
@@ -94,7 +97,24 @@ class MasterPelajar extends Component
         $this->wali = $pelajar->wali;
         $this->wa_wali = $pelajar->wa_wali;
         $this->markas_id = $pelajar->markas_id === null ? null : (string) $pelajar->markas_id;
+        $this->kelas_id = $pelajar->user->kelas_id === null ? null : (string) $pelajar->user->kelas_id;
         $this->resetErrorBag();
+    }
+
+    public function updatedMarkasId($value): void
+    {
+        if ($this->kelas_id === null || $this->kelas_id === '') {
+            return;
+        }
+
+        $masihCocok = Kelas::query()
+            ->whereKey($this->kelas_id)
+            ->where('markas_id', $value)
+            ->exists();
+
+        if (! $masihCocok) {
+            $this->kelas_id = null;
+        }
     }
 
     public function simpan(): void
@@ -103,10 +123,25 @@ class MasterPelajar extends Component
 
         $actor = auth()->user();
         $pelajar = $this->authorizeRow($this->pelajarUserId);
+
+        if ($this->kelas_id === '') {
+            $this->kelas_id = null;
+        }
+
         $markasRules = ['required', 'integer', 'exists:adm_markas,id'];
 
         if (! $actor->isSuperAdmin()) {
             $markasRules[] = Rule::in($actor->markasIds());
+        }
+
+        $kelasRules = [
+            'nullable',
+            'integer',
+            Rule::exists('kelas', 'id')->where(fn ($query) => $query->where('markas_id', $this->markas_id)),
+        ];
+
+        if (! $actor->isSuperAdmin()) {
+            $kelasRules[] = Rule::in($this->kelasIdsForActor($actor));
         }
 
         $validated = $this->validate([
@@ -121,9 +156,14 @@ class MasterPelajar extends Component
             'wali' => ['nullable', 'string'],
             'wa_wali' => ['nullable', 'string'],
             'markas_id' => $markasRules,
+            'kelas_id' => $kelasRules,
         ]);
 
+        $kelasId = $validated['kelas_id'] ?? null;
+        unset($validated['kelas_id']);
+
         $pelajar->update($validated);
+        User::whereKey($this->pelajarUserId)->update(['kelas_id' => $kelasId]);
         $this->halaman = 'lihat';
         $this->resetErrorBag();
     }
@@ -171,6 +211,7 @@ class MasterPelajar extends Component
             'wali',
             'wa_wali',
             'markas_id',
+            'kelas_id',
         ]);
         $this->resetErrorBag();
     }
@@ -180,7 +221,7 @@ class MasterPelajar extends Component
         $actor = auth()->user();
         $roleId = $this->tab === 'suspended' ? 6 : 4;
         $pelajars = AdminVisibility::pelajarQuery($actor, $roleId)
-            ->with(['pelajar.markas'])
+            ->with(['pelajar.markas', 'kelas'])
             ->when($this->cari, fn ($query) => $query->where(function ($query) {
                 $search = '%'.$this->cari.'%';
 
@@ -195,7 +236,7 @@ class MasterPelajar extends Component
 
         if ($this->pelajarUserId !== null) {
             $pelajarAktif = $this->authorizeRow($this->pelajarUserId);
-            $pelajarAktif->load(['user', 'markas']);
+            $pelajarAktif->load(['user.kelas', 'markas']);
         }
 
         $markasList = $actor->isSuperAdmin()
@@ -206,6 +247,7 @@ class MasterPelajar extends Component
             'pelajars' => $pelajars,
             'pelajarAktif' => $pelajarAktif,
             'markasList' => $markasList,
+            'kelasList' => $this->kelasListFor($actor),
         ]);
     }
 
@@ -224,5 +266,34 @@ class MasterPelajar extends Component
         }
 
         return $pelajar;
+    }
+
+    private function kelasListFor(User $actor)
+    {
+        $query = Kelas::query()->orderBy('nama');
+
+        if ($this->markas_id) {
+            $query->where('markas_id', $this->markas_id);
+        } elseif (! $actor->isSuperAdmin()) {
+            $ids = $actor->markasIds();
+            $ids === [] ? $query->whereRaw('1 = 0') : $query->whereIn('markas_id', $ids);
+        }
+
+        return $query->get();
+    }
+
+    private function kelasIdsForActor(User $actor): array
+    {
+        $ids = $actor->markasIds();
+
+        if ($ids === []) {
+            return [];
+        }
+
+        return Kelas::query()
+            ->whereIn('markas_id', $ids)
+            ->pluck('id')
+            ->map(fn ($id) => (int) $id)
+            ->all();
     }
 }

@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\Admin;
 
+use App\Kelas;
 use App\Livewire\Admin\MasterPelajar;
 use App\Markas;
 use App\Pelajar;
@@ -161,11 +162,14 @@ class MasterPelajarTest extends TestCase
             'foto' => 'tetap.jpg',
         ]);
 
+        $kelas = Kelas::create(['nama' => 'Reguler A', 'markas_id' => $genteng->id]);
+
         Livewire::actingAs($admin)
             ->test(MasterPelajar::class)
             ->call('edit', $pelajar->id)
             ->set('nik', '999')
             ->set('markas_id', (string) $genteng->id)
+            ->set('kelas_id', (string) $kelas->id)
             ->call('simpan')
             ->assertHasNoErrors();
 
@@ -367,6 +371,60 @@ class MasterPelajarTest extends TestCase
             ->test(MasterPelajar::class)
             ->assertSeeHtml('<ul class="pagination">')
             ->assertDontSeeHtml('inline-flex items-center');
+    }
+
+    public function test_list_shows_kelas_nama(): void
+    {
+        $markas = Markas::create(['markas' => 'Genteng']);
+        $kelas = Kelas::create(['nama' => 'Reguler A', 'markas_id' => $markas->id]);
+        $user = User::factory()->create([
+            'role_id' => 4,
+            'nama' => 'Siswa Kelas',
+            'kelas_id' => $kelas->id,
+        ]);
+        Pelajar::create(['pelajar_id' => $user->id, 'markas_id' => $markas->id]);
+
+        Livewire::actingAs($this->superAdmin())
+            ->test(MasterPelajar::class)
+            ->assertSee('Reguler A');
+    }
+
+    public function test_can_update_pelajar_kelas(): void
+    {
+        $markas = Markas::create(['markas' => 'Genteng']);
+        $lama = Kelas::create(['nama' => 'Reguler A', 'markas_id' => $markas->id]);
+        $baru = Kelas::create(['nama' => 'Reguler B', 'markas_id' => $markas->id]);
+        $pelajar = User::factory()->create(['role_id' => 4, 'kelas_id' => $lama->id]);
+        Pelajar::create(['pelajar_id' => $pelajar->id, 'markas_id' => $markas->id]);
+
+        Livewire::actingAs($this->superAdmin())
+            ->test(MasterPelajar::class)
+            ->call('edit', $pelajar->id)
+            ->set('markas_id', (string) $markas->id)
+            ->set('kelas_id', (string) $baru->id)
+            ->call('simpan')
+            ->assertHasNoErrors();
+
+        $this->assertSame($baru->id, (int) $pelajar->fresh()->kelas_id);
+    }
+
+    public function test_cannot_assign_kelas_from_another_markas(): void
+    {
+        $genteng = Markas::create(['markas' => 'Genteng']);
+        $jember = Markas::create(['markas' => 'Jember']);
+        $kelasJember = Kelas::create(['nama' => 'Z Jember', 'markas_id' => $jember->id]);
+        $pelajar = User::factory()->create(['role_id' => 4]);
+        Pelajar::create(['pelajar_id' => $pelajar->id, 'markas_id' => $genteng->id]);
+
+        Livewire::actingAs($this->superAdmin())
+            ->test(MasterPelajar::class)
+            ->call('edit', $pelajar->id)
+            ->set('markas_id', (string) $genteng->id)
+            ->set('kelas_id', (string) $kelasJember->id)
+            ->call('simpan')
+            ->assertHasErrors(['kelas_id']);
+
+        $this->assertNull($pelajar->fresh()->kelas_id);
     }
 
     private function superAdmin(): User

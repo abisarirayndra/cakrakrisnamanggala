@@ -72,13 +72,23 @@
                     </div>
                     <div class="col-md-6">
                         <label for="markas_id" class="form-label">Markas</label>
-                        <select id="markas_id" class="form-select @error('markas_id') is-invalid @enderror" wire:model="markas_id">
+                        <select id="markas_id" class="form-select @error('markas_id') is-invalid @enderror" wire:model.live="markas_id">
                             <option value="">Pilih markas</option>
                             @foreach ($markasList as $markas)
                                 <option value="{{ $markas->id }}">{{ $markas->markas }}</option>
                             @endforeach
                         </select>
                         @error('markas_id') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                    </div>
+                    <div class="col-md-6">
+                        <label for="kelas_id" class="form-label">Kelas</label>
+                        <select id="kelas_id" class="form-select @error('kelas_id') is-invalid @enderror" wire:model="kelas_id">
+                            <option value="">Pilih kelas</option>
+                            @foreach ($kelasList as $kelas)
+                                <option value="{{ $kelas->id }}">{{ $kelas->nama }}</option>
+                            @endforeach
+                        </select>
+                        @error('kelas_id') <div class="invalid-feedback">{{ $message }}</div> @enderror
                     </div>
                 </div>
 
@@ -121,6 +131,8 @@
                 <dd class="col-sm-9">{{ $pelajarAktif->wa_wali ?: '—' }}</dd>
                 <dt class="col-sm-3">Markas</dt>
                 <dd class="col-sm-9">{{ $pelajarAktif->markas?->markas ?: 'Belum ditentukan' }}</dd>
+                <dt class="col-sm-3">Kelas</dt>
+                <dd class="col-sm-9">{{ $pelajarAktif->user->kelas?->nama ?: 'Belum ditentukan' }}</dd>
             </dl>
 
             <div class="d-flex flex-wrap gap-2">
@@ -174,6 +186,7 @@
                             <th>Email</th>
                             <th>Nomor registrasi</th>
                             <th>Markas</th>
+                            <th>Kelas</th>
                             <th class="text-end">Aksi</th>
                         </tr>
                     </thead>
@@ -184,6 +197,7 @@
                                 <td>{{ $pelajar->email }}</td>
                                 <td>{{ $pelajar->nomor_registrasi ?: '—' }}</td>
                                 <td>{{ $pelajar->pelajar->markas?->markas ?: 'Belum ditentukan' }}</td>
+                                <td>{{ $pelajar->kelas?->nama ?: '—' }}</td>
                                 <td>
                                     <div class="d-flex justify-content-end gap-2">
                                         <button type="button" class="btn btn-sm btn-ck-ghost" wire:click="lihat({{ $pelajar->id }})">Lihat</button>
@@ -199,7 +213,7 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="5" class="text-center ck-hint py-4">Tidak ada pelajar ditemukan.</td>
+                                <td colspan="6" class="text-center ck-hint py-4">Tidak ada pelajar ditemukan.</td>
                             </tr>
                         @endforelse
                     </tbody>

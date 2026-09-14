@@ -52,18 +52,67 @@
                     <div class="d-flex flex-column gap-4">
                         <section>
                             <h2 class="h6 mb-3">Pendidik</h2>
-                            <p class="ck-hint mb-0">Belum ada absensi</p>
+                            @forelse ($hadirPendidik as $row)
+                                <div class="d-flex flex-wrap justify-content-between gap-2 py-2 border-bottom" wire:key="absensi-pendidik-{{ $row->pendidik_id }}">
+                                    <div>
+                                        <p class="fw-semibold mb-0">{{ $row->pendidik?->nama }}</p>
+                                        @if ($slot && (int) $slot->pendidik_id === (int) $row->pendidik_id)
+                                            <p class="ck-hint small mb-0">Guru utama</p>
+                                        @endif
+                                    </div>
+                                    <div class="text-end">
+                                        @php
+                                            $statusTampil = \App\Support\AbsensiStatus::tampilkan((int) $row->status, $row->datang, $slot?->mulai);
+                                            $warnaTampil = \App\Support\AbsensiStatus::warnaTampil((int) $row->status, $row->datang, $slot?->mulai);
+                                        @endphp
+                                        <p class="mb-0" @if ($warnaTampil) style="color: {{ $warnaTampil }};" @endif>
+                                            {{ $statusTampil }}
+                                        </p>
+                                        <p class="ck-hint small mb-0">
+                                            {{ $row->datang?->format('H:i') ?: '—' }}
+                                            @if ($row->pulang)
+                                                · {{ $row->pulang->format('H:i') }}
+                                            @endif
+                                        </p>
+                                    </div>
+                                </div>
+                            @empty
+                                <p class="ck-hint mb-0">Belum ada absensi</p>
+                            @endforelse
                         </section>
                         <section>
                             <h2 class="h6 mb-3">Pelajar</h2>
-                            <p class="ck-hint mb-0">Belum ada absensi</p>
+                            @forelse ($hadirPelajar as $row)
+                                <div class="d-flex flex-wrap justify-content-between gap-2 py-2 border-bottom" wire:key="absensi-pelajar-{{ $row->pelajar_id }}">
+                                    <div>
+                                        <p class="fw-semibold mb-0">{{ $row->pelajar?->nama }}</p>
+                                    </div>
+                                    <div class="text-end">
+                                        @php
+                                            $statusTampil = \App\Support\AbsensiStatus::tampilkan((int) $row->status, $row->datang, $slot?->mulai);
+                                            $warnaTampil = \App\Support\AbsensiStatus::warnaTampil((int) $row->status, $row->datang, $slot?->mulai);
+                                        @endphp
+                                        <p class="mb-0" @if ($warnaTampil) style="color: {{ $warnaTampil }};" @endif>
+                                            {{ $statusTampil }}
+                                        </p>
+                                        <p class="ck-hint small mb-0">
+                                            {{ $row->datang?->format('H:i') ?: '—' }}
+                                            @if ($row->pulang)
+                                                · {{ $row->pulang->format('H:i') }}
+                                            @endif
+                                        </p>
+                                    </div>
+                                </div>
+                            @empty
+                                <p class="ck-hint mb-0">Belum ada absensi</p>
+                            @endforelse
                         </section>
                     </div>
                 @endif
             </section>
         </div>
         <div class="col-lg-4">
-            <section class="ck-card ck-sticky-card p-4">
+            <section class="ck-card ck-sticky-card p-4 mb-4">
                 <h2 class="h5 mb-4">Scan</h2>
                 <fieldset @disabled($slot === null)>
                     <div class="d-flex flex-wrap gap-2 mb-3">
@@ -86,6 +135,7 @@
                         <label for="token" class="form-label">Nomor registrasi</label>
                         <input
                             id="token"
+                            x-ref="token"
                             class="form-control @error('token') is-invalid @enderror"
                             wire:model="token"
                             autofocus
@@ -109,20 +159,33 @@
                         @endif
                     </form>
                     @if ($pesan !== '')
-                        <p class="ck-hint mt-3 mb-0">{{ $pesan }}</p>
+                        <div class="alert alert-ck mt-3 mb-0" role="status">{{ $pesan }}</div>
                     @endif
                     <p class="ck-hint mb-0 mt-3">{{ $slot ? 'Siap mencatat absensi.' : 'Pilih slot' }}</p>
                 </fieldset>
-                <h2 class="h5 mb-3 mt-4">Izin / Sakit / Alpa</h2>
+            </section>
+            <section class="ck-card p-4">
+                <h2 class="h5 mb-3">Izin / Sakit / Alpa</h2>
                 <fieldset @disabled($slot === null)>
                     <form wire:submit="simpanIzin" novalidate>
                         <div class="mb-3">
                             <label for="izin_user_id" class="form-label">Nama</label>
                             <select id="izin_user_id" class="form-select @error('izin_user_id') is-invalid @enderror" wire:model="izin_user_id">
                                 <option value="">Pilih nama</option>
-                                @foreach ($pelajarList->concat($pendidikList) as $orang)
-                                    <option value="{{ $orang->id }}">{{ $orang->nama }}</option>
-                                @endforeach
+                                @if ($pelajarList->isNotEmpty())
+                                    <optgroup label="Pelajar">
+                                        @foreach ($pelajarList as $orang)
+                                            <option value="{{ $orang->id }}">{{ $orang->nama }}</option>
+                                        @endforeach
+                                    </optgroup>
+                                @endif
+                                @if ($pendidikList->isNotEmpty())
+                                    <optgroup label="Pendidik">
+                                        @foreach ($pendidikList as $orang)
+                                            <option value="{{ $orang->id }}">{{ $orang->nama }}</option>
+                                        @endforeach
+                                    </optgroup>
+                                @endif
                             </select>
                             @error('izin_user_id')
                                 <div class="invalid-feedback">{{ $message }}</div>
@@ -160,3 +223,11 @@
         </div>
     </div>
 </div>
+
+@script
+<script>
+    $wire.on('fokus-token', () => {
+        requestAnimationFrame(() => document.getElementById('token')?.focus())
+    })
+</script>
+@endscript

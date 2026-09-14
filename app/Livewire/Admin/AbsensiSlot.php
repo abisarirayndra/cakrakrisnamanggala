@@ -40,7 +40,28 @@ class AbsensiSlot extends Component
         $this->resetErrorBag();
     }
 
+    public function updatedJadwalId(): void
+    {
+        $this->reset(['token', 'jurnal', 'pesan']);
+        $this->resetErrorBag();
+        $this->fokusToken();
+    }
+
+    public function updatedMode(): void
+    {
+        $this->fokusToken();
+    }
+
     public function scan(): void
+    {
+        try {
+            $this->prosesScan();
+        } finally {
+            $this->fokusToken();
+        }
+    }
+
+    protected function prosesScan(): void
     {
         $this->pesan = '';
         $this->validate(['token' => 'required']);
@@ -104,9 +125,11 @@ class AbsensiSlot extends Component
                 return;
             }
 
+            $statusDatang = AbsensiStatus::dariDatang(now(), $slot->mulai);
+
             AbsensiPelajar::updateOrCreate(
                 ['jadwal_id' => $slot->id, 'pelajar_id' => $user->id],
-                ['datang' => now(), 'status' => AbsensiStatus::HADIR]
+                ['datang' => now(), 'status' => $statusDatang]
             );
         } else {
             $existing = AbsensiPendidik::query()
@@ -120,14 +143,16 @@ class AbsensiSlot extends Component
                 return;
             }
 
+            $statusDatang = AbsensiStatus::dariDatang(now(), $slot->mulai);
+
             AbsensiPendidik::updateOrCreate(
                 ['jadwal_id' => $slot->id, 'pendidik_id' => $user->id],
-                ['datang' => now(), 'status' => AbsensiStatus::HADIR]
+                ['datang' => now(), 'status' => $statusDatang]
             );
         }
 
         $this->token = '';
-        $this->pesan = $user->nama.' — Datang';
+        $this->pesan = $user->nama.' — '.AbsensiStatus::label($statusDatang);
     }
 
     protected function scanPulang(Jadwal $slot, User $user, bool $isPelajar): void
@@ -166,7 +191,6 @@ class AbsensiSlot extends Component
 
         $payload = [
             'pulang' => now(),
-            'status' => AbsensiStatus::HADIR,
         ];
 
         if ($guruUtama) {
@@ -214,7 +238,7 @@ class AbsensiSlot extends Component
                 ->first();
         }
 
-        if ($existing && (int) $existing->status === AbsensiStatus::HADIR && $existing->datang !== null) {
+        if ($existing && $existing->datang !== null) {
             $this->addError('izin_user_id', 'Sudah hadir, ubah lewat scan pulang atau biarkan');
 
             return;
@@ -239,6 +263,12 @@ class AbsensiSlot extends Component
 
         $this->reset(['izin_user_id', 'izin_keterangan']);
         $this->izin_status = '2';
+    }
+
+    protected function fokusToken(): void
+    {
+        $this->dispatch('fokus-token');
+        $this->js('document.getElementById("token")?.focus()');
     }
 
     public function slotAktif(): Jadwal
@@ -278,8 +308,12 @@ class AbsensiSlot extends Component
             'kelasList' => AdminVisibility::kelasForJadwal($actor)->with('markas')->get(),
             'slots' => $slots,
             'slot' => $slot,
-            'hadirPendidik' => $slot ? AbsensiPendidik::query()->where('jadwal_id', $slot->id)->with('pendidik')->get() : collect(),
-            'hadirPelajar' => $slot ? AbsensiPelajar::query()->where('jadwal_id', $slot->id)->with('pelajar')->get() : collect(),
+            'hadirPendidik' => $slot
+                ? AbsensiPendidik::query()->where('jadwal_id', $slot->id)->with('pendidik')->orderByDesc('id')->get()
+                : collect(),
+            'hadirPelajar' => $slot
+                ? AbsensiPelajar::query()->where('jadwal_id', $slot->id)->with('pelajar')->orderByDesc('id')->get()
+                : collect(),
             'pendidikList' => $kelasAktif ? AdminVisibility::pendidikForKelas($kelasAktif)->get() : collect(),
             'pelajarList' => $kelasAktif ? AdminVisibility::pelajarForKelas($kelasAktif)->get() : collect(),
         ]);
