@@ -77,6 +77,13 @@ body.ck-body {
     box-shadow: 0 10px 30px rgba(27, 36, 48, 0.05);
 }
 
+@media (min-width: 992px) {
+    .ck-sticky-card {
+        position: sticky;
+        top: 1.25rem;
+    }
+}
+
 .ck-steps {
     display: flex;
     gap: 1.25rem;
@@ -118,6 +125,25 @@ body.ck-body {
     background-color: #fff;
     border-radius: 0.75rem;
     padding: 0.7rem 0.9rem;
+    min-height: 3rem;
+}
+
+input[type="date"].form-control,
+input[type="time"].form-control {
+    display: flex;
+    align-items: center;
+}
+
+input[type="date"].form-control::-webkit-datetime-edit,
+input[type="time"].form-control::-webkit-datetime-edit {
+    display: flex;
+    align-items: center;
+    padding: 0;
+}
+
+input[type="date"].form-control::-webkit-calendar-picker-indicator,
+input[type="time"].form-control::-webkit-calendar-picker-indicator {
+    margin: 0;
 }
 
 .form-control:focus,

@@ -7,8 +7,9 @@
         </div>
     </div>
 
-    <section class="ck-card p-4">
-        <div class="row g-3 align-items-end mb-4">
+    <section class="ck-card p-4 mb-4">
+        <p class="ck-hint mb-3">Minggu Senin–Minggu</p>
+        <div class="row g-3">
             <div class="col-md-6">
                 <label for="kelas_id" class="form-label">Kelas</label>
                 <select id="kelas_id" class="form-select @error('kelas_id') is-invalid @enderror" wire:model.live="kelas_id">
@@ -24,12 +25,13 @@
             <div class="col-md-6">
                 <label for="senin" class="form-label">Senin</label>
                 <input id="senin" type="date" class="form-control" wire:model.live="senin">
-                <p class="ck-hint mb-0 mt-2">Minggu Senin–Minggu</p>
             </div>
         </div>
+    </section>
 
-        <div class="row g-4">
-            <div class="col-lg-8">
+    <div class="row g-4 align-items-start">
+        <div class="col-lg-8">
+            <section class="ck-card p-4">
                 @error('jadwal')
                     <div class="alert alert-ck" role="alert">{{ $message }}</div>
                 @enderror
@@ -72,8 +74,10 @@
                         @endfor
                     </div>
                 @endif
-            </div>
-            <div class="col-lg-4">
+            </section>
+        </div>
+        <div class="col-lg-4">
+            <section class="ck-card ck-sticky-card p-4">
                 <h2 class="h5 mb-4">{{ $editId ? 'Ubah slot' : 'Tambah slot' }}</h2>
                 <form wire:submit="simpan" novalidate>
                     <div class="mb-3">
@@ -105,15 +109,17 @@
                         </select>
                         @error('pendidik_id') <div class="invalid-feedback">{{ $message }}</div> @enderror
                     </div>
-                    <div class="mb-3">
-                        <label for="jam_mulai" class="form-label">Jam mulai</label>
-                        <input id="jam_mulai" type="time" class="form-control @error('jam_mulai') is-invalid @enderror" wire:model="jam_mulai" @disabled($kelas_id === '')>
-                        @error('jam_mulai') <div class="invalid-feedback">{{ $message }}</div> @enderror
-                    </div>
-                    <div class="mb-4">
-                        <label for="jam_selesai" class="form-label">Jam selesai</label>
-                        <input id="jam_selesai" type="time" class="form-control @error('jam_selesai') is-invalid @enderror" wire:model="jam_selesai" @disabled($kelas_id === '')>
-                        @error('jam_selesai') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                    <div class="row g-3 mb-4">
+                        <div class="col-6">
+                            <label for="jam_mulai" class="form-label">Jam mulai</label>
+                            <input id="jam_mulai" type="time" class="form-control @error('jam_mulai') is-invalid @enderror" wire:model="jam_mulai" @disabled($kelas_id === '')>
+                            @error('jam_mulai') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                        </div>
+                        <div class="col-6">
+                            <label for="jam_selesai" class="form-label">Jam selesai</label>
+                            <input id="jam_selesai" type="time" class="form-control @error('jam_selesai') is-invalid @enderror" wire:model="jam_selesai" @disabled($kelas_id === '')>
+                            @error('jam_selesai') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                        </div>
                     </div>
                     <div class="d-flex flex-column gap-2">
                         <button type="submit" class="btn btn-ck w-100" wire:loading.attr="disabled" @disabled($kelas_id === '')>
@@ -124,7 +130,7 @@
                         @endif
                     </div>
                 </form>
-            </div>
+            </section>
         </div>
-    </section>
+    </div>
 </div>
