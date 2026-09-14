@@ -277,6 +277,8 @@ class HasilDinasController extends Controller
         $akademik = RekapTniPolri::where('pelajar_id', $id)->max('total_nilai');
         $psikotes = RekapPsikotes::where('pelajar_id', $id)->max('total_nilai');
         $capaian_skd = RekapDinas::where('pelajar_id', $id)->get();
+        $skd_categories = [];
+        $skd_data = [];
 
         foreach($capaian_skd as $item){
             $skd_categories[] = Carbon::parse($item->created_at)->isoFormat('LL');
@@ -284,6 +286,8 @@ class HasilDinasController extends Controller
         }
 
         $capaian_akademik = RekapTniPolri::where('pelajar_id', $id)->get();
+        $akademik_categories = [];
+        $akademik_data = [];
         foreach($capaian_akademik as $item){
             $akademik_categories[] = Carbon::parse($item->created_at)->isoFormat('LL');
             $akademik_data[] = $item->total_nilai;

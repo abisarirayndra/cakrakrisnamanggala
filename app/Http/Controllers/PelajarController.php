@@ -2,14 +2,16 @@
 
 namespace App\Http\Controllers;
 
+use App\AbsensiPelajar;
+use App\Pelajar;
+use Barryvdh\DomPDF\Facade\Pdf;
+use chillerlan\QRCode\Common\EccLevel;
+use chillerlan\QRCode\Output\QRGdImagePNG;
+use chillerlan\QRCode\QRCode;
+use chillerlan\QRCode\QROptions;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use App\PaketSoal;
-use App\Pelajar;
-use App\AbsensiPelajar;
-use App\RekapTniPolri;
-use App\RekapDinas;
-use App\RekapPsikotes;
+use Image;
 
 class PelajarController extends Controller
 {
@@ -21,13 +23,65 @@ class PelajarController extends Controller
     public function index()
     {
         $id = Auth::user()->id;
-        $user = Auth::user()->nama;
+        $akun = Auth::user()->load('kelas');
+        $user = $akun->nama;
+        $nomor_registrasi = $akun->nomor_registrasi;
+        $kelasNama = $akun->kelas?->nama;
         $data = Pelajar::where('pelajar_id',$id)->first();
         $jumlah_ontime = AbsensiPelajar::where('pelajar_id', $id)->where('status', 1)->count();
         $jumlah_terlambat = AbsensiPelajar::where('pelajar_id', $id)->where('status', 0)->count();
         $jumlah_izin = AbsensiPelajar::where('pelajar_id', $id)->where('status', 2)->count();
 
-        return view('pelajar.beranda', compact('data','user','jumlah_ontime','jumlah_terlambat','jumlah_izin'));
+        return view('pelajar.beranda', compact(
+            'data',
+            'user',
+            'nomor_registrasi',
+            'kelasNama',
+            'jumlah_ontime',
+            'jumlah_terlambat',
+            'jumlah_izin'
+        ));
+    }
+
+    public function kartuAbsensi()
+    {
+        $akun = Auth::user()->load('kelas');
+        abort_unless(filled($akun->nomor_registrasi), 404);
+
+        $data = Pelajar::where('pelajar_id', $akun->id)->first();
+        $pdf = Pdf::loadView('pelajar.kartu-absensi-pdf', [
+            'nama' => $akun->nama,
+            'kelasNama' => $akun->kelas?->nama,
+            'nomor_registrasi' => $akun->nomor_registrasi,
+            'qr' => $this->qrDataUri($akun->nomor_registrasi),
+            'foto' => $this->imageDataUri(public_path('img/pelajar/'.($data?->foto ?? ''))),
+        ])->setPaper([0, 0, 243.78, 153.07]);
+
+        return $pdf->download('kartu-absensi-'.$akun->nomor_registrasi.'.pdf');
+    }
+
+    private function qrDataUri(string $token): string
+    {
+        $options = new QROptions;
+        $options->outputInterface = QRGdImagePNG::class;
+        $options->eccLevel = EccLevel::H;
+        $options->scale = 8;
+        $options->outputBase64 = true;
+
+        return (new QRCode($options))->render($token);
+    }
+
+    private function imageDataUri(string $path): ?string
+    {
+        if ($path === '' || ! is_file($path)) {
+            return null;
+        }
+
+        try {
+            return (string) Image::make($path)->encode('data-url');
+        } catch (\Throwable) {
+            return null;
+        }
     }
 
     /**

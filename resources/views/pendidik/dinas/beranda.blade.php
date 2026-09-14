@@ -1,166 +1,108 @@
-@extends('master.master')
+@extends('layouts.panel-pendidik')
 
-@section('title')
-    <title>Computer Assisted Test - Cakra Krisna Manggala</title>
-    <style>
-        td{
-            font-size: 80%
-        }
-    </style>
-@endsection
+@section('title', 'Beranda Pendidik - Cakra Krisna Manggala')
 
 @section('content')
-<div class="container">
-    <div class="card shadow mb-4">
-        <div class="card-body">
-            <h5><i class="fas fa-hashtag text-warning"></i> Data Diri</h5>
-            <div class="p-3 mt-3">
-                <div class="row">
-                    <div class="col-xl-4 col-sm-4 text-center pb-4">
-                        <img src="{{ asset('pendidik/img/'. $data->foto) }}" width="120" alt="Belum ada foto">
-                    </div>
-                    <div class="col-xl-8 col-sm-8">
-                            <table>
-                                <tr>
-                                    <td><b>Nama</b></td>
-                                    <td class="pl-4">{{$user}}</td>
-                                </tr>
-                                <tr>
-                                    <td><b>NIK</b></td>
-                                    @if ($data->nik == null)
-                                        <td class="pl-4">--Belum Tersedia--</td>
-                                    @else
-                                        <td class="pl-4">{{$data->nik}}</td>
-                                    @endif
-                                </tr>
-                                <tr>
-                                    <td><b>NIP</b></td>
-                                    @if ($data->nip == null)
-                                        <td class="pl-4">--Belum Tersedia--</td>
-                                    @else
-                                        <td class="pl-4">{{$data->nip}}</td>
-                                    @endif
-                                </tr>
-                                <tr>
-                                    <td><b>Tempat, Tanggal Lahir</b></td>
-                                    <td class="pl-4">{{$data->tempat_lahir}}, {{\Carbon\Carbon::parse($data->tanggal_lahir)->isoFormat('D MMMM Y')}}</td>
-                                </tr>
-                                <tr>
-                                    <td><b>Alamat</b></td>
-                                    <td class="pl-4">{{$data->alamat}}</td>
-                                </tr>
-                                <tr>
-                                    <td><b>Mata Pelajaran</b></td>
-                                    <td class="pl-4">{{$data->mapel}}</td>
-                                </tr>
-                                <tr>
-                                    <td><b>No. Telpon/WhatsApp</b></td>
-                                    <td class="pl-4">{{$data->wa}}</td>
-                                </tr>
-                                <tr>
-                                    <td><b>Nama Ibu Kandung</b></td>
-                                    @if ($data->ibu == null)
-                                        <td class="pl-4">--Belum Tersedia--</td>
-                                    @else
-                                        <td class="pl-4">{{$data->ibu}}</td>
-                                    @endif
-                                </tr>
-                                <tr>
-                                    <td><b>Status Dapodik</b></td>
-                                    <td class="pl-4">{{$data->status_dapodik}}</td>
-                                </tr>
-                                <tr>
-                                    <td><b>Tanggal Daftar</b></td>
-                                    <td class="pl-4">{{\Carbon\Carbon::parse($data->created_at)->isoFormat('dddd, D MMMM Y HH:mm')}}</td>
-                                </tr>
-                            </table>
-                                {{-- <a href="" class="btn btn-sm btn-success mt-4"><i class="fas fa-cloud-download-alt"></i> Unduh CV</a> --}}
-                                <a href="{{ route('pendidik.dinas.edit') }}" class="btn btn-warning btn-sm mt-4 ml-3"><i class="fas fa-edit"></i> Edit</a>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="card shadow mb-4">
-        <div class="card-body">
-            @if ($data->tempat_lahir == null)
-            <h5><i class="fas fa-hashtag text-warning"></i> Menu (Not Available)</h5>
-            <ul>
-                <li class="text-danger"><b>SILAKAN MELAKUKAN EDIT DATA DIRI DAHULU SEBELUM MENGAKSES MENU</b></li>
-            </ul>
-            <div class="p-3 mt-3">
-                <div class="row">
-                    <div class="col-xl-3 col-md-3 text-center">
-                        <button style="background-color: transparent; border: 0px" disabled>
-                            <span class="fa-stack fa-3x">
-                                <i class="fas fa-circle fa-stack-2x text-warning"></i>
-                                <i class="fas fa-calendar fa-stack-1x fa-inverse"></i>
-                            </span>
-                                <h6 class="my-3 text-dark">Paket Soal (Not Available)</h6>
-                        </button>
-                    </div>
-                    <div class="col-xl-3 col-md-3 text-center">
-                        <button style="background-color: transparent; border: 0px" disabled>
-                            <span class="fa-stack fa-3x">
-                                <i class="fas fa-circle fa-stack-2x text-warning"></i>
-                                <i class="fas fa-qrcode fa-stack-1x fa-inverse"></i>
-                            </span>
-                                <h6 class="my-3 text-dark">Absensi (Not Available)</h6>
-                        </button>
-                    </div>
-                </div>
-            </div>
-            @else
-            <h5><i class="fas fa-hashtag text-warning"></i> Menu</h5>
-            <div class="p-3 mt-3">
-                <div class="row">
-                    <div class="col-xl-3 col-md-3 text-center">
-                        <a href="{{ route('pendidik.dinas.paket') }}">
-                            <span class="fa-stack fa-3x">
-                                <i class="fas fa-circle fa-stack-2x text-warning"></i>
-                                <i class="fas fa-calendar fa-stack-1x fa-inverse"></i>
-                            </span>
-                                <h6 class="my-3 text-dark">Paket Soal</h6>
-                        </a>
-                    </div>
-                    <div class="col-xl-3 col-md-3 text-center">
-                        <a href="{{ route('pendidik.dinas.analisis') }}">
-                            <span class="fa-stack fa-3x">
-                                <i class="fas fa-circle fa-stack-2x text-warning"></i>
-                                <i class="fas fa-chart-bar fa-stack-1x fa-inverse"></i>
-                            </span>
-                                <h6 class="my-3 text-dark">Analisis</h6>
-                        </a>
-                    </div>
-                    <div class="col-xl-3 col-md-3 text-center">
-                        <a href="{{ route('pendidik.absensi') }}">
-                            <span class="fa-stack fa-3x">
-                                <i class="fas fa-circle fa-stack-2x text-warning"></i>
-                                <i class="fas fa-qrcode fa-stack-1x fa-inverse"></i>
-                            </span>
-                                <h6 class="my-3 text-dark">Absensi</h6>
-                        </a>
-                    </div>
-                    @if ($data->mapel == "Jasmani")
-                    <div class="col-xl-3 col-md-3 text-center">
-                        <a href="{{ route('pendidik.absensi.jadwal_jasmani') }}">
-                            <span class="fa-stack fa-3x">
-                                <i class="fas fa-circle fa-stack-2x text-warning"></i>
-                                <i class="fas fa-search fa-stack-1x fa-inverse"></i>
-                            </span>
-                                <h6 class="my-3 text-dark">Absen Lapangan</h6>
-                        </a>
-                    </div>
+    <section class="ck-card p-4 p-md-5 mb-4">
+        <p class="text-uppercase small fw-semibold mb-1" style="color: var(--ck-gold);">Pendidik</p>
+        <h1 class="h3 mb-2">Selamat datang, {{ $user }}</h1>
+        <p class="ck-hint mb-4">Ringkasan data diri Anda.</p>
+
+        <div class="row g-4 align-items-start">
+            <div class="col-md-3 text-center">
+                <div class="ck-photo-frame mx-auto">
+                    @if ($data->foto)
+                        <img src="{{ asset('pendidik/img/'.$data->foto) }}" alt="Foto {{ $user }}">
                     @endif
                 </div>
             </div>
-            @endif
-
+            <div class="col-md-9">
+                <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3">
+                    <h2 class="h5 mb-0">Data Diri</h2>
+                    <div class="d-flex flex-wrap gap-2">
+                        <button type="button" class="btn btn-ck-ghost" data-bs-toggle="modal" data-bs-target="#kartu-absensi-modal">
+                            Kartu Absensi
+                        </button>
+                        <a href="{{ route('pendidik.dinas.edit') }}" class="btn btn-ck-ghost">Edit</a>
+                    </div>
+                </div>
+                <dl class="ck-meta row mb-0">
+                    <dt class="col-sm-4">Nama</dt>
+                    <dd class="col-sm-8">{{ $user }}</dd>
+                    <dt class="col-sm-4">NIK</dt>
+                    <dd class="col-sm-8">{{ $data->nik ?: '—' }}</dd>
+                    <dt class="col-sm-4">NIP</dt>
+                    <dd class="col-sm-8">{{ $data->nip ?: '—' }}</dd>
+                    <dt class="col-sm-4">Tempat, tanggal lahir</dt>
+                    <dd class="col-sm-8">
+                        {{ $data->tempat_lahir ?: '—' }},
+                        {{ $data->tanggal_lahir ? \Carbon\Carbon::parse($data->tanggal_lahir)->isoFormat('D MMMM Y') : '—' }}
+                    </dd>
+                    <dt class="col-sm-4">Alamat</dt>
+                    <dd class="col-sm-8">{{ $data->alamat ?: '—' }}</dd>
+                    <dt class="col-sm-4">Mata pelajaran</dt>
+                    <dd class="col-sm-8">{{ $data->mapel ?: '—' }}</dd>
+                    <dt class="col-sm-4">No. telpon/WhatsApp</dt>
+                    <dd class="col-sm-8">{{ $data->wa ?: '—' }}</dd>
+                    <dt class="col-sm-4">Nama ibu kandung</dt>
+                    <dd class="col-sm-8">{{ $data->ibu ?: '—' }}</dd>
+                    <dt class="col-sm-4">Status Dapodik</dt>
+                    <dd class="col-sm-8">{{ $data->status_dapodik ?: '—' }}</dd>
+                    <dt class="col-sm-4">Tanggal daftar</dt>
+                    <dd class="col-sm-8">
+                        {{ $data->created_at ? \Carbon\Carbon::parse($data->created_at)->isoFormat('dddd, D MMMM Y HH:mm') : '—' }}
+                    </dd>
+                </dl>
+            </div>
         </div>
-    </div>
-</div>
+    </section>
+
+    <section class="ck-card p-4 p-md-5">
+        @if ($data->tempat_lahir == null)
+            <h2 class="h5 mb-3">Menu</h2>
+            <p class="mb-2" style="color: var(--ck-danger);"><b>SILAKAN MELAKUKAN EDIT DATA DIRI DAHULU SEBELUM MENGAKSES MENU</b></p>
+            <div class="d-flex flex-wrap gap-2">
+                <button type="button" class="btn btn-ck-ghost" disabled>Paket Soal (Not Available)</button>
+                <button type="button" class="btn btn-ck-ghost" disabled>Absensi (Not Available)</button>
+            </div>
+        @else
+            <h2 class="h5 mb-3">Menu</h2>
+            <div class="d-flex flex-wrap gap-2">
+                <a href="{{ route('pendidik.dinas.paket') }}" class="btn btn-ck">Paket Soal</a>
+                <a href="{{ route('pendidik.dinas.analisis') }}" class="btn btn-ck-ghost">Analisis</a>
+                <a href="{{ route('pendidik.absensi') }}" class="btn btn-ck-ghost">Absensi</a>
+                @if ($data->mapel == 'Jasmani')
+                    <a href="{{ route('pendidik.absensi.jadwal_jasmani') }}" class="btn btn-ck-ghost">Absen Lapangan</a>
+                @endif
+            </div>
+        @endif
+    </section>
+    @include('pendidik.partials.kartu-absensi')
 @endsection
 
-@section('js')
+@push('scripts')
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const modal = document.getElementById('kartu-absensi-modal');
+        const el = document.querySelector('#kartu-absensi-qr');
+        if (!modal || !el || !el.dataset.qrToken || typeof QRCode === 'undefined') {
+            return;
+        }
 
-@endsection
+        modal.addEventListener('shown.bs.modal', () => {
+            if (el.dataset.ready === '1') {
+                return;
+            }
+            new QRCode(el, {
+                text: el.dataset.qrToken,
+                width: 148,
+                height: 148,
+                colorDark: '#1B2430',
+                colorLight: '#ffffff',
+                correctLevel: QRCode.CorrectLevel.H
+            });
+            el.dataset.ready = '1';
+        });
+    });
+</script>
+@endpush

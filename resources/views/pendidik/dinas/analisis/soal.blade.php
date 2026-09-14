@@ -1,16 +1,10 @@
-@extends('master.master')
+@extends('layouts.panel-pendidik')
 
-@section('title')
-<title>Computer Assisted Test - Cakra Krisna Manggala</title>
-@endsection
+@section('title', 'Analisis Jawaban - Cakra Krisna Manggala')
 
 @section('content')
-    <!-- Begin Page Content -->
-<div class="container">
-
-    <!-- Page Heading -->
-    <!-- DataTales Example -->
-    <div class="card shadow mb-4">
+<div>
+    <div class="ck-card mb-4">
         <div class="card-body">
             <h5><b>Analisis Jawaban</b></h5>
         </div>

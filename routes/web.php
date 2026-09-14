@@ -151,6 +151,7 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth','admin-role']], funct
 
 Route::group(['prefix' => 'pendidik','middleware' => ['auth','pengajar-role']], function(){
     Route::get('/beranda',[PengajarController::class, 'index'])->name('pendidik.dinas.beranda');
+    Route::get('/kartu-absensi', [PengajarController::class, 'kartuAbsensi'])->name('pendidik.kartu-absensi');
     Route::get('/edit-profil',[PengajarController::class, 'edit'])->name('pendidik.dinas.edit');
     Route::post('/update-profil',[PengajarController::class, 'update'])->name('pendidik.dinas.updateprofil');
     Route::get('/paket',[PaketDinasController::class, 'pendidikPaket'])->name('pendidik.dinas.paket');
@@ -232,6 +233,7 @@ Route::group(['prefix' => 'pelajar','middleware' => ['auth','pelajar-role']], fu
     Route::get('/masukkan_token',[TesDinasController::class, 'masukToken'])->name('pelajar.masukkan_token');
     Route::post('/submit_token',[TesDinasController::class, 'submitToken'])->name('pelajar.submit_token');
     Route::get('/capaian_tes', [HasilDinasController::class, 'capaian'])->name('pelajar.capaian');
+    Route::get('/kartu-absensi', [PelajarController::class, 'kartuAbsensi'])->name('pelajar.kartu-absensi');
 });
 
 Route::group(['prefix' => 'staf-admin', 'middleware' => ['auth','admin-role']], function(){

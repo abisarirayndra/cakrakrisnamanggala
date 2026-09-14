@@ -9,6 +9,12 @@ use App\Pendidik;
 use App\Mapel;
 use Validator;
 use Alert;
+use Barryvdh\DomPDF\Facade\Pdf;
+use chillerlan\QRCode\Common\EccLevel;
+use chillerlan\QRCode\Output\QRGdImagePNG;
+use chillerlan\QRCode\QRCode;
+use chillerlan\QRCode\QROptions;
+use Image;
 
 class PengajarController extends Controller
 {
@@ -19,18 +25,60 @@ class PengajarController extends Controller
      */
     public function index()
     {
-        $user = Auth::user()->nama;
-        $id = Auth::user()->id;
-        // return $id;
+        $akun = Auth::user();
+        $user = $akun->nama;
+        $nomor_registrasi = $akun->nomor_registrasi;
         $data = Pendidik::select('users.nama','adm_pendidik.tempat_lahir','adm_pendidik.tanggal_lahir',
                                 'adm_pendidik.alamat','adm_pendidik.nik','adm_pendidik.nip','mapels.mapel',
                                 'adm_pendidik.wa','adm_pendidik.ibu','adm_pendidik.foto','adm_pendidik.cv',
-                                'adm_pendidik.markas','adm_pendidik.status_dapodik')
+                                'adm_pendidik.markas','adm_pendidik.status_dapodik','adm_pendidik.created_at')
                 ->join('users','users.id','=','adm_pendidik.pendidik_id')
                 ->join('mapels','mapels.id','=','adm_pendidik.mapel_id')
-                ->where('adm_pendidik.pendidik_id', $id)
+                ->where('adm_pendidik.pendidik_id', $akun->id)
                 ->firstOrFail();
-        return view('pendidik.dinas.beranda', compact('user','data'));
+
+        return view('pendidik.dinas.beranda', compact('user', 'data', 'nomor_registrasi'));
+    }
+
+    public function kartuAbsensi()
+    {
+        $akun = Auth::user();
+        abort_unless(filled($akun->nomor_registrasi), 404);
+
+        $data = Pendidik::with('mapel')->where('pendidik_id', $akun->id)->first();
+        $pdf = Pdf::loadView('pendidik.kartu-absensi-pdf', [
+            'nama' => $akun->nama,
+            'mapelNama' => $data?->mapel?->mapel,
+            'nomor_registrasi' => $akun->nomor_registrasi,
+            'qr' => $this->qrDataUri($akun->nomor_registrasi),
+            'foto' => $this->imageDataUri(public_path('pendidik/img/'.($data?->foto ?? ''))),
+        ])->setPaper([0, 0, 243.78, 153.07]);
+
+        return $pdf->download('kartu-absensi-'.$akun->nomor_registrasi.'.pdf');
+    }
+
+    private function qrDataUri(string $token): string
+    {
+        $options = new QROptions;
+        $options->outputInterface = QRGdImagePNG::class;
+        $options->eccLevel = EccLevel::H;
+        $options->scale = 8;
+        $options->outputBase64 = true;
+
+        return (new QRCode($options))->render($token);
+    }
+
+    private function imageDataUri(string $path): ?string
+    {
+        if ($path === '' || ! is_file($path)) {
+            return null;
+        }
+
+        try {
+            return (string) Image::make($path)->encode('data-url');
+        } catch (\Throwable) {
+            return null;
+        }
     }
 
     /**

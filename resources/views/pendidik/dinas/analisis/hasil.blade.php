@@ -1,99 +1,71 @@
-@extends('master.master')
+@extends('layouts.panel-pendidik')
 
-@section('title')
-<title>Computer Assisted Test - Cakra Krisna Manggala</title>
-    <link href="{{asset('vendor/datatables/datatables.min.css')}}" rel="stylesheet">
-@endsection
+@section('title', 'Hasil Penilaian - Cakra Krisna Manggala')
 
 @section('content')
-    <!-- Begin Page Content -->
-<div class="container">
-
-    <!-- Page Heading -->
-    <div class="text-right mr-3">
-        <a href="{{ route('pendidik.dinas.analisis') }}" class="btn btn-sm btn-danger"><i class="fas fa-times"></i></a>
-    </div>
-    <p class="mb-4"></p>
-    <!-- DataTales Example -->
-    <div class="card shadow mb-4">
-        <div class="card-body">
-            <h1 class="h3 mb-2 text-gray-800">Hasil Penilaian</h1>
-            <div class="p-3">
-                <div class="row mb-3">
-                    <form action="{{ route('pendidik.dinas.cetakhasil') }}" method="GET">
-                        <input name="kelas" value="{{ $selected }}" hidden>
-                        <input name="token" value="{{ $arsip }}" hidden>
-                        <input name="tes_id" value="{{ $tes_id }}" hidden>
-                        <button type="submit" class="btn btn-sm btn-success"><i class="fas fa-file-pdf"></i> Unduh PDF</button>
-                    </form>
-                </div>
-                <div class="mb-3">
-                    <form action="{{ route('pendidik.dinas.hasil') }}" method="GET">
-                        <div class="form-group">
-                            <label for="kelas"><b>Filter Kelas</b></label>
-                            <div class="row">
-                                <div class="col-6">
-                                    <input type="text" name="token" value="{{ $arsip }}" hidden>
-                                    <select name="kelas" id="" class="form-control">
-                                        <option value="" @if($selected == "") {{'selected="selected"'}} @endif >Semua Kelas</option>
-                                        @foreach ($kelas as $item)
-                                            <option value="{{ $item->id }}" @if($item->id == $selected) {{'selected="selected"'}} @endif >{{ $item->nama }}</option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                                <div class="col-6">
-                                    <div style="display: block">
-                                        <button class="btn btn-sm btn-primary"><i class="fas fa-filter"></i> Filter</button>
-
-                                    </div>
-
-                                </div>
-                            </div>
-                        </div>
-                    </form>
-                </div>
-                <div class="table-responsive">
-                    <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
-                      <thead>
-                        <tr>
-                          <th>Ranking</th>
-                          <th>Nama Pelajar</th>
-                          <th>Kelas</th>
-                          <th>Nilai</th>
-                          <th>Akumulasi Bobot</th>
-                          <th>Waktu Pengumpulan</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        @php
-                        $no = 1;
-                        @endphp
-                        @foreach ($nilai as $item)
-                        <tr>
-                        <td>{{$no++}}</td>
-                        <td>{{$item->nama}}</td>
-                        <td>{{ $item->kelas }}</td>
-                        <td>{{$item->nilai}}</td>
-                        <td>{{$item->akumulasi}}</td>
-                        <td>{{\Carbon\Carbon::parse($item->created_at)->isoFormat('dddd, D MMMM Y HH:mm')}}</td>
-                        </tr>
-                          @endforeach
-                      </tbody>
-                    </table>
-                </div>
-            </div>
+    <div class="d-flex flex-wrap align-items-start justify-content-between gap-3 mb-4">
+        <div>
+            <p class="text-uppercase small fw-semibold mb-1" style="color: var(--ck-gold);">Analisis</p>
+            <h1 class="h3 mb-1">Hasil Penilaian</h1>
         </div>
+        <a href="{{ route('pendidik.dinas.analisis') }}" class="btn btn-ck-ghost">Kembali</a>
     </div>
-</div>
 
+    <section class="ck-card p-4 p-md-5">
+        <div class="d-flex flex-wrap gap-2 mb-4">
+            <form action="{{ route('pendidik.dinas.cetakhasil') }}" method="GET">
+                <input name="kelas" value="{{ $selected }}" hidden>
+                <input name="token" value="{{ $arsip }}" hidden>
+                <input name="tes_id" value="{{ $tes_id }}" hidden>
+                <button type="submit" class="btn btn-ck">
+                    <i class="bi bi-download"></i> Unduh PDF
+                </button>
+            </form>
+        </div>
+        <form action="{{ route('pendidik.dinas.hasil') }}" method="GET" class="row g-3 align-items-end mb-4">
+            <input type="hidden" name="token" value="{{ $arsip }}">
+            <div class="col-md-6">
+                <label for="kelas" class="form-label">Filter kelas</label>
+                <select name="kelas" id="kelas" class="form-select">
+                    <option value="" @selected($selected == '')>Semua kelas</option>
+                    @foreach ($kelas as $item)
+                        <option value="{{ $item->id }}" @selected($item->id == $selected)>{{ $item->nama }}</option>
+                    @endforeach
+                </select>
+            </div>
+            <div class="col-md-3">
+                <button class="btn btn-ck-ghost" type="submit">Filter</button>
+            </div>
+        </form>
+        <div class="table-responsive">
+            <table class="table align-middle">
+                <thead>
+                    <tr>
+                        <th>Ranking</th>
+                        <th>Nama pelajar</th>
+                        <th>Kelas</th>
+                        <th>Nilai</th>
+                        <th>Akumulasi bobot</th>
+                        <th>Waktu pengumpulan</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @forelse ($nilai as $item)
+                        <tr>
+                            <td>{{ $loop->iteration }}</td>
+                            <td>{{ $item->nama }}</td>
+                            <td>{{ $item->kelas }}</td>
+                            <td>{{ $item->nilai }}</td>
+                            <td>{{ $item->akumulasi }}</td>
+                            <td>{{ \Carbon\Carbon::parse($item->created_at)->isoFormat('dddd, D MMMM Y HH:mm') }}</td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="6" class="ck-hint">Belum ada hasil penilaian.</td>
+                        </tr>
+                    @endforelse
+                </tbody>
+            </table>
+        </div>
+    </section>
 @endsection
-
-@section('js')
-<!-- Page level plugins -->
-<script src="{{asset('vendor/datatables/jquery.dataTables.min.js')}}"></script>
-<script src="{{asset('vendor/datatables/datatables.min.js')}}"></script>
-
-<!-- Page level custom scripts -->
-<script src="{{asset('js/demo/datatables-demo.js')}}"></script>
-@endsection
-

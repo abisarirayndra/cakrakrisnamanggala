@@ -1,170 +1,108 @@
-@extends('master.pelajar')
+@extends('layouts.panel-pelajar')
 
-@section('title')
-    <title>Computer Assisted Test - Cakra Krisna Manggala</title>
-    <style>
-        td{
-            font-size: 80%
-        }
-    </style>
-@endsection
+@section('title', 'Beranda Pelajar - Cakra Krisna Manggala')
 
 @section('content')
-<div class="container">
-    <div class="card shadow mb-4">
-        <div class="card-body">
-            <h5><i class="fas fa-hashtag text-warning"></i> Data Diri</h5>
-            <div class="p-3 mt-3">
-                <div class="row">
-                    <div class="col-xl-4 col-sm-4 text-center pb-4">
-                        <img src="{{asset('img/pelajar/'. $data->foto)}}" width="120" alt="">
-                    </div>
-                    <div class="col-xl-8 col-sm-8">
-                            <table>
-                                <tr>
-                                    <td><b>Nama</b></td>
-                                    <td class="pl-4">{{$user}}</td>
-                                </tr>
-                                <tr>
-                                    <td><b>NIK</b></td>
-                                    @if ($data->nik == null)
-                                        <td class="pl-4">--Belum Tersedia--</td>
-                                    @else
-                                        <td class="pl-4">{{$data->nik}}</td>
-                                    @endif
-                                </tr>
-                                <tr>
-                                    <td><b>NISN</b></td>
-                                    @if ($data->nisn == null)
-                                        <td class="pl-4">--Belum Tersedia--</td>
-                                    @else
-                                        <td class="pl-4">{{$data->nisn}}</td>
-                                    @endif
-                                </tr>
-                                <tr>
-                                    <td><b>Tempat, Tanggal Lahir</b></td>
-                                    <td class="pl-4">{{$data->tempat_lahir}}, {{\Carbon\Carbon::parse($data->tanggal_lahir)->isoFormat('D MMMM Y')}}</td>
-                                </tr>
-                                <tr>
-                                    <td><b>Alamat</b></td>
-                                    <td class="pl-4">{{$data->alamat}}</td>
-                                </tr>
-                                <tr>
-                                    <td><b>Asal Sekolah</b></td>
-                                    <td class="pl-4">{{$data->sekolah}}</td>
-                                </tr>
-                                <tr>
-                                    <td><b>Nama Wali</b></td>
-                                    <td class="pl-4">{{$data->wali}}</td>
-                                </tr>
-                                <tr>
-                                    <td><b>Tanggal Daftar</b></td>
-                                    <td class="pl-4">{{\Carbon\Carbon::parse($data->created_at)->isoFormat('dddd, D MMMM Y HH:mm')}}</td>
-                                </tr>
-                            </table>
-                                {{-- <a href="{{route('pendaftar.cetak_pdf', [$data->id])}}" target="_blank" class="btn btn-success mt-4"><i class="fas fa-cloud-download-alt"></i> Unduh PDF</a> --}}
-                                {{-- <a href="" class="btn btn-warning mt-4 ml-3"><i class="fas fa-edit"></i> Edit</a> --}}
-                    </div>
+    <section class="ck-card p-4 p-md-5 mb-4">
+        <p class="text-uppercase small fw-semibold mb-1" style="color: var(--ck-gold);">Pelajar</p>
+        <h1 class="h3 mb-2">Selamat datang, {{ $user }}</h1>
+        <p class="ck-hint mb-4">Ringkasan data diri dan kehadiran Anda.</p>
+
+        <div class="row g-4 align-items-start">
+            <div class="col-md-3 text-center">
+                <div class="ck-photo-frame mx-auto">
+                    @if ($data?->foto)
+                        <img src="{{ asset('img/pelajar/'.$data->foto) }}" alt="Foto {{ $user }}">
+                    @endif
                 </div>
             </div>
+            <div class="col-md-9">
+                <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3">
+                    <h2 class="h5 mb-0">Data Diri</h2>
+                    <button type="button" class="btn btn-ck-ghost" data-bs-toggle="modal" data-bs-target="#kartu-absensi-modal">
+                        Kartu Absensi
+                    </button>
+                </div>
+                <dl class="ck-meta row mb-0">
+                    <dt class="col-sm-4">Nama</dt>
+                    <dd class="col-sm-8">{{ $user }}</dd>
+                    <dt class="col-sm-4">NIK</dt>
+                    <dd class="col-sm-8">{{ $data?->nik ?: '—' }}</dd>
+                    <dt class="col-sm-4">NISN</dt>
+                    <dd class="col-sm-8">{{ $data?->nisn ?: '—' }}</dd>
+                    <dt class="col-sm-4">Tempat, tanggal lahir</dt>
+                    <dd class="col-sm-8">
+                        {{ $data?->tempat_lahir ?: '—' }},
+                        {{ $data?->tanggal_lahir?->isoFormat('D MMMM Y') ?: '—' }}
+                    </dd>
+                    <dt class="col-sm-4">Alamat</dt>
+                    <dd class="col-sm-8">{{ $data?->alamat ?: '—' }}</dd>
+                    <dt class="col-sm-4">Asal sekolah</dt>
+                    <dd class="col-sm-8">{{ $data?->sekolah ?: '—' }}</dd>
+                    <dt class="col-sm-4">Nama wali</dt>
+                    <dd class="col-sm-8">{{ $data?->wali ?: '—' }}</dd>
+                    <dt class="col-sm-4">Tanggal daftar</dt>
+                    <dd class="col-sm-8">{{ $data?->created_at?->isoFormat('dddd, D MMMM Y HH:mm') ?: '—' }}</dd>
+                </dl>
+            </div>
+        </div>
+    </section>
+
+    <div class="row g-3 mb-4">
+        <div class="col-md-4">
+            <section class="ck-card p-4 h-100">
+                <p class="ck-hint mb-1">Jumlah Ontime</p>
+                <p class="h3 mb-0" style="color: var(--ck-success);">{{ $jumlah_ontime }}</p>
+            </section>
+        </div>
+        <div class="col-md-4">
+            <section class="ck-card p-4 h-100">
+                <p class="ck-hint mb-1">Jumlah Terlambat</p>
+                <p class="h3 mb-0" style="color: var(--ck-danger);">{{ $jumlah_terlambat }}</p>
+            </section>
+        </div>
+        <div class="col-md-4">
+            <section class="ck-card p-4 h-100">
+                <p class="ck-hint mb-1">Jumlah Izin</p>
+                <p class="h3 mb-0">{{ $jumlah_izin }}</p>
+            </section>
         </div>
     </div>
-    <div class="row">
 
-        <!-- Earnings (Monthly) Card Example -->
-        <div class="col-xl-4 col-md-6 col-sm-6 col-xs-6 mb-4">
-            <div class="card border-left-success shadow h-100 py-2">
-                <div class="card-body">
-                    <div class="row no-gutters align-items-center">
-                        <div class="col mr-2">
-                            <div class="text-xs font-weight-bold text-dark text-uppercase mb-1">
-                                Jumlah Ontime</div>
-                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ $jumlah_ontime }}</div>
-                        </div>
-                        <div class="col-auto">
-                            <i class="fas fa-calendar fa-2x text-gray-300"></i>
-                        </div>
-                    </div>
-                </div>
-            </div>
+    <section class="ck-card p-4 p-md-5">
+        <h2 class="h5 mb-3">Menu</h2>
+        <div class="d-flex flex-wrap gap-2">
+            <a href="{{ route('pelajar.masukkan_token') }}" class="btn btn-ck">CAT</a>
+            <a href="{{ route('pelajar.capaian') }}" class="btn btn-ck-ghost">Capaian Tes</a>
+            <a href="{{ route('pelajar.absensi') }}" class="btn btn-ck-ghost">Absensi</a>
         </div>
-
-        <!-- Earnings (Annual) Card Example -->
-        <div class="col-xl-4 col-md-6 col-sm-6 col-xs-6 mb-4">
-            <div class="card border-left-danger shadow h-100 py-2">
-                <div class="card-body">
-                    <div class="row no-gutters align-items-center">
-                        <div class="col mr-2">
-                            <div class="text-xs font-weight-bold text-dark text-uppercase mb-1">
-                                Jumlah Terlambat</div>
-                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ $jumlah_terlambat }}</div>
-                        </div>
-                        <div class="col-auto">
-                            <i class="fas fa-calendar fa-2x text-gray-300"></i>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Tasks Card Example -->
-        <div class="col-xl-4 col-md-6 col-sm-6 col-xs-6 mb-4">
-            <div class="card border-left-info shadow h-100 py-2">
-                <div class="card-body">
-                    <div class="row no-gutters align-items-center">
-                        <div class="col mr-2">
-                            <div class="text-xs font-weight-bold text-info text-uppercase mb-1">Jumlah Izin
-                            </div>
-                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ $jumlah_izin }}</div>
-                        </div>
-                        <div class="col-auto">
-                            <i class="fas fa-clipboard-list fa-2x text-gray-300"></i>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="card shadow mb-4">
-        <div class="card-body">
-            <h5><i class="fas fa-hashtag text-warning"></i> Menu</h5>
-            <div class="p-3 mt-3">
-                <div class="row">
-
-                    <div class="col-xl-3 col-md-3 text-center">
-                        <a href="{{ route('pelajar.masukkan_token') }}">
-                            <span class="fa-stack fa-3x">
-                                <i class="fas fa-circle fa-stack-2x text-warning"></i>
-                                <i class="fas fa-calendar fa-stack-1x fa-inverse"></i>
-                            </span>
-                                <h6 class="my-3 text-dark">CAT</h6>
-                        </a>
-                    </div>
-                    <div class="col-xl-3 col-md-3 text-center">
-                        <a href="{{ route('pelajar.capaian') }}">
-                            <span class="fa-stack fa-3x">
-                                <i class="fas fa-circle fa-stack-2x text-warning"></i>
-                                <i class="fas fa-chart-area fa-stack-1x fa-inverse"></i>
-                            </span>
-                                <h6 class="my-3 text-dark">Capaian Tes</h6>
-                        </a>
-                    </div>
-                    <div class="col-xl-3 col-md-3 text-center">
-                        <a href="{{ route('pelajar.absensi') }}">
-                            <span class="fa-stack fa-3x">
-                                <i class="fas fa-circle fa-stack-2x text-warning"></i>
-                                <i class="fas fa-qrcode fa-stack-1x fa-inverse"></i>
-                            </span>
-                                <h6 class="my-3 text-dark">Absensi</h6>
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
+    </section>
+    @include('pelajar.partials.kartu-absensi')
 @endsection
 
-@section('js')
+@push('scripts')
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const modal = document.getElementById('kartu-absensi-modal');
+        const el = document.querySelector('#kartu-absensi-qr');
+        if (!modal || !el || !el.dataset.qrToken || typeof QRCode === 'undefined') {
+            return;
+        }
 
-@endsection
+        modal.addEventListener('shown.bs.modal', () => {
+            if (el.dataset.ready === '1') {
+                return;
+            }
+            new QRCode(el, {
+                text: el.dataset.qrToken,
+                width: 148,
+                height: 148,
+                colorDark: '#1B2430',
+                colorLight: '#ffffff',
+                correctLevel: QRCode.CorrectLevel.H
+            });
+            el.dataset.ready = '1';
+        });
+    });
+</script>
+@endpush

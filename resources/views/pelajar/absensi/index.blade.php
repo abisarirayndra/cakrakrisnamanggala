@@ -1,131 +1,102 @@
-@extends('master.pelajar')
+@extends('layouts.panel-pelajar')
 
-@section('title')
-    <title>Cakra Krisna Manggala</title>
-    <link href="{{asset('vendor/datatables/datatables.min.css')}}" rel="stylesheet">
-@endsection
+@section('title', 'Absensi Pelajar - Cakra Krisna Manggala')
 
 @section('content')
-<div class="container">
-    <div class="card shadow mb-4">
-        <div class="card-body">
-            <h5><i class="fas fa-hashtag text-warning"></i> Absensi Pelajar</h5>
-            <ul>
-                <li>Klik tombol <b>Kode QR</b> di bawah ini</li>
-                <li>Dekatkan layar perangkat anda ke scanner, tambah kecerahan perangkat anda bila tidak bisa terbaca scanner</li>
-                <li>Klik tombol <b>Selesai</b> jika proses pembelajaran berakhir</li>
-            </ul>
-            <input id="text" value="{{ $token }}" hidden/>
-            <div class="row">
-                <button id="btn-qrcode" class="btn btn-success btn-sm mt-4 ml-3" data-toggle="modal" data-target="#qrcode-modal"><i class="fas fa-qrcode"></i> Kode QR</button>
-                {{-- <button class="btn btn-sm btn-danger mt-4 ml-2"  data-toggle="modal" data-target="#absensi-outdoor"><i class="fas fa-pen"></i> Absensi Outdoor</button> --}}
-                <form action="{{ route('pelajar.absensi.histori-pembelajaran') }}" method="GET">
-                    @php
-                        $sekarang = \Carbon\Carbon::now();
-                    @endphp
-                    <input type="text" value="{{ $sekarang->format('m') }}" hidden name="bulan">
-                    <input type="text" value="{{ $sekarang->format('Y') }}" hidden name="tahun">
-                    <button class="btn btn-sm btn-warning mt-4 ml-2" type="submit"><i class="fas fa-list"></i> Histori Pembelajaran</a>
-                </form>
+    <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-4">
+        <div>
+            <p class="text-uppercase small fw-semibold mb-1" style="color: var(--ck-gold);">Kehadiran</p>
+            <h1 class="h3 mb-1">Absensi Pelajar</h1>
+            <p class="ck-hint mb-0">Tunjukkan kode QR kepada petugas, lalu selesaikan sesi setelah pembelajaran berakhir.</p>
+        </div>
+        <div class="d-flex flex-wrap gap-2">
+            <button id="btn-qrcode" type="button" class="btn btn-ck" data-bs-toggle="modal" data-bs-target="#qrcode-modal">
+                <i class="bi bi-qr-code-scan"></i> Kode QR
+            </button>
+            <form action="{{ route('pelajar.absensi.histori-pembelajaran') }}" method="GET">
+                @php
+                    $sekarang = \Carbon\Carbon::now();
+                @endphp
+                <input type="hidden" name="bulan" value="{{ $sekarang->format('m') }}">
+                <input type="hidden" name="tahun" value="{{ $sekarang->format('Y') }}">
+                <button class="btn btn-ck-ghost" type="submit">
+                    <i class="bi bi-clock-history"></i> Histori Pembelajaran
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <section class="ck-card p-4 mb-4">
+        <ol class="ck-hint mb-0 ps-3">
+            <li>Klik tombol <b>Kode QR</b> di bawah ini</li>
+            <li>Dekatkan layar perangkat anda ke scanner, tambah kecerahan perangkat anda bila tidak bisa terbaca scanner</li>
+            <li>Klik tombol <b>Selesai</b> jika proses pembelajaran berakhir</li>
+        </ol>
+        <input id="text" value="{{ $token }}" hidden>
+        @if ($errors->any())
+            <div class="alert alert-ck mt-3 mb-0">{{ $errors->first() }}</div>
+        @endif
+    </section>
+
+    <div class="row g-3">
+        @forelse ($jadwal as $item)
+            <div class="col-md-6 col-xl-3">
+                <section class="ck-card p-4 h-100">
+                    <p class="text-uppercase small fw-semibold mb-2" style="color: var(--ck-gold);">
+                        {{ \Carbon\Carbon::parse($item->mulai)->isoFormat('dddd, D MMMM Y') }}
+                    </p>
+                    @if ($item->status == 0)
+                        <p class="mb-2" style="color: var(--ck-danger);">Terlambat</p>
+                    @elseif ($item->status == 1)
+                        <p class="mb-2" style="color: var(--ck-success);">Ontime</p>
+                    @endif
+                    <p class="mb-1">Datang <b>{{ \Carbon\Carbon::parse($item->datang)->isoFormat('HH:mm') }}</b></p>
+                    <p class="mb-1">Mapel <b>{{ $item->mapel }}</b></p>
+                    <p class="mb-1">Kelas <b>{{ $item->kelas }}</b></p>
+                    <p class="mb-0 ck-hint">
+                        {{ \Carbon\Carbon::parse($item->mulai)->isoFormat('HH:mm') }} –
+                        {{ \Carbon\Carbon::parse($item->selesai)->isoFormat('HH:mm') }}
+                    </p>
+                </section>
             </div>
+        @empty
+            <div class="col-12">
+                <section class="ck-card p-4">
+                    <p class="ck-hint mb-0">Belum ada absensi yang sedang berjalan.</p>
+                </section>
+            </div>
+        @endforelse
+    </div>
 
-
-
-            <div class="p-3 mt-3">
-                @if ($errors->any())
-                                        <div class="alert alert-danger">
-                                            <ul>
-                                                <li>{{ $errors->first() }}</li>
-                                            </ul>
-                                        </div>
-                                    @endif
-                <div class="row">
-                    @foreach ($jadwal as $item)
-                    <div class="col-sm-3">
-                        <div class="card mb-4 border-bottom-warning">
-                            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between bg-warning">
-                                <h6 class="m-0 font-weight-bold text-white">{{\Carbon\Carbon::parse($item->mulai)->isoFormat('dddd, D MMMM Y')}}</h6>
-                            </div>
-                            <div class="card-body">
-                                @if ($item->status == 0)
-                                    <p class="text-danger"><i class="fas fa-circle"></i><b> Terlambat</b></p>
-                                @elseif ($item->status == 1)
-                                    <p class="text-success"><i class="fas fa-circle"></i><b> Ontime</b></p>
-                                @endif
-                                <p class="text-s mb-0">Datang <b>{{\Carbon\Carbon::parse($item->datang)->isoFormat('HH:mm')}}</b></p>
-                                <p class="text-s mb-0">Mapel <b>{{ $item->mapel }}</b></p>
-                                <p class="text-s mb-0">Kelas <b>{{ $item->kelas }}</b></p>
-                                <p class="text-s mb-0"><b>{{\Carbon\Carbon::parse($item->mulai)->isoFormat('HH:mm')}} - {{ \Carbon\Carbon::parse($item->selesai)->isoFormat('HH:mm') }}</b></p>
-                            </div>
-                        </div>
-                    </div>
-                    @endforeach
+    <div class="modal fade" id="qrcode-modal" tabindex="-1" aria-labelledby="qrcodeModalTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content ck-card">
+                <div class="modal-header border-0 pb-0">
+                    <h2 class="modal-title h5" id="qrcodeModalTitle">QR Code Absensi</h2>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Tutup"></button>
                 </div>
-
+                <div class="modal-body">
+                    <div id="qrcode" class="ck-qr mx-auto"></div>
+                    <p class="mt-3 mb-0">Token : <b>{{ $token }}</b></p>
+                </div>
             </div>
         </div>
     </div>
-    <div class="modal fade" id="qrcode-modal" tabindex="-1" role="dialog" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered" role="document">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h5 class="modal-title" id="exampleModalLongTitle">QR Code Absensi</h5>
-              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-              </button>
-            </div>
-            <div class="modal-body">
-                <div id="qrcode"></div>
-                    <div class="text-left mt-4">
-                        <p>Token : <b>{{ $token }}</b></p>
-                    </div>
-            </div>
-          </div>
-        </div>
-    </div>
-    {{-- <div class="modal fade" id="absensi-outdoor" tabindex="-1" role="dialog" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered" role="document">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h5 class="modal-title" id="exampleModalLongTitle">Masukkan Kode Dari Coach</h5>
-              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-              </button>
-            </div>
-            <div class="modal-body">
-                <form action="" class="form-group">
-                    <input type="text" class="form-control">
-                    <button class="btn btn-sm btn-warning mt-3"><i class="fas fa-pen"></i> Submit</button>
-                </form>
-            </div>
-          </div>
-        </div>
-    </div> --}}
-</div>
 @endsection
 
-@section('js')
-<script src="{{ asset('/js/qrcode.min.js') }}"></script>
+@push('scripts')
 <script>
     let input = document.querySelector('#text');
     let button = document.querySelector('#btn-qrcode');
     let qrcode = new QRCode(document.querySelector('#qrcode'), {
-
         width: 200,
         height: 200,
-        colorDark : "#000000",
-        colorLight : "#ffffff",
-        correctLevel : QRCode.CorrectLevel.H
+        colorDark: "#000000",
+        colorLight: "#ffffff",
+        correctLevel: QRCode.CorrectLevel.H
     });
     button.addEventListener('click', () => {
-      let inputValue = input.value;
-      qrcode.makeCode(inputValue);
-    })
+        qrcode.makeCode(input.value);
+    });
 </script>
-<!-- Page level plugins -->
-<script src="{{asset('vendor/datatables/jquery.dataTables.min.js')}}"></script>
-<script src="{{asset('vendor/datatables/datatables.min.js')}}"></script>
-
-<!-- Page level custom scripts -->
-<script src="{{asset('js/demo/datatables-demo.js')}}"></script>
-@endsection
+@endpush

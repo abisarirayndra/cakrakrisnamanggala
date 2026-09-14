@@ -1,16 +1,10 @@
-@extends('master.master')
+@extends('layouts.panel-pendidik')
 
-@section('title')
-<title>Computer Assisted Test - Cakra Krisna Manggala</title>
-@endsection
+@section('title', 'Analisis Jawaban - Cakra Krisna Manggala')
 
 @section('content')
-    <!-- Begin Page Content -->
-<div class="container">
-
-    <!-- Page Heading -->
-    <!-- DataTales Example -->
-    <div class="card shadow mb-4">
+<div>
+    <div class="ck-card mb-4">
         <div class="card-body">
             <div class="row">
                 <div class="col-md-6"> <h5><b>Analisis Jawaban</b></h5></div>
@@ -21,14 +15,14 @@
                             <input hidden name="auth" value="{{ $nilai->pelajar_id }}">
                             <input hidden name="token" value="{{ $nilai->status }}">
                             <input hidden name="tes" value="{{ $nilai->dn_tes_id }}">
-                            <button type="submit" class="btn btn-sm btn-success" target="_blank"><i class="fas fa-cloud-download-alt"></i> Unduh PDF</button>
+                            <button type="submit" class="btn btn-sm btn-ck" target="_blank"><i class="bi bi-download"></i> Unduh PDF</button>
                         </form>
                         @else
                         <form action="{{ route('pendidik.dinas.cetakjawabanpoin') }}" method="get">
                             <input hidden name="auth" value="{{ $nilai->pelajar_id }}">
                             <input hidden name="token" value="{{ $nilai->status }}">
                             <input hidden name="tes" value="{{ $nilai->dn_tes_id }}">
-                            <button type="submit" class="btn btn-sm btn-success" target="_blank"><i class="fas fa-cloud-download-alt"></i> Unduh PDF</button>
+                            <button type="submit" class="btn btn-sm btn-ck" target="_blank"><i class="bi bi-download"></i> Unduh PDF</button>
                         </form>
                         @endif
                     </div>

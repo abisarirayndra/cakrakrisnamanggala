@@ -450,3 +450,43 @@ input[type="time"].form-control::-webkit-calendar-picker-indicator {
     color: #fff;
 }
 
+.ck-id-card {
+    background: var(--ck-surface);
+    border: 1px solid var(--ck-line);
+    border-radius: 1.1rem;
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(27, 36, 48, 0.05);
+    max-width: 560px;
+}
+
+.ck-id-card-head {
+    background: var(--ck-navy);
+    color: #f7f1e6;
+    padding: 1rem 1.25rem;
+}
+
+.ck-id-card-body {
+    display: grid;
+    grid-template-columns: 96px 1fr auto;
+    gap: 1.25rem;
+    align-items: center;
+    padding: 1.25rem;
+}
+
+.ck-id-card-photo {
+    width: 96px;
+    border-radius: 0.75rem;
+}
+
+.ck-id-card-meta .ck-hint {
+    margin-bottom: 0.15rem;
+}
+
+@media (max-width: 575.98px) {
+    .ck-id-card-body {
+        grid-template-columns: 1fr;
+        text-align: center;
+        justify-items: center;
+    }
+}
+

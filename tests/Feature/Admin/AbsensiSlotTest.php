@@ -15,7 +15,9 @@ use App\Support\AbsensiStatus;
 use App\Support\AdminVisibility;
 use App\User;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Livewire\Livewire;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Tests\Concerns\CreatesAdminMasterSchema;
 use Tests\TestCase;
 
@@ -359,6 +361,128 @@ class AbsensiSlotTest extends TestCase
         $row = AbsensiPelajar::first();
         $this->assertSame(AbsensiStatus::HADIR, (int) $row->status);
         $this->assertNotNull($row->datang);
+    }
+
+    public function test_roster_shows_scanned_pendidik_and_pelajar(): void
+    {
+        Carbon::setTestNow('2026-09-14 08:30:00');
+        [$admin, $kelas, $mapel, $guru, $slot, $siswa] = $this->slotFixture();
+        $guru->update(['nama' => 'Guru Roster Utama']);
+        $siswa->update(['nama' => 'Siswa Roster Hadir']);
+
+        Livewire::actingAs($admin)
+            ->test(AbsensiSlot::class)
+            ->set('kelas_id', (string) $kelas->id)
+            ->set('jadwal_id', (string) $slot->id)
+            ->set('mode', 'datang')
+            ->set('token', 'GURU01')
+            ->call('scan')
+            ->set('token', 'ABC123')
+            ->call('scan')
+            ->assertSee('Guru Roster Utama')
+            ->assertSee('Siswa Roster Hadir')
+            ->assertSee('08:30')
+            ->assertSee('Guru utama')
+            ->assertDontSee('Belum ada absensi');
+    }
+
+    public function test_other_markas_slot_returns_404_and_writes_nothing(): void
+    {
+        Carbon::setTestNow('2026-09-14 08:30:00');
+        [$admin, $kelas, $mapel, $guru, $slot, $siswa] = $this->slotFixture();
+        $jember = Markas::create(['markas' => 'Jember']);
+        $kelasLain = Kelas::create(['nama' => 'Z', 'markas_id' => $jember->id]);
+        $slotLain = Jadwal::create([
+            'staf_id' => $admin->id,
+            'mapel_id' => $mapel->id,
+            'pendidik_id' => $guru->id,
+            'kelas_id' => $kelasLain->id,
+            'mulai' => '2026-09-14 08:00:00',
+            'selesai' => '2026-09-14 09:00:00',
+        ]);
+
+        try {
+            Livewire::actingAs($admin)
+                ->test(AbsensiSlot::class)
+                ->set('kelas_id', (string) $kelas->id)
+                ->set('jadwal_id', (string) $slotLain->id)
+                ->set('mode', 'datang')
+                ->set('token', 'ABC123')
+                ->call('scan');
+
+            $this->fail('Expected other-markas slot to abort with 404.');
+        } catch (ModelNotFoundException|NotFoundHttpException $e) {
+            if ($e instanceof NotFoundHttpException) {
+                $this->assertSame(404, $e->getStatusCode());
+            }
+        }
+
+        $this->assertSame(0, AbsensiPelajar::count());
+        $this->assertSame(0, AbsensiPendidik::count());
+        $this->assertDatabaseMissing('adm_absensi_pelajar', ['pelajar_id' => $siswa->id]);
+    }
+
+    public function test_pendidik_other_markas_is_rejected(): void
+    {
+        Carbon::setTestNow('2026-09-14 08:30:00');
+        [$admin, $kelas, $mapel, $guru, $slot] = $this->slotFixture();
+        $jember = Markas::create(['markas' => 'Jember']);
+        $lain = User::factory()->create([
+            'role_id' => 3,
+            'nomor_registrasi' => 'JBR001',
+            'nama' => 'Guru Jember',
+        ]);
+        Pendidik::create(['pendidik_id' => $lain->id, 'markas_id' => $jember->id]);
+
+        Livewire::actingAs($admin)
+            ->test(AbsensiSlot::class)
+            ->set('kelas_id', (string) $kelas->id)
+            ->set('jadwal_id', (string) $slot->id)
+            ->set('mode', 'datang')
+            ->set('token', 'JBR001')
+            ->call('scan')
+            ->assertHasErrors(['token' => 'Bukan pendidik markas ini']);
+
+        $this->assertSame(0, AbsensiPendidik::count());
+    }
+
+    public function test_simpan_izin_writes_pendidik_without_datang(): void
+    {
+        Carbon::setTestNow('2026-09-14 08:30:00');
+        [$admin, $kelas, $mapel, $guru, $slot] = $this->slotFixture();
+
+        Livewire::actingAs($admin)
+            ->test(AbsensiSlot::class)
+            ->set('kelas_id', (string) $kelas->id)
+            ->set('jadwal_id', (string) $slot->id)
+            ->set('izin_user_id', (string) $guru->id)
+            ->set('izin_status', (string) AbsensiStatus::SAKIT)
+            ->set('izin_keterangan', '')
+            ->call('simpanIzin')
+            ->assertHasNoErrors();
+
+        $row = AbsensiPendidik::firstOrFail();
+        $this->assertSame($guru->id, (int) $row->pendidik_id);
+        $this->assertSame(AbsensiStatus::SAKIT, (int) $row->status);
+        $this->assertNull($row->datang);
+        $this->assertSame(0, AbsensiPelajar::count());
+    }
+
+    public function test_whitespace_only_token_is_required(): void
+    {
+        Carbon::setTestNow('2026-09-14 08:30:00');
+        [$admin, $kelas, $mapel, $guru, $slot] = $this->slotFixture();
+
+        Livewire::actingAs($admin)
+            ->test(AbsensiSlot::class)
+            ->set('kelas_id', (string) $kelas->id)
+            ->set('jadwal_id', (string) $slot->id)
+            ->set('token', '   ')
+            ->call('scan')
+            ->assertHasErrors(['token' => 'required']);
+
+        $this->assertSame(0, AbsensiPelajar::count());
+        $this->assertSame(0, AbsensiPendidik::count());
     }
 
     public function test_izin_rejected_when_already_hadir(): void

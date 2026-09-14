@@ -134,12 +134,12 @@ class PaketDinasController extends Controller
     public function pendidikPaket(){
         $user = Auth::user()->nama;
         $id = Auth::user()->id;
-        $paket = TesDinas::select('dn_tes.dn_paket_id','dn_pakets.nama_paket','dn_pakets.id')
+        $paket = TesDinas::select('dn_pakets.nama_paket', 'dn_pakets.id')
                             ->join('dn_pakets','dn_pakets.id','=','dn_tes.dn_paket_id')
                             ->where('dn_pakets.status', 1)
                             ->where('dn_tes.pengajar_id', $id)
-                            ->orderBy('dn_tes.mulai','desc')
-                            ->distinct()
+                            ->groupBy('dn_pakets.id', 'dn_pakets.nama_paket')
+                            ->orderByRaw('MAX(dn_tes.mulai) DESC')
                             ->get();
 
         // return $paket;
