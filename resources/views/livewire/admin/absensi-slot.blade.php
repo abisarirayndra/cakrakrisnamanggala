@@ -43,16 +43,21 @@
 
     <div class="row g-4 align-items-start">
         <div class="col-lg-8">
-            <section class="ck-card p-4">
-                @if ($kelas_id === '')
+            @if ($kelas_id === '')
+                <section class="ck-card p-4">
                     <p class="ck-hint mb-0">Pilih kelas</p>
-                @elseif ($slots->isEmpty())
+                </section>
+            @elseif ($slots->isEmpty())
+                <section class="ck-card p-4">
                     <p class="ck-hint mb-0">Tidak ada mapel hari ini</p>
-                @else
+                </section>
+            @else
+                <section class="ck-card p-4 mb-4">
+                    <h2 class="h5 mb-4">Datang</h2>
                     <div class="d-flex flex-column gap-4">
                         <section>
-                            <h2 class="h6 mb-3">Pendidik</h2>
-                            @forelse ($hadirPendidik as $row)
+                            <h3 class="h6 mb-3">Pendidik</h3>
+                            @forelse ($datangPendidik as $row)
                                 <div class="d-flex flex-wrap justify-content-between gap-2 py-2 border-bottom" wire:key="absensi-pendidik-{{ $row->pendidik_id }}">
                                     <div>
                                         <p class="fw-semibold mb-0">{{ $row->pendidik?->nama }}</p>
@@ -77,13 +82,13 @@
                                     </div>
                                 </div>
                             @empty
-                                <p class="ck-hint mb-0">Belum ada absensi</p>
+                                <p class="ck-hint mb-0">Belum ada yang datang</p>
                             @endforelse
                         </section>
                         <section>
-                            <h2 class="h6 mb-3">Pelajar</h2>
-                            @forelse ($hadirPelajar as $row)
-                                <div class="d-flex flex-wrap justify-content-between gap-2 py-2 border-bottom" wire:key="absensi-pelajar-{{ $row->pelajar_id }}">
+                            <h3 class="h6 mb-3">Pelajar</h3>
+                            @forelse ($datangPelajar as $row)
+                                <div class="d-flex flex-wrap justify-content-between gap-2 py-2 border-bottom" wire:key="absensi-pelajar-datang-{{ $row->pelajar_id }}">
                                     <div>
                                         <p class="fw-semibold mb-0">{{ $row->pelajar?->nama }}</p>
                                     </div>
@@ -104,12 +109,53 @@
                                     </div>
                                 </div>
                             @empty
-                                <p class="ck-hint mb-0">Belum ada absensi</p>
+                                <p class="ck-hint mb-0">Belum ada yang datang</p>
                             @endforelse
                         </section>
                     </div>
-                @endif
-            </section>
+                </section>
+                <section id="laporan-izin" class="ck-card p-4">
+                    <h2 class="h5 mb-4">Izin / Sakit / Alpa</h2>
+                    <div class="d-flex flex-column gap-4">
+                        <section>
+                            <h3 class="h6 mb-3">Pendidik</h3>
+                            @forelse ($izinPendidik as $row)
+                                <div class="d-flex flex-wrap justify-content-between gap-2 py-2 border-bottom" wire:key="absensi-pendidik-izin-{{ $row->pendidik_id }}">
+                                    <div>
+                                        <p class="fw-semibold mb-0">{{ $row->pendidik?->nama }}</p>
+                                        @if ($row->keterangan)
+                                            <p class="ck-hint small mb-0">{{ $row->keterangan }}</p>
+                                        @endif
+                                    </div>
+                                    <div class="text-end">
+                                        <p class="mb-0">{{ \App\Support\AbsensiStatus::tampilkan((int) $row->status) }}</p>
+                                    </div>
+                                </div>
+                            @empty
+                                <p class="ck-hint mb-0">Belum ada izin, sakit, atau alpa</p>
+                            @endforelse
+                        </section>
+                        <section>
+                            <h3 class="h6 mb-3">Pelajar</h3>
+                            @forelse ($izinPelajar as $row)
+                                <div class="d-flex flex-wrap justify-content-between gap-2 py-2 border-bottom" wire:key="absensi-pelajar-{{ $row->pelajar_id }}">
+                                    <div>
+                                        <p class="fw-semibold mb-0">{{ $row->pelajar?->nama }}</p>
+                                        @if ($row->keterangan)
+                                            <p class="ck-hint small mb-0">{{ $row->keterangan }}</p>
+                                        @endif
+                                    </div>
+                                    <div class="text-end">
+                                        <p class="mb-0">{{ \App\Support\AbsensiStatus::tampilkan((int) $row->status) }}</p>
+                                    </div>
+                                </div>
+                            @empty
+                                <p class="ck-hint mb-0">Belum ada izin, sakit, atau alpa</p>
+                            @endforelse
+                        </section>
+                    </div>
+                </section>
+            @endif
         </div>
         <div class="col-lg-4">
             <section class="ck-card ck-sticky-card p-4 mb-4">
@@ -144,19 +190,9 @@
                         @error('token')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
-                        @if ($mode === 'pulang')
-                            <label for="jurnal" class="form-label mt-3">Jurnal</label>
-                            <textarea
-                                id="jurnal"
-                                class="form-control @error('jurnal') is-invalid @enderror"
-                                wire:model="jurnal"
-                                rows="3"
-                            ></textarea>
-                            @error('jurnal')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                            <p class="ck-hint mb-0 mt-2">Hanya dipakai saat scan guru utama</p>
-                        @endif
+                        <button type="submit" class="btn btn-ck w-100 mt-3" wire:loading.attr="disabled">
+                            Simpan
+                        </button>
                     </form>
                     @if ($pesan !== '')
                         <div class="alert alert-ck mt-3 mb-0" role="status">{{ $pesan }}</div>
@@ -164,7 +200,7 @@
                     <p class="ck-hint mb-0 mt-3">{{ $slot ? 'Siap mencatat absensi.' : 'Pilih slot' }}</p>
                 </fieldset>
             </section>
-            <section class="ck-card p-4">
+            <section class="ck-card p-4 mb-4">
                 <h2 class="h5 mb-3">Izin / Sakit / Alpa</h2>
                 <fieldset @disabled($slot === null)>
                     <form wire:submit="simpanIzin" novalidate>
@@ -220,8 +256,43 @@
                     </form>
                 </fieldset>
             </section>
+            @if ($slot && $adaSisaAlpa && ! $lewatiAlpa)
+                <section class="ck-card p-4">
+                    <p class="mb-3">Siswa yang tidak terabsen dan tidak ada izin, statusnya Alpa?</p>
+                    <div class="d-flex flex-wrap gap-2">
+                        <button type="button" class="btn btn-ck" wire:click="tandaiSisaAlpa" wire:loading.attr="disabled">Ya</button>
+                        <button type="button" class="btn btn-ck-ghost" wire:click="lewatiSisaAlpa" wire:loading.attr="disabled">Tidak</button>
+                    </div>
+                </section>
+            @endif
         </div>
     </div>
+
+    @if ($showJurnalModal)
+        <div class="ck-modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="jurnalModalTitle">
+            <section class="ck-card p-4" style="max-width: 480px; width: 100%;">
+                <h2 class="h5 mb-1" id="jurnalModalTitle">Jurnal pulang</h2>
+                <p class="ck-hint mb-3">{{ $jurnalNama }} — jurnal wajib diisi sebelum pulang tercatat.</p>
+                <form wire:submit="simpanJurnalPulang" novalidate>
+                    <label for="jurnal" class="form-label">Jurnal</label>
+                    <textarea
+                        id="jurnal"
+                        class="form-control @error('jurnal') is-invalid @enderror"
+                        wire:model="jurnal"
+                        rows="4"
+                        autofocus
+                    ></textarea>
+                    @error('jurnal')
+                        <div class="invalid-feedback">{{ $message }}</div>
+                    @enderror
+                    <div class="d-flex justify-content-end gap-2 mt-3">
+                        <button type="button" class="btn btn-ck-ghost" wire:click="tutupJurnal">Batal</button>
+                        <button type="submit" class="btn btn-ck" wire:loading.attr="disabled">Simpan</button>
+                    </div>
+                </form>
+            </section>
+        </div>
+    @endif
 </div>
 
 @script

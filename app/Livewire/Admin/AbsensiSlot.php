@@ -26,6 +26,14 @@ class AbsensiSlot extends Component
     public string $izin_status = '2';
     public string $izin_keterangan = '';
 
+    public bool $lewatiAlpa = false;
+
+    public bool $showJurnalModal = false;
+
+    public string $jurnalNama = '';
+
+    public ?int $jurnalPendidikId = null;
+
     public function boot(): void
     {
         abort_unless(auth()->user()?->isAdmin(), 403);
@@ -34,7 +42,7 @@ class AbsensiSlot extends Component
     public function updatedKelasId(): void
     {
         $this->jadwal_id = '';
-        $this->reset(['token', 'jurnal', 'pesan', 'izin_user_id', 'izin_keterangan']);
+        $this->reset(['token', 'jurnal', 'pesan', 'izin_user_id', 'izin_keterangan', 'lewatiAlpa', 'showJurnalModal', 'jurnalNama', 'jurnalPendidikId']);
         $this->izin_status = '2';
         $this->mode = 'datang';
         $this->resetErrorBag();
@@ -42,7 +50,7 @@ class AbsensiSlot extends Component
 
     public function updatedJadwalId(): void
     {
-        $this->reset(['token', 'jurnal', 'pesan']);
+        $this->reset(['token', 'jurnal', 'pesan', 'lewatiAlpa', 'showJurnalModal', 'jurnalNama', 'jurnalPendidikId']);
         $this->resetErrorBag();
         $this->fokusToken();
     }
@@ -57,7 +65,11 @@ class AbsensiSlot extends Component
         try {
             $this->prosesScan();
         } finally {
-            $this->fokusToken();
+            if ($this->showJurnalModal) {
+                $this->js('document.getElementById("jurnal")?.focus()');
+            } else {
+                $this->fokusToken();
+            }
         }
     }
 
@@ -183,24 +195,68 @@ class AbsensiSlot extends Component
 
         $guruUtama = ! $isPelajar && $user->id === (int) $slot->pendidik_id;
 
-        if ($guruUtama && trim($this->jurnal) === '') {
+        if ($guruUtama) {
+            $this->showJurnalModal = true;
+            $this->jurnalNama = $user->nama;
+            $this->jurnalPendidikId = (int) $user->id;
+            $this->jurnal = '';
+            $this->token = '';
+            $this->resetErrorBag('jurnal');
+
+            return;
+        }
+
+        $existing->update([
+            'pulang' => now(),
+        ]);
+
+        $this->token = '';
+        $this->pesan = $user->nama.' — Pulang';
+    }
+
+    public function simpanJurnalPulang(): void
+    {
+        $slot = $this->slotAktif();
+        abort_unless($this->showJurnalModal && $this->jurnalPendidikId, 403);
+        abort_unless($this->jurnalPendidikId === (int) $slot->pendidik_id, 403);
+
+        if (trim($this->jurnal) === '') {
             $this->addError('jurnal', 'Jurnal wajib diisi');
 
             return;
         }
 
-        $payload = [
-            'pulang' => now(),
-        ];
+        $existing = AbsensiPendidik::query()
+            ->where('jadwal_id', $slot->id)
+            ->where('pendidik_id', $this->jurnalPendidikId)
+            ->first();
 
-        if ($guruUtama) {
-            $payload['jurnal'] = $this->jurnal;
+        if ($existing?->datang === null) {
+            $this->addError('jurnal', 'Belum absen datang');
+
+            return;
         }
 
-        $existing->update($payload);
+        if ($existing->pulang !== null) {
+            $this->addError('jurnal', 'Sudah absen pulang');
 
-        $this->token = '';
-        $this->pesan = $user->nama.' — Pulang';
+            return;
+        }
+
+        $existing->update([
+            'pulang' => now(),
+            'jurnal' => $this->jurnal,
+        ]);
+
+        $this->pesan = $this->jurnalNama.' — Pulang';
+        $this->tutupJurnal();
+        $this->fokusToken();
+    }
+
+    public function tutupJurnal(): void
+    {
+        $this->reset(['jurnal', 'showJurnalModal', 'jurnalNama', 'jurnalPendidikId']);
+        $this->resetErrorBag('jurnal');
     }
 
     public function simpanIzin(): void
@@ -265,6 +321,31 @@ class AbsensiSlot extends Component
         $this->izin_status = '2';
     }
 
+    public function tandaiSisaAlpa(): void
+    {
+        $slot = $this->slotAktif();
+
+        foreach ($this->pelajarSisaAlpa($slot) as $siswa) {
+            AbsensiPelajar::updateOrCreate(
+                ['jadwal_id' => $slot->id, 'pelajar_id' => $siswa->id],
+                [
+                    'status' => AbsensiStatus::ALPA,
+                    'datang' => null,
+                    'pulang' => null,
+                    'keterangan' => null,
+                ]
+            );
+        }
+
+        $this->lewatiAlpa = false;
+    }
+
+    public function lewatiSisaAlpa(): void
+    {
+        $this->slotAktif();
+        $this->lewatiAlpa = true;
+    }
+
     protected function fokusToken(): void
     {
         $this->dispatch('fokus-token');
@@ -304,18 +385,62 @@ class AbsensiSlot extends Component
             ? null
             : $slots->firstWhere('id', (int) $this->jadwal_id);
 
+        $hadirPendidik = $slot
+            ? AbsensiPendidik::query()->where('jadwal_id', $slot->id)->with('pendidik')->orderByDesc('id')->get()
+            : collect();
+        $hadirPelajar = $slot
+            ? AbsensiPelajar::query()->where('jadwal_id', $slot->id)->with('pelajar')->orderByDesc('id')->get()
+            : collect();
+        [$datangPendidik, $izinPendidik] = $this->pisahDatangIzin($hadirPendidik);
+        [$datangPelajar, $izinPelajar] = $this->pisahDatangIzin($hadirPelajar);
+        $pelajarList = $kelasAktif ? AdminVisibility::pelajarForKelas($kelasAktif)->get() : collect();
+
         return view('livewire.admin.absensi-slot', [
             'kelasList' => AdminVisibility::kelasForJadwal($actor)->with('markas')->get(),
             'slots' => $slots,
             'slot' => $slot,
-            'hadirPendidik' => $slot
-                ? AbsensiPendidik::query()->where('jadwal_id', $slot->id)->with('pendidik')->orderByDesc('id')->get()
-                : collect(),
-            'hadirPelajar' => $slot
-                ? AbsensiPelajar::query()->where('jadwal_id', $slot->id)->with('pelajar')->orderByDesc('id')->get()
-                : collect(),
+            'datangPendidik' => $datangPendidik,
+            'datangPelajar' => $datangPelajar,
+            'izinPendidik' => $izinPendidik,
+            'izinPelajar' => $izinPelajar,
             'pendidikList' => $kelasAktif ? AdminVisibility::pendidikForKelas($kelasAktif)->get() : collect(),
-            'pelajarList' => $kelasAktif ? AdminVisibility::pelajarForKelas($kelasAktif)->get() : collect(),
+            'pelajarList' => $pelajarList,
+            'adaSisaAlpa' => $slot ? $this->pelajarSisaAlpa($slot, $pelajarList, $hadirPelajar)->isNotEmpty() : false,
         ]);
+    }
+
+    private function pisahDatangIzin($rows): array
+    {
+        $izinStatus = [AbsensiStatus::IZIN, AbsensiStatus::SAKIT, AbsensiStatus::ALPA];
+
+        return [
+            $rows->filter(fn ($row) => $row->datang !== null)->values(),
+            $rows->filter(fn ($row) => $row->datang === null && in_array((int) $row->status, $izinStatus, true))->values(),
+        ];
+    }
+
+    private function pelajarSisaAlpa(Jadwal $slot, $pelajarList = null, $hadirPelajar = null)
+    {
+        $pelajarList = $pelajarList ?? AdminVisibility::pelajarForKelas($slot->kelas)->get();
+        $absensiMap = ($hadirPelajar ?? AbsensiPelajar::query()->where('jadwal_id', $slot->id)->get())
+            ->keyBy(fn ($row) => (int) $row->pelajar_id);
+
+        return $pelajarList->filter(function ($siswa) use ($absensiMap) {
+            $absensi = $absensiMap->get((int) $siswa->id);
+
+            if ($absensi === null) {
+                return true;
+            }
+
+            if ($absensi->datang !== null) {
+                return false;
+            }
+
+            return ! in_array((int) $absensi->status, [
+                AbsensiStatus::IZIN,
+                AbsensiStatus::SAKIT,
+                AbsensiStatus::ALPA,
+            ], true);
+        });
     }
 }

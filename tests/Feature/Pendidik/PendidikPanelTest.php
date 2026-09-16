@@ -118,9 +118,12 @@ class PendidikPanelTest extends TestCase
             ->get(route('pendidik.absensi'))
             ->assertOk()
             ->assertSee('ck-sidebar', false)
-            ->assertSee('Absensi Pendidik')
-            ->assertSee('Kode QR')
-            ->assertSee('Histori Mengajar');
+            ->assertSee('Histori Mengajar')
+            ->assertSee('Kelas')
+            ->assertSee('Bulan')
+            ->assertSee('Tahun')
+            ->assertDontSee('Kode QR')
+            ->assertDontSee('Absensi Pendidik');
     }
 
     public function test_histori_mengajar_uses_cakra_shell(): void

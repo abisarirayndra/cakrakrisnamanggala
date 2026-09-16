@@ -461,21 +461,9 @@ class JadwalAbsensiController extends Controller
 
 
     // Pendidik
-    public function scanAbsensiPendidik(){
-        $user = Auth::user()->nama;
-        $token = Auth::user()->nomor_registrasi;
-        $data = Pendidik::where('pendidik_id', Auth::user()->id)->firstOrFail();
-        $jadwal = AbsensiPendidik::select('adm_absensi_pendidik.id','mapels.mapel','kelas.nama as kelas','adm_absensi_pendidik.jurnal','adm_jadwal.mulai','adm_jadwal.selesai','adm_absensi_pendidik.status')
-                                    ->join('adm_jadwal','adm_jadwal.id','=','adm_absensi_pendidik.jadwal_id')
-                                    ->join('mapels','mapels.id','=','adm_jadwal.mapel_id')
-                                    ->join('kelas','kelas.id','=','adm_jadwal.kelas_id')
-                                    ->where('adm_absensi_pendidik.pendidik_id', Auth::user()->id)
-                                    ->where('adm_absensi_pendidik.pulang', null)
-                                    ->orderBy('adm_absensi_pendidik.id', 'desc')
-                                    ->get();
-
-
-        return view('pendidik.absensi.index', compact('user','token','jadwal','data'));
+    public function scanAbsensiPendidik(Request $request)
+    {
+        return $this->historiMengajar($request);
     }
     public function jurnalPendidik($id){
         $user = Auth::user()->nama;
@@ -512,6 +500,9 @@ class JadwalAbsensiController extends Controller
         $markas = Pendidik::select('markas_id')->where('pendidik_id', $id)->firstOrFail();
         $mapel = Mapel::all();
         $kelas = Kelas::where('markas_id', $markas->markas_id)->orderBy('nama','asc')->get();
+        $kelas_id = $request->kelas ?: $kelas->first()?->id;
+        $bulan = $request->bulan ?: now()->format('m');
+        $tahun = $request->tahun ?: now()->format('Y');
         $jadwal = AbsensiPendidik::select('mapels.mapel','kelas.nama as kelas','adm_jadwal.mulai','adm_jadwal.selesai',
                                 'adm_absensi_pendidik.datang','adm_absensi_pendidik.pulang','adm_absensi_pendidik.jurnal','adm_absensi_pendidik.status')
                             ->join('users','users.id','=','adm_absensi_pendidik.pendidik_id')
@@ -519,15 +510,12 @@ class JadwalAbsensiController extends Controller
                             ->join('mapels','mapels.id','=','adm_jadwal.mapel_id')
                             ->join('kelas','kelas.id','=','adm_jadwal.kelas_id')
                             ->where('adm_absensi_pendidik.pendidik_id', $id)
-                            ->where('adm_jadwal.kelas_id', $request->kelas)
-                            ->whereMonth('adm_jadwal.mulai', $request->bulan)
-                            ->whereYear('adm_jadwal.mulai', $request->tahun)
+                            ->when($kelas_id, fn ($query) => $query->where('adm_jadwal.kelas_id', $kelas_id))
+                            ->whereMonth('adm_jadwal.mulai', $bulan)
+                            ->whereYear('adm_jadwal.mulai', $tahun)
                             ->whereNotNull('adm_absensi_pendidik.jurnal')
                             ->orderBy('adm_jadwal.mulai', 'desc')
                             ->get();
-        $kelas_id = $request->kelas;
-        $bulan = $request->bulan;
-        $tahun = $request->tahun;
 
         return view('pendidik.absensi.histori',compact('mapel','kelas','jadwal','kelas_id','bulan','tahun','user'));
     }

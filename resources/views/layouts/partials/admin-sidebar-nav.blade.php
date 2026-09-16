@@ -45,10 +45,33 @@
 @endif
 
 <p class="ck-nav-section">Operasional</p>
-<a href="{{ route('admin.jadwal') }}" data-nav="jadwal" class="ck-nav-link {{ $active('admin.jadwal') }}">
-    <i class="bi bi-calendar3"></i>
-    <span>Jadwal</span>
-</a>
+@php
+    $jadwalMenuOpen = request()->routeIs('admin.jadwal', 'admin.jadwal.histori', 'admin.jadwal.histori.pdf');
+@endphp
+<div class="ck-nav-fold">
+    <div class="ck-nav-fold-head">
+        <a href="{{ route('admin.jadwal') }}" data-nav="jadwal" class="ck-nav-link {{ $active('admin.jadwal') }}">
+            <i class="bi bi-calendar3"></i>
+            <span>Jadwal</span>
+        </a>
+        <button
+            type="button"
+            class="ck-nav-chevron {{ $jadwalMenuOpen ? '' : 'collapsed' }}"
+            data-bs-toggle="collapse"
+            data-bs-target=".js-nav-jadwal"
+            aria-expanded="{{ $jadwalMenuOpen ? 'true' : 'false' }}"
+            aria-label="Tampilkan submenu jadwal"
+        >
+            <i class="bi bi-chevron-down"></i>
+        </button>
+    </div>
+    <div class="collapse js-nav-jadwal {{ $jadwalMenuOpen ? 'show' : '' }}">
+        <a href="{{ route('admin.jadwal.histori') }}" data-nav="histori-jadwal" class="ck-nav-link ck-nav-child {{ $active('admin.jadwal.histori', 'admin.jadwal.histori.pdf') }}">
+            <i class="bi bi-clock-history"></i>
+            <span>Histori Jadwal</span>
+        </a>
+    </div>
+</div>
 <a href="{{ route('admin.absensi') }}" data-nav="absensi" class="ck-nav-link {{ $active('admin.absensi') }}">
     <i class="bi bi-check2-square"></i>
     <span>Absensi</span>

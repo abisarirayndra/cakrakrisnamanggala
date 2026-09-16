@@ -4,6 +4,7 @@ use App\Http\Controllers\AdminController;
 use App\Http\Controllers\ArsipController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\HasilDinasController;
+use App\Http\Controllers\HistoriJadwalController;
 use App\Http\Controllers\JadwalAbsensiController;
 use App\Http\Controllers\JawabanDinasController;
 use App\Http\Controllers\PaketDinasController;
@@ -16,6 +17,9 @@ use App\Http\Controllers\StafAdminController;
 use App\Http\Controllers\SuperController;
 use App\Http\Controllers\TesDinasController;
 use App\Livewire\Admin\AbsensiSlot;
+use App\Livewire\Admin\HistoriJadwal;
+use App\Livewire\Pendidik\AbsensiSiswa;
+use App\Livewire\Pendidik\HistoriAbsensiSiswa;
 use App\Livewire\Admin\JadwalMingguan;
 use App\Livewire\Admin\MasterAdmin;
 use App\Livewire\Admin\MasterKelas;
@@ -146,6 +150,8 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth','admin-role']], funct
     Route::get('/master-mapel', MasterMapel::class)->middleware('superadmin-role')->name('admin.master.mapel');
     Route::get('/pengguna-pendidik', MasterPendidik::class)->name('admin.pengguna.pendidik');
     Route::get('/jadwal', JadwalMingguan::class)->name('admin.jadwal');
+    Route::get('/jadwal/histori', HistoriJadwal::class)->name('admin.jadwal.histori');
+    Route::get('/jadwal/histori/{jadwal}/pdf', [HistoriJadwalController::class, 'pdf'])->name('admin.jadwal.histori.pdf');
     Route::get('/absensi', AbsensiSlot::class)->name('admin.absensi');
 });
 
@@ -193,6 +199,8 @@ Route::group(['prefix' => 'pendidik','middleware' => ['auth','pengajar-role']], 
 
     // Absensi
     Route::get('/absensi',[JadwalAbsensiController::class, 'scanAbsensiPendidik'])->name('pendidik.absensi');
+    Route::get('/absensi/siswa', AbsensiSiswa::class)->name('pendidik.absensi.siswa');
+    Route::get('/absensi/histori-siswa', HistoriAbsensiSiswa::class)->name('pendidik.absensi.histori-siswa');
     Route::get('/absensi/jurnal/{id}',[JadwalAbsensiController::class, 'jurnalPendidik'])->name('pendidik.absensi.jurnal');
     Route::post('/absensi/up-jurnal/{id}',[JadwalAbsensiController::class, 'upJurnalPendidik'])->name('pendidik.absensi.up-jurnal');
     Route::post('/absensi/selesai/{id}',[JadwalAbsensiController::class, 'selesaiPendidik'])->name('pendidik.absensi.selesai');

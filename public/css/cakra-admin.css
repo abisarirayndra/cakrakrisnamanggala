@@ -366,6 +366,55 @@ input[type="time"].form-control::-webkit-calendar-picker-indicator {
     box-shadow: inset 3px 0 0 var(--ck-gold);
 }
 
+.ck-nav-link.ck-nav-child {
+    padding-left: 2.15rem;
+    font-size: 0.86rem;
+}
+
+.ck-nav-fold {
+    display: flex;
+    flex-direction: column;
+}
+
+.ck-nav-fold-head {
+    display: flex;
+    align-items: center;
+    gap: 0.15rem;
+}
+
+.ck-nav-fold-head .ck-nav-link {
+    flex: 1;
+    min-width: 0;
+}
+
+.ck-nav-chevron {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2rem;
+    height: 2rem;
+    border: 0;
+    border-radius: 0.5rem;
+    background: transparent;
+    color: rgba(247, 241, 230, 0.62);
+    padding: 0;
+    flex-shrink: 0;
+}
+
+.ck-nav-chevron:hover {
+    color: #fff;
+    background: rgba(184, 149, 74, 0.18);
+}
+
+.ck-nav-chevron i {
+    font-size: 0.85rem;
+    transition: transform 0.15s ease;
+}
+
+.ck-nav-chevron:not(.collapsed) i {
+    transform: rotate(180deg);
+}
+
 .ck-offcanvas {
     width: 260px;
     background: var(--ck-navy);

@@ -9,11 +9,10 @@
             <h1 class="h3 mb-1">Histori Mengajar</h1>
             <p class="ck-hint mb-0">Lihat catatan mengajar yang sudah dilengkapi jurnal.</p>
         </div>
-        <a href="{{ route('pendidik.absensi') }}" class="btn btn-ck-ghost">Kembali</a>
     </div>
 
     <section class="ck-card p-4 mb-4">
-        <form action="{{ route('pendidik.absensi.histori-mengajar') }}" method="GET" class="row g-3 align-items-end">
+        <form action="{{ route('pendidik.absensi') }}" method="GET" class="row g-3 align-items-end">
             <div class="col-sm-4 col-md-3">
                 <label for="kelas" class="form-label">Kelas</label>
                 <select id="kelas" name="kelas" class="form-select">
