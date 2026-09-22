@@ -2,6 +2,8 @@
 /public/hot
 /public/storage
 /storage/*.key
+/storage/framework/laravel-excel/*
+!/storage/framework/laravel-excel/.gitignore
 /vendor
 .env
 .env.backup
@@ -23,7 +25,6 @@ public/pendidik/cv/cv128.pdf
 public/pendidik/cv/cv4.pdf
 public/pendidik/img/pendidik4.jpg
 public/img/pelajar/Pelajarbaru11.jpg
-storage/framework/laravel-excel/laravel-excel-inCcFGZApYpvuF5bkl0ACCF7F8k120Cf.html
 ngrok.exe
 public/img/pelajar/Pelajar135.jpg
 public/img/pelajar/Pelajar136.jpg
