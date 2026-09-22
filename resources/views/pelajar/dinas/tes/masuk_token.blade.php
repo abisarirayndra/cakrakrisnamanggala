@@ -10,7 +10,7 @@
     <section class="ck-card p-4 p-md-5 mx-auto" style="max-width: 440px;">
         <p class="text-uppercase small fw-semibold mb-1" style="color: var(--ck-gold);">Computer Assisted Test</p>
         <h1 class="h4 mb-2">Masukkan Token</h1>
-        <p class="ck-hint mb-4">Gunakan token yang diberikan pendidik untuk membuka tes.</p>
+        <p class="ck-hint mb-4">Gunakan token tes untuk membuka paket soal.</p>
 
         <form action="{{ route('pelajar.submit_token') }}" method="post">
             @csrf

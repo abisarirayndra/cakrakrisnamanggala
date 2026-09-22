@@ -5,7 +5,10 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use RealRashid\SweetAlert\Facades\Alert;
+use App\CatJadwal;
 use App\TesDinas;
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Str;
 use App\Mapel;
 use App\User;
 use App\Penilaian;
@@ -194,12 +197,50 @@ class TesDinasController extends Controller
     }
 
     public function submitToken(Request $request){
-        $tes = TesDinas::whereRaw("BINARY `token`= ?", [$request->token])->first();
-        if($tes){
-            return redirect()->route('pelajar.dinas.persiapan', $tes->id);
-        }else{
-            Alert::error('Token Tidak Ditemukan', 'Gagal Akses Soal');
-            return redirect()->back();
+        $token = Str::upper(trim((string) $request->token));
+        $jadwal = $token === '' ? null : CatJadwal::query()->where('token', $token)->first();
+
+        if ($jadwal) {
+            $jadwal->load('banks');
+            $pelajarId = (int) $request->user()->id;
+
+            if (now()->lt($jadwal->mulai)) {
+                Alert::error('Belum Dimulai', 'Tes belum bisa dikerjakan.');
+
+                return redirect()->back();
+            }
+
+            if (now()->gte($jadwal->selesai)) {
+                $jadwal->kumpulkanSesiBerjalan($pelajarId);
+                Alert::error('Sudah Selesai', 'Waktu tes sudah berakhir.');
+
+                return redirect()->back();
+            }
+
+            if ($jadwal->semuaSelesaiUntuk($pelajarId)) {
+                Alert::error('Sudah Dikerjakan', 'Token ini sudah tidak bisa dipakai lagi.');
+
+                return redirect()->back();
+            }
+
+            $request->session()->put('cat_akses_jadwal', $jadwal->id);
+
+            return redirect()->route('pelajar.cat.tes', $jadwal);
         }
+
+        $tes = null;
+        if (Schema::hasColumn('dn_tes', 'token')) {
+            $tes = Schema::getConnection()->getDriverName() === 'mysql'
+                ? TesDinas::whereRaw('BINARY `token` = ?', [$request->token])->first()
+                : TesDinas::where('token', $request->token)->first();
+        }
+
+        if ($tes) {
+            return redirect()->route('pelajar.dinas.persiapan', $tes->id);
+        }
+
+        Alert::error('Token Tidak Ditemukan', 'Gagal Akses Soal');
+
+        return redirect()->back();
     }
 }

@@ -22,6 +22,7 @@ use App\JawabanGandaDinas;
 use App\JawabanGandaPoinDinas;
 use App\PaketDinas;
 use App\RekapPsikotes;
+use App\CatJadwal;
 
 class HasilDinasController extends Controller
 {
@@ -270,38 +271,22 @@ class HasilDinasController extends Controller
 
     }
 
-    public function capaian(){
-        $id = Auth::user()->id;
-        $user = Auth::user()->nama;
-        $skd = RekapDinas::where('pelajar_id', $id)->max('total_nilai');
-        $akademik = RekapTniPolri::where('pelajar_id', $id)->max('total_nilai');
-        $psikotes = RekapPsikotes::where('pelajar_id', $id)->max('total_nilai');
-        $capaian_skd = RekapDinas::where('pelajar_id', $id)->get();
-        $skd_categories = [];
-        $skd_data = [];
+    public function capaian()
+    {
+        $pelajar = Auth::user();
+        abort_unless($pelajar?->isPelajar(), 403);
 
-        foreach($capaian_skd as $item){
-            $skd_categories[] = Carbon::parse($item->created_at)->isoFormat('LL');
-            $skd_data[] = $item->total_nilai;
-        }
+        $histori = CatJadwal::historiPelajar((int) $pelajar->id);
+        $kronologis = $histori->reverse()->values();
 
-        $capaian_akademik = RekapTniPolri::where('pelajar_id', $id)->get();
-        $akademik_categories = [];
-        $akademik_data = [];
-        foreach($capaian_akademik as $item){
-            $akademik_categories[] = Carbon::parse($item->created_at)->isoFormat('LL');
-            $akademik_data[] = $item->total_nilai;
-        }
-
-        // $capaian_psikotes = RekapPsikotes::where('pelajar_id', $id)->get();
-        // foreach($capaian_psikotes as $item){
-        //     $psikotes_categories[] = Carbon::parse($item->created_at)->isoFormat('LL');
-        //     $psikotes_data[] = $item->total_nilai;
-        // }
-        return view('pelajar.dinas.capaian', compact('user','skd','akademik','psikotes',
-                                                'skd_categories','skd_data','akademik_categories','akademik_data',
-                                                // 'psikotes_categories','psikotes_data'
-                                            ));
+        return view('pelajar.dinas.capaian', [
+            'histori' => $histori,
+            'jumlahTes' => $histori->count(),
+            'skorTertinggi' => $histori->isEmpty() ? null : (int) $histori->max('total'),
+            'skorTerakhir' => $histori->isEmpty() ? null : (int) $histori->first()['total'],
+            'grafikKategori' => $kronologis->map(fn (array $item) => $item['nama'].' ('.$item['label_tanggal'].')')->all(),
+            'grafikData' => $kronologis->map(fn (array $item) => (int) $item['total'])->all(),
+        ]);
     }
 
 }

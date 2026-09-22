@@ -8,18 +8,41 @@
         'pendidik.absensi.siswa',
         'pendidik.absensi.histori-siswa'
     );
+    $catMenuOpen = request()->routeIs(
+        'pendidik.cat.bank-soal',
+        'pendidik.cat.bank-soal.paket'
+    );
 @endphp
-
 <p class="ck-nav-section">Utama</p>
 <a href="{{ route('pendidik.dinas.beranda') }}" data-nav="beranda" class="ck-nav-link {{ $active('pendidik.dinas.beranda', 'pendidik.dinas.edit') }}">
     <i class="bi bi-house"></i>
     <span>Beranda</span>
 </a>
-<a href="{{ route('pendidik.dinas.paket') }}" data-nav="paket" class="ck-nav-link {{ $active('pendidik.dinas.paket', 'pendidik.dinas.tes', 'pendidik.dinas.penilaian') }}">
-    <i class="bi bi-journal-text"></i>
-    <span>Paket Soal</span>
-</a>
-<a href="{{ route('pendidik.dinas.analisis') }}" data-nav="analisis" class="ck-nav-link {{ $active('pendidik.dinas.analisis', 'pendidik.dinas.hasil', 'pendidik.dinas.analisispelajar', 'pendidik.dinas.analisissoal', 'pendidik.dinas.jawabanpelajar') }}">
+<div class="ck-nav-fold">
+    <div class="ck-nav-fold-head">
+        <a href="{{ route('pendidik.cat.bank-soal') }}" data-nav="cat" class="ck-nav-link {{ $active('pendidik.cat.bank-soal', 'pendidik.cat.bank-soal.paket') }}">
+            <i class="bi bi-journal-text"></i>
+            <span>CAT</span>
+        </a>
+        <button
+            type="button"
+            class="ck-nav-chevron {{ $catMenuOpen ? '' : 'collapsed' }}"
+            data-bs-toggle="collapse"
+            data-bs-target=".js-nav-cat"
+            aria-expanded="{{ $catMenuOpen ? 'true' : 'false' }}"
+            aria-label="Tampilkan submenu CAT"
+        >
+            <i class="bi bi-chevron-down"></i>
+        </button>
+    </div>
+    <div class="collapse js-nav-cat {{ $catMenuOpen ? 'show' : '' }}">
+        <a href="{{ route('pendidik.cat.bank-soal') }}" data-nav="bank-soal" class="ck-nav-link ck-nav-child {{ $active('pendidik.cat.bank-soal', 'pendidik.cat.bank-soal.paket') }}">
+            <i class="bi bi-collection"></i>
+            <span>Bank Soal</span>
+        </a>
+    </div>
+</div>
+<a href="{{ route('pendidik.dinas.analisis') }}" data-nav="analisis" class="ck-nav-link {{ $active('pendidik.dinas.analisis', 'pendidik.dinas.hasil', 'pendidik.dinas.analisispelajar', 'pendidik.dinas.analisissoal', 'pendidik.dinas.jawabanpelajar', 'pendidik.cat.analisis', 'pendidik.cat.analisis.pdf', 'pendidik.cat.analisis.soal.pdf') }}">
     <i class="bi bi-graph-up"></i>
     <span>Analisis</span>
 </a>

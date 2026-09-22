@@ -8,11 +8,13 @@ use App\User;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 use Tests\Concerns\CreatesAdminMasterSchema;
+use Tests\Concerns\CreatesCatBankSchema;
 use Tests\TestCase;
 
 class PelajarPanelTest extends TestCase
 {
     use CreatesAdminMasterSchema;
+    use CreatesCatBankSchema;
 
     protected function defineEnvironment($app): void
     {
@@ -29,6 +31,7 @@ class PelajarPanelTest extends TestCase
         parent::setUp();
         $this->setUpAdminMasterSchema();
         $this->setUpPelajarCatSchema();
+        $this->setUpCatBankSchema();
     }
 
     public function test_beranda_uses_cakra_shell_with_pelajar_nav(): void
@@ -62,7 +65,8 @@ class PelajarPanelTest extends TestCase
             ->assertSee('3510010101070001')
             ->assertSee('Jumlah Ontime')
             ->assertSee('Jumlah Terlambat')
-            ->assertSee('Jumlah Izin');
+            ->assertSee('Jumlah Izin')
+            ->assertDontSee('>Menu</h2>', false);
     }
 
     public function test_beranda_opens_attendance_card_from_modal_not_inline(): void
@@ -83,13 +87,11 @@ class PelajarPanelTest extends TestCase
 
         $dataDiriPos = strpos($html, 'Data Diri');
         $buttonPos = strpos($html, 'data-bs-target="#kartu-absensi-modal"');
-        $menuPos = strpos($html, '>Menu</h2>');
 
         $this->assertNotFalse($dataDiriPos);
         $this->assertNotFalse($buttonPos);
-        $this->assertNotFalse($menuPos);
         $this->assertGreaterThan($dataDiriPos, $buttonPos);
-        $this->assertLessThan($menuPos, $buttonPos);
+        $this->assertStringNotContainsString('>Menu</h2>', $html);
     }
 
     public function test_pelajar_can_download_attendance_card_pdf(): void
@@ -146,10 +148,12 @@ class PelajarPanelTest extends TestCase
             ->get(route('pelajar.capaian'))
             ->assertOk()
             ->assertSee('ck-sidebar', false)
-            ->assertSee('SKD tertinggi')
-            ->assertSee('Tes Akademik Tertinggi')
-            ->assertSee('Psikotes Tertinggi')
-            ->assertSee('Grafik Capaian Tes');
+            ->assertSee('Capaian Tes')
+            ->assertSee('Histori Tes')
+            ->assertSee('Grafik Capaian Tes')
+            ->assertSee('Belum ada tes yang dikumpulkan')
+            ->assertSee('Grafik muncul setelah ada tes yang dikumpulkan')
+            ->assertDontSee('SKD tertinggi');
     }
 
     public function test_paket_list_uses_cakra_shell(): void

@@ -78,7 +78,30 @@
 </a>
 
 <p class="ck-nav-section">Tes</p>
-<a href="{{ route('admin.dinas.paket') }}" data-nav="cat" class="ck-nav-link {{ $active('admin.dinas.*', 'admin.cetak_soal') }}">
-    <i class="bi bi-clipboard-data"></i>
-    <span>CAT</span>
-</a>
+@php
+    $catMenuOpen = request()->routeIs('admin.cat.*');
+@endphp
+<div class="ck-nav-fold">
+    <div class="ck-nav-fold-head">
+        <a href="{{ route('admin.cat.jadwal') }}" data-nav="cat" class="ck-nav-link {{ $active('admin.cat.jadwal', 'admin.cat.jadwal.skor', 'admin.cat.jadwal.report', 'admin.cat.jadwal.report.pdf') }}">
+            <i class="bi bi-clipboard-data"></i>
+            <span>CAT</span>
+        </a>
+        <button
+            type="button"
+            class="ck-nav-chevron {{ $catMenuOpen ? '' : 'collapsed' }}"
+            data-bs-toggle="collapse"
+            data-bs-target=".js-nav-cat"
+            aria-expanded="{{ $catMenuOpen ? 'true' : 'false' }}"
+            aria-label="Tampilkan submenu CAT"
+        >
+            <i class="bi bi-chevron-down"></i>
+        </button>
+    </div>
+    <div class="collapse js-nav-cat {{ $catMenuOpen ? 'show' : '' }}">
+        <a href="{{ route('admin.cat.jadwal') }}" data-nav="cat-jadwal" class="ck-nav-link ck-nav-child {{ $active('admin.cat.jadwal', 'admin.cat.jadwal.skor', 'admin.cat.jadwal.report', 'admin.cat.jadwal.report.pdf') }}">
+            <i class="bi bi-calendar-event"></i>
+            <span>Jadwal CAT</span>
+        </a>
+    </div>
+</div>

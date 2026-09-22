@@ -9,11 +9,13 @@ use App\User;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 use Tests\Concerns\CreatesAdminMasterSchema;
+use Tests\Concerns\CreatesCatBankSchema;
 use Tests\TestCase;
 
 class PendidikPanelTest extends TestCase
 {
     use CreatesAdminMasterSchema;
+    use CreatesCatBankSchema;
 
     protected function defineEnvironment($app): void
     {
@@ -30,6 +32,7 @@ class PendidikPanelTest extends TestCase
         parent::setUp();
         $this->setUpAdminMasterSchema();
         $this->setUpPendidikHubSchema();
+        $this->setUpCatBankSchema();
     }
 
     public function test_beranda_uses_cakra_shell_with_pendidik_nav(): void
@@ -40,14 +43,15 @@ class PendidikPanelTest extends TestCase
             ->assertSee('ck-sidebar', false)
             ->assertSeeInOrder([
                 'data-nav="beranda"',
-                'data-nav="paket"',
+                'data-nav="cat"',
                 'data-nav="analisis"',
                 'data-nav="absensi"',
             ], false)
             ->assertDontSee('data-nav="pelajar"', false)
             ->assertDontSee('data-nav="admin"', false)
+            ->assertDontSee('data-nav="paket"', false)
             ->assertSee(route('pendidik.dinas.beranda', absolute: false), false)
-            ->assertSee(route('pendidik.dinas.paket', absolute: false), false)
+            ->assertSee(route('pendidik.cat.bank-soal', absolute: false), false)
             ->assertSee(route('pendidik.dinas.analisis', absolute: false), false)
             ->assertSee(route('pendidik.absensi', absolute: false), false)
             ->assertSee('Keluar');
@@ -62,9 +66,9 @@ class PendidikPanelTest extends TestCase
             ->assertSee('Guru Uji')
             ->assertSee('3510123456780001')
             ->assertSee('Matematika')
-            ->assertSee('Paket Soal')
             ->assertSee('Absensi')
-            ->assertDontSee('SILAKAN MELAKUKAN EDIT DATA DIRI');
+            ->assertDontSee('SILAKAN MELAKUKAN EDIT DATA DIRI')
+            ->assertDontSee('>Menu</h2>', false);
     }
 
     public function test_incomplete_biodata_locks_beranda_menu(): void
@@ -73,7 +77,8 @@ class PendidikPanelTest extends TestCase
             ->get(route('pendidik.dinas.beranda'))
             ->assertOk()
             ->assertSee('SILAKAN MELAKUKAN EDIT DATA DIRI')
-            ->assertSee('Not Available');
+            ->assertDontSee('Not Available')
+            ->assertDontSee('>Menu</h2>', false);
     }
 
     public function test_beranda_opens_attendance_card_from_modal_not_inline(): void
@@ -92,13 +97,11 @@ class PendidikPanelTest extends TestCase
 
         $dataDiriPos = strpos($html, 'Data Diri');
         $buttonPos = strpos($html, 'data-bs-target="#kartu-absensi-modal"');
-        $menuPos = strpos($html, '>Menu</h2>');
 
         $this->assertNotFalse($dataDiriPos);
         $this->assertNotFalse($buttonPos);
-        $this->assertNotFalse($menuPos);
         $this->assertGreaterThan($dataDiriPos, $buttonPos);
-        $this->assertLessThan($menuPos, $buttonPos);
+        $this->assertStringNotContainsString('>Menu</h2>', $html);
     }
 
     public function test_pendidik_can_download_attendance_card_pdf(): void
@@ -170,7 +173,9 @@ class PendidikPanelTest extends TestCase
             ->assertOk()
             ->assertSee('ck-sidebar', false)
             ->assertSee('Analisis Nilai')
-            ->assertSee('Daftar Arsip Nilai');
+            ->assertSee('Paket CAT')
+            ->assertDontSee('Daftar Arsip Nilai')
+            ->assertSee('Belum ada paket CAT yang memakai bank soal Anda');
     }
 
     public function test_penilaian_hub_uses_cakra_shell(): void

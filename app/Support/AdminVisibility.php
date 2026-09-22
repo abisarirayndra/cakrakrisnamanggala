@@ -4,6 +4,8 @@ namespace App\Support;
 
 use App\Jadwal;
 use App\Kelas;
+use App\BankPaket;
+use App\CatJadwal;
 use App\User;
 use Illuminate\Database\Eloquent\Builder;
 
@@ -111,5 +113,36 @@ class AdminVisibility
             ->where('users.role_id', 4)
             ->where('users.kelas_id', $kelas->id)
             ->orderBy('users.nama');
+    }
+
+    public static function bankPaketQuery(User $actor): Builder
+    {
+        $query = BankPaket::query();
+
+        if (! $actor->isSuperAdmin()) {
+            $ids = static::pendidikQuery($actor)->pluck('users.id');
+            $query = $ids->isEmpty()
+                ? $query->whereRaw('1 = 0')
+                : $query->whereIn('pendidik_id', $ids);
+        }
+
+        return $query;
+    }
+
+    public static function catJadwalQuery(User $actor): Builder
+    {
+        $query = CatJadwal::query();
+
+        if (! $actor->isSuperAdmin()) {
+            $ids = static::pendidikQuery($actor)->pluck('users.id');
+            $query = $ids->isEmpty()
+                ? $query->whereRaw('1 = 0')
+                : $query->whereHas(
+                    'banks',
+                    fn (Builder $banks) => $banks->whereIn('pendidik_id', $ids)
+                );
+        }
+
+        return $query;
     }
 }

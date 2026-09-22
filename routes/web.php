@@ -1,8 +1,12 @@
 <?php
 
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\BankSoalTemplateController;
 use App\Http\Controllers\ArsipController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\CatAnalisisController;
+use App\Http\Controllers\CatJadwalReportController;
+use App\Http\Controllers\CatTesReportController;
 use App\Http\Controllers\HasilDinasController;
 use App\Http\Controllers\HistoriJadwalController;
 use App\Http\Controllers\JadwalAbsensiController;
@@ -17,8 +21,15 @@ use App\Http\Controllers\StafAdminController;
 use App\Http\Controllers\SuperController;
 use App\Http\Controllers\TesDinasController;
 use App\Livewire\Admin\AbsensiSlot;
+use App\Livewire\Admin\CatJadwal;
+use App\Livewire\Admin\CatJadwalReport;
+use App\Livewire\Admin\CatJadwalSkor;
+use App\Livewire\Pelajar\CatTes;
 use App\Livewire\Admin\HistoriJadwal;
 use App\Livewire\Pendidik\AbsensiSiswa;
+use App\Livewire\Pendidik\BankPaket;
+use App\Livewire\Pendidik\BankSoalForm;
+use App\Livewire\Pendidik\CatAnalisis;
 use App\Livewire\Pendidik\HistoriAbsensiSiswa;
 use App\Livewire\Admin\JadwalMingguan;
 use App\Livewire\Admin\MasterAdmin;
@@ -83,6 +94,10 @@ Route::group(['prefix' => 'super','middleware' => ['auth','super-role']], functi
 
 Route::group(['prefix' => 'admin', 'middleware' => ['auth','admin-role']], function(){
     Route::get('/beranda',[AdminController::class, 'index'])->name('admin.beranda');
+    Route::get('/cat/jadwal', CatJadwal::class)->name('admin.cat.jadwal');
+    Route::get('/cat/jadwal/{jadwal}/skor', CatJadwalSkor::class)->name('admin.cat.jadwal.skor');
+    Route::get('/cat/jadwal/{jadwal}/report/pdf', [CatJadwalReportController::class, 'pdf'])->name('admin.cat.jadwal.report.pdf');
+    Route::get('/cat/jadwal/{jadwal}/report', CatJadwalReport::class)->name('admin.cat.jadwal.report');
 
     Route::get('/paket',[PaketDinasController::class, 'paket'])->name('admin.dinas.paket');
     Route::get('/tambahpaket',[PaketDinasController::class, 'tambah'])->name('admin.dinas.tambahpaket');
@@ -161,6 +176,12 @@ Route::group(['prefix' => 'pendidik','middleware' => ['auth','pengajar-role']], 
     Route::get('/edit-profil',[PengajarController::class, 'edit'])->name('pendidik.dinas.edit');
     Route::post('/update-profil',[PengajarController::class, 'update'])->name('pendidik.dinas.updateprofil');
     Route::get('/paket',[PaketDinasController::class, 'pendidikPaket'])->name('pendidik.dinas.paket');
+    Route::get('/bank-soal', BankPaket::class)->name('pendidik.cat.bank-soal');
+    Route::get('/bank-soal/{paket}/template', BankSoalTemplateController::class)->name('pendidik.cat.bank-soal.template');
+    Route::get('/bank-soal/{paket}', BankSoalForm::class)->name('pendidik.cat.bank-soal.paket');
+    Route::get('/cat/analisis/{jadwal}/soal/pdf', [CatAnalisisController::class, 'pdfSoal'])->name('pendidik.cat.analisis.soal.pdf');
+    Route::get('/cat/analisis/{jadwal}/pdf', [CatAnalisisController::class, 'pdf'])->name('pendidik.cat.analisis.pdf');
+    Route::get('/cat/analisis/{jadwal}', CatAnalisis::class)->name('pendidik.cat.analisis');
     Route::get('/tes/{id}',[TesDinasController::class, 'pendidikTes'])->name('pendidik.dinas.tes');
     Route::get('/tipesoal/{id}',[SoalDinasController::class, 'pendidikPilihTipe'])->name('pendidik.dinas.tipesoal');
     Route::get('/hapusganda/{id}',[SoalDinasController::class, 'pendidikHapusGanda'])->name('pendidik.dinas.hapusganda');
@@ -240,6 +261,8 @@ Route::group(['prefix' => 'pelajar','middleware' => ['auth','pelajar-role']], fu
     Route::get('/absensi/histori-pembelajaran',[JadwalAbsensiController::class, 'historiPelajar'])->name('pelajar.absensi.histori-pembelajaran');
     Route::get('/masukkan_token',[TesDinasController::class, 'masukToken'])->name('pelajar.masukkan_token');
     Route::post('/submit_token',[TesDinasController::class, 'submitToken'])->name('pelajar.submit_token');
+    Route::get('/cat/{jadwal}/pdf', [CatTesReportController::class, 'pdf'])->name('pelajar.cat.tes.pdf');
+    Route::get('/cat/{jadwal}', CatTes::class)->name('pelajar.cat.tes');
     Route::get('/capaian_tes', [HasilDinasController::class, 'capaian'])->name('pelajar.capaian');
     Route::get('/kartu-absensi', [PelajarController::class, 'kartuAbsensi'])->name('pelajar.kartu-absensi');
 });

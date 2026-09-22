@@ -48,7 +48,7 @@
         </div>
     </section>
 
-    <div class="row g-3 mb-4">
+    <div class="row g-3">
         <div class="col-md-4">
             <section class="ck-card p-4 h-100">
                 <p class="ck-hint mb-1">Jumlah Ontime</p>
@@ -68,15 +68,6 @@
             </section>
         </div>
     </div>
-
-    <section class="ck-card p-4 p-md-5">
-        <h2 class="h5 mb-3">Menu</h2>
-        <div class="d-flex flex-wrap gap-2">
-            <a href="{{ route('pelajar.masukkan_token') }}" class="btn btn-ck">CAT</a>
-            <a href="{{ route('pelajar.capaian') }}" class="btn btn-ck-ghost">Capaian Tes</a>
-            <a href="{{ route('pelajar.absensi') }}" class="btn btn-ck-ghost">Absensi</a>
-        </div>
-    </section>
     @include('pelajar.partials.kartu-absensi')
 @endsection
 

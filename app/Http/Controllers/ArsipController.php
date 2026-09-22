@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use RealRashid\SweetAlert\Facades\Alert;
 use App\ArsipPaket;
+use App\Support\CatAnalisisPaket;
 use App\Penilaian;
 use App\Kelas;
 use App\SoalDinasGanda;
@@ -21,19 +22,12 @@ use PDF;
 
 class ArsipController extends Controller
 {
-    public function analisis(){
+    public function analisis()
+    {
         $user = Auth::user()->nama;
-        $pendidik_id = Auth::user()->id;
-        $arsip = ArsipPaket::select('mapels.mapel', 'dn_arsippaket.kode','dn_arsippaket.tanggal','dn_tes.id as tes_id')
-                                ->join('dn_pakets','dn_pakets.id','=','dn_arsippaket.dn_paket_id')
-                                ->join('dn_tes','dn_tes.dn_paket_id','=', 'dn_pakets.id')
-                                ->join('mapels','mapels.id','=','dn_tes.mapel_id')
-                                ->where('dn_tes.pengajar_id', $pendidik_id)
-                                ->orderBy('dn_arsippaket.tanggal','desc')
-                                ->paginate(10);
-        // return $arsip;
+        $paketCat = CatAnalisisPaket::daftarUntuk(Auth::user());
 
-        return view('pendidik.dinas.analisis.analisis', compact('arsip','user'));
+        return view('pendidik.dinas.analisis.analisis', compact('user', 'paketCat'));
     }
 
     public function daftarArsip(){

@@ -152,6 +152,44 @@ input[type="time"].form-control::-webkit-calendar-picker-indicator {
     box-shadow: 0 0 0 0.2rem rgba(184, 149, 74, 0.18);
 }
 
+.ck-select2 .select2-container {
+    width: 100% !important;
+}
+
+.ck-select2 .select2-selection--single {
+    min-height: 3rem;
+    border: 1px solid var(--ck-line);
+    border-radius: 0.75rem;
+    padding: 0.35rem 0.5rem;
+    background-color: #fff;
+}
+
+.ck-select2 .select2-selection--single .select2-selection__rendered {
+    line-height: 2.1rem;
+    padding-left: 0.4rem;
+    color: inherit;
+}
+
+.ck-select2 .select2-selection--single .select2-selection__arrow {
+    height: 2.8rem;
+}
+
+.ck-select2 .select2-container--default.select2-container--focus .select2-selection--single,
+.ck-select2 .select2-container--default.select2-container--open .select2-selection--single {
+    border-color: var(--ck-gold);
+    box-shadow: 0 0 0 0.2rem rgba(184, 149, 74, 0.18);
+}
+
+.select2-container--default .select2-search--dropdown .select2-search__field {
+    border-color: var(--ck-line);
+    border-radius: 0.5rem;
+    padding: 0.45rem 0.7rem;
+}
+
+.select2-container--default .select2-results__option--highlighted.select2-results__option--selectable {
+    background-color: var(--ck-navy);
+}
+
 .btn-ck {
     background: var(--ck-gold);
     border-color: var(--ck-gold);
@@ -277,6 +315,10 @@ input[type="time"].form-control::-webkit-calendar-picker-indicator {
 .ck-cropper-wrap img {
     display: block;
     max-width: 100%;
+}
+
+[x-cloak] {
+    display: none !important;
 }
 
 .ck-modal-backdrop {
@@ -537,5 +579,157 @@ input[type="time"].form-control::-webkit-calendar-picker-indicator {
         text-align: center;
         justify-items: center;
     }
+}
+
+math-field.ck-math-widget {
+    display: block;
+    width: 100%;
+    min-height: 4.5rem;
+    font-size: 1.4rem;
+    border: 1px solid var(--ck-line);
+    border-radius: 0.75rem;
+    padding: 0.65rem 0.85rem;
+    background: #fff;
+}
+
+.ck-nav-nomor {
+    min-width: 2.35rem;
+    padding: 0.4rem 0.55rem;
+    font-weight: 600;
+    border-radius: 0.65rem;
+}
+
+.ck-nav-nomor-kosong {
+    background: #fff;
+    border: 1px solid var(--ck-line);
+    color: var(--ck-muted);
+}
+
+.ck-nav-nomor-isi {
+    background: var(--ck-success);
+    border: 1px solid var(--ck-success);
+    color: #fff;
+}
+
+.ck-nav-nomor-isi:hover,
+.ck-nav-nomor-isi:focus {
+    background: #335a44;
+    border-color: #335a44;
+    color: #fff;
+}
+
+.ck-nav-nomor-aktif {
+    box-shadow: 0 0 0 2px var(--ck-gold);
+}
+
+.ck-sisa-waktu {
+    text-align: right;
+    min-width: 8.5rem;
+    padding: 0.45rem 0.85rem 0.65rem;
+    border-radius: 0.85rem;
+    border: 1px solid var(--ck-line);
+    background: var(--ck-surface);
+    transition: color 0.25s ease, background 0.25s ease, border-color 0.25s ease;
+}
+
+.ck-sisa-waktu-angka {
+    display: block;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: 0.06em;
+    font-size: 1.35rem;
+    line-height: 1.1;
+    margin: 0;
+    color: var(--ck-navy);
+}
+
+.ck-sisa-garis {
+    display: block;
+    height: 3px;
+    margin-top: 0.55rem;
+    border-radius: 99px;
+    background: var(--ck-line);
+    overflow: hidden;
+}
+
+.ck-sisa-garis-isi {
+    display: block;
+    height: 100%;
+    border-radius: inherit;
+    background: var(--ck-gold);
+    transform-origin: left center;
+    transition: width 1s linear, background 0.25s ease;
+}
+
+.ck-sisa-waktu-genting {
+    border-color: var(--ck-danger);
+    background: rgba(164, 74, 70, 0.12);
+}
+
+.ck-sisa-waktu-genting .ck-hint,
+.ck-sisa-waktu-genting .ck-sisa-waktu-angka {
+    color: var(--ck-danger);
+}
+
+.ck-sisa-waktu-genting .ck-sisa-garis-isi {
+    background: var(--ck-danger);
+}
+
+.ck-hasil-tes {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.75rem;
+}
+
+.ck-hasil-item {
+    text-align: center;
+    padding: 0.85rem 0.5rem;
+    border-radius: 0.85rem;
+    border: 1px solid var(--ck-line);
+    background: var(--ck-surface);
+}
+
+.ck-hasil-angka {
+    font-weight: 700;
+    font-size: 1.65rem;
+    line-height: 1.1;
+    color: var(--ck-navy);
+}
+
+.ck-hasil-benar {
+    border-color: var(--ck-success);
+}
+
+.ck-hasil-benar .ck-hint,
+.ck-hasil-benar .ck-hasil-angka {
+    color: var(--ck-success);
+}
+
+.ck-hasil-salah {
+    border-color: var(--ck-danger);
+}
+
+.ck-hasil-salah .ck-hint,
+.ck-hasil-salah .ck-hasil-angka {
+    color: var(--ck-danger);
+}
+
+.ck-hasil-skor {
+    border-color: var(--ck-gold);
+}
+
+.ck-analisis-nomor-salah {
+    background: var(--ck-danger);
+    border: 1px solid var(--ck-danger);
+    color: #fff;
+}
+
+details.ck-card > summary {
+    cursor: pointer;
+    list-style: none;
+}
+
+details.ck-card > summary::-webkit-details-marker {
+    display: none;
 }
 

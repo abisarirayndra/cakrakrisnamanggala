@@ -10,11 +10,13 @@ use App\Markas;
 use App\User;
 use Illuminate\Support\Facades\Route;
 use Tests\Concerns\CreatesAdminMasterSchema;
+use Tests\Concerns\CreatesCatBankSchema;
 use Tests\TestCase;
 
 class AdminAccessTest extends TestCase
 {
     use CreatesAdminMasterSchema;
+    use CreatesCatBankSchema;
 
     protected function defineEnvironment($app): void
     {
@@ -30,6 +32,7 @@ class AdminAccessTest extends TestCase
     {
         parent::setUp();
         $this->setUpAdminMasterSchema();
+        $this->setUpCatBankSchema();
     }
 
     public function test_non_super_admin_can_open_cat_paket(): void
@@ -132,7 +135,9 @@ class AdminAccessTest extends TestCase
             ->assertSee(route('admin.pengguna.pendaftar', absolute: false), false)
             ->assertSee(route('admin.jadwal', absolute: false), false)
             ->assertSee(route('admin.absensi', absolute: false), false)
-            ->assertSee(route('admin.dinas.paket', absolute: false), false);
+            ->assertSee(route('admin.cat.jadwal', absolute: false), false)
+            ->assertDontSee(route('admin.dinas.paket', absolute: false), false)
+            ->assertDontSee('data-nav="cat-paket"', false);
     }
 
     public function test_legacy_absensi_beranda_redirects_to_admin_absensi(): void

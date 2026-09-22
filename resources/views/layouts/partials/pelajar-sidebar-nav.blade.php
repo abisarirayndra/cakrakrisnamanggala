@@ -7,7 +7,7 @@
     <i class="bi bi-house"></i>
     <span>Beranda</span>
 </a>
-<a href="{{ route('pelajar.masukkan_token') }}" data-nav="cat" class="ck-nav-link {{ $active('pelajar.masukkan_token', 'pelajar.dinas.paket', 'pelajar.dinas.tes', 'pelajar.dinas.persiapan') }}">
+<a href="{{ route('pelajar.masukkan_token') }}" data-nav="cat" class="ck-nav-link {{ $active('pelajar.masukkan_token', 'pelajar.dinas.paket', 'pelajar.dinas.tes', 'pelajar.dinas.persiapan', 'pelajar.cat.tes') }}">
     <i class="bi bi-clipboard-data"></i>
     <span>CAT</span>
 </a>

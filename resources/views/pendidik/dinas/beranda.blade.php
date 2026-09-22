@@ -3,7 +3,7 @@
 @section('title', 'Beranda Pendidik - Cakra Krisna Manggala')
 
 @section('content')
-    <section class="ck-card p-4 p-md-5 mb-4">
+    <section class="ck-card p-4 p-md-5">
         <p class="text-uppercase small fw-semibold mb-1" style="color: var(--ck-gold);">Pendidik</p>
         <h1 class="h3 mb-2">Selamat datang, {{ $user }}</h1>
         <p class="ck-hint mb-4">Ringkasan data diri Anda.</p>
@@ -53,29 +53,11 @@
                         {{ $data->created_at ? \Carbon\Carbon::parse($data->created_at)->isoFormat('dddd, D MMMM Y HH:mm') : '—' }}
                     </dd>
                 </dl>
-            </div>
-        </div>
-    </section>
-
-    <section class="ck-card p-4 p-md-5">
-        @if ($data->tempat_lahir == null)
-            <h2 class="h5 mb-3">Menu</h2>
-            <p class="mb-2" style="color: var(--ck-danger);"><b>SILAKAN MELAKUKAN EDIT DATA DIRI DAHULU SEBELUM MENGAKSES MENU</b></p>
-            <div class="d-flex flex-wrap gap-2">
-                <button type="button" class="btn btn-ck-ghost" disabled>Paket Soal (Not Available)</button>
-                <button type="button" class="btn btn-ck-ghost" disabled>Absensi (Not Available)</button>
-            </div>
-        @else
-            <h2 class="h5 mb-3">Menu</h2>
-            <div class="d-flex flex-wrap gap-2">
-                <a href="{{ route('pendidik.dinas.paket') }}" class="btn btn-ck">Paket Soal</a>
-                <a href="{{ route('pendidik.dinas.analisis') }}" class="btn btn-ck-ghost">Analisis</a>
-                <a href="{{ route('pendidik.absensi') }}" class="btn btn-ck-ghost">Absensi</a>
-                @if ($data->mapel == 'Jasmani')
-                    <a href="{{ route('pendidik.absensi.jadwal_jasmani') }}" class="btn btn-ck-ghost">Absen Lapangan</a>
+                @if ($data->tempat_lahir == null)
+                    <p class="mt-3 mb-0" style="color: var(--ck-danger);"><b>SILAKAN MELAKUKAN EDIT DATA DIRI DAHULU SEBELUM MENGAKSES MENU</b></p>
                 @endif
             </div>
-        @endif
+        </div>
     </section>
     @include('pendidik.partials.kartu-absensi')
 @endsection
