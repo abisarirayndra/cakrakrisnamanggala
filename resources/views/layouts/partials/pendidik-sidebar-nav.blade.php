@@ -10,7 +10,8 @@
     );
     $catMenuOpen = request()->routeIs(
         'pendidik.cat.bank-soal',
-        'pendidik.cat.bank-soal.paket'
+        'pendidik.cat.bank-soal.paket',
+        'pendidik.cat.jadwal'
     );
 @endphp
 <p class="ck-nav-section">Utama</p>
@@ -20,7 +21,7 @@
 </a>
 <div class="ck-nav-fold">
     <div class="ck-nav-fold-head">
-        <a href="{{ route('pendidik.cat.bank-soal') }}" data-nav="cat" class="ck-nav-link {{ $active('pendidik.cat.bank-soal', 'pendidik.cat.bank-soal.paket') }}">
+        <a href="{{ route('pendidik.cat.bank-soal') }}" data-nav="cat" class="ck-nav-link {{ $active('pendidik.cat.bank-soal', 'pendidik.cat.bank-soal.paket', 'pendidik.cat.jadwal') }}">
             <i class="bi bi-journal-text"></i>
             <span>CAT</span>
         </a>
@@ -39,6 +40,10 @@
         <a href="{{ route('pendidik.cat.bank-soal') }}" data-nav="bank-soal" class="ck-nav-link ck-nav-child {{ $active('pendidik.cat.bank-soal', 'pendidik.cat.bank-soal.paket') }}">
             <i class="bi bi-collection"></i>
             <span>Bank Soal</span>
+        </a>
+        <a href="{{ route('pendidik.cat.jadwal') }}" data-nav="cat-jadwal" class="ck-nav-link ck-nav-child {{ $active('pendidik.cat.jadwal') }}">
+            <i class="bi bi-calendar-event"></i>
+            <span>Jadwal CAT</span>
         </a>
     </div>
 </div>

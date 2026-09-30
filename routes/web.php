@@ -30,6 +30,7 @@ use App\Livewire\Pendidik\AbsensiSiswa;
 use App\Livewire\Pendidik\BankPaket;
 use App\Livewire\Pendidik\BankSoalForm;
 use App\Livewire\Pendidik\CatAnalisis;
+use App\Livewire\Pendidik\CatJadwal as PendidikCatJadwal;
 use App\Livewire\Pendidik\HistoriAbsensiSiswa;
 use App\Livewire\Admin\JadwalMingguan;
 use App\Livewire\Admin\MasterAdmin;
@@ -177,6 +178,7 @@ Route::group(['prefix' => 'pendidik','middleware' => ['auth','pengajar-role']], 
     Route::post('/update-profil',[PengajarController::class, 'update'])->name('pendidik.dinas.updateprofil');
     Route::get('/paket',[PaketDinasController::class, 'pendidikPaket'])->name('pendidik.dinas.paket');
     Route::get('/bank-soal', BankPaket::class)->name('pendidik.cat.bank-soal');
+    Route::get('/cat/jadwal', PendidikCatJadwal::class)->name('pendidik.cat.jadwal');
     Route::get('/bank-soal/{paket}/template', BankSoalTemplateController::class)->name('pendidik.cat.bank-soal.template');
     Route::get('/bank-soal/{paket}', BankSoalForm::class)->name('pendidik.cat.bank-soal.paket');
     Route::get('/cat/analisis/{jadwal}/soal/pdf', [CatAnalisisController::class, 'pdfSoal'])->name('pendidik.cat.analisis.soal.pdf');
