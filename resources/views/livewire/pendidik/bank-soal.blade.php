@@ -279,7 +279,7 @@
                     <math-field
                         id="ck-math-widget"
                         class="ck-math-widget"
-                        virtual-keyboard-mode="onfocus"
+                        math-virtual-keyboard-policy="manual"
                         fonts-directory="https://cdn.jsdelivr.net/npm/mathlive@0.105.3/fonts/"
                         sounds-directory="https://cdn.jsdelivr.net/npm/mathlive@0.105.3/sounds/"
                     ></math-field>
@@ -491,14 +491,35 @@
                 mf.focus?.();
             }
         });
+
+        let fromKeyboardToggle = false;
+        document.addEventListener('pointerdown', (event) => {
+            fromKeyboardToggle = event.composedPath().some(
+                (el) => el instanceof Element && el.getAttribute('part') === 'virtual-keyboard-toggle'
+            );
+        }, true);
+        document.addEventListener('focusin', (event) => {
+            if (event.target?.id !== 'ck-math-widget' || fromKeyboardToggle) {
+                return;
+            }
+            window.mathVirtualKeyboard?.show({ animate: true });
+        });
     }
+
+    const hideKeyboardIfClosed = () => {
+        if (!mathField() && window.mathVirtualKeyboard?.visible) {
+            window.mathVirtualKeyboard.hide();
+        }
+    };
 
     loadKatex();
     loadMathlive();
     Livewire.hook('morph.updated', () => {
         renderKatex();
         loadMathlive();
+        hideKeyboardIfClosed();
     });
+    Livewire.hook('morph.removed', hideKeyboardIfClosed);
 </script>
 @endscript
 @endif
