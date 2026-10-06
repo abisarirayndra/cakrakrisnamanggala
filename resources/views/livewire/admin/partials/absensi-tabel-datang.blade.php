@@ -1,3 +1,6 @@
+@php
+    $aksi = $aksi ?? true;
+@endphp
 <div class="table-responsive">
     <table class="table align-middle mb-0">
         <thead>
@@ -7,7 +10,9 @@
                 <th>Status</th>
                 <th>Datang</th>
                 <th>Pulang</th>
-                <th class="text-end">Aksi</th>
+                @if ($aksi)
+                    <th class="text-end">Aksi</th>
+                @endif
             </tr>
         </thead>
         <tbody>
@@ -31,11 +36,13 @@
                     <td @if ($warnaTampil) style="color: {{ $warnaTampil }};" @endif>{{ $statusTampil }}</td>
                     <td>{{ $row->datang?->format('H:i') ?: '—' }}</td>
                     <td>{{ $row->pulang?->format('H:i') ?: '—' }}</td>
-                    <td>@include('livewire.admin.partials.absensi-aksi', ['tipe' => $tipe, 'row' => $row])</td>
+                    @if ($aksi)
+                        <td>@include('livewire.admin.partials.absensi-aksi', ['tipe' => $tipe, 'row' => $row])</td>
+                    @endif
                 </tr>
             @empty
                 <tr>
-                    <td colspan="6" class="ck-hint">Belum ada yang datang</td>
+                    <td colspan="{{ $aksi ? 6 : 5 }}" class="ck-hint">Belum ada yang datang</td>
                 </tr>
             @endforelse
         </tbody>
