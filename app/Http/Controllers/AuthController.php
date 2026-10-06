@@ -72,9 +72,9 @@ class AuthController extends Controller
     public function kirimEmail(Request $request){
         $cek = User::where('email', $request->email)->first();
         if(!$cek){
-            return redirect()->back()->with('error','Email Tidak Terdaftar');
+            return redirect()->back()->withInput($request->only('email'))->with('error','Email Tidak Terdaftar');
         }elseif($cek->nomor_registrasi != $request->token){
-            return redirect()->back()->with('error','Token salah, Lihat pada ID Card/Konfirmasi admin markas');
+            return redirect()->back()->withInput($request->only('email'))->with('error','Token salah, Lihat pada ID Card/Konfirmasi admin markas');
         }else{
             $cek->update([
                 'token_reset' => Str::random(40),
@@ -89,25 +89,35 @@ class AuthController extends Controller
     }
 
     public function formReset(){
-        return view('auth.reset.form_reset');
+        $token = session('token') ?? old('token');
+
+        if (! $token) {
+            return redirect()->route('reset');
+        }
+
+        return view('auth.reset.form_reset', ['token' => $token]);
     }
 
     public function upReset(Request $request){
-        $token = $request->token;
+        $user = User::where('token_reset', $request->token)->whereNotNull('token_reset')->first();
 
-        $user = User::where('token_reset', $token)->first();
-
-        if(isset($user)){
-            $user->update([
-                'password' => Hash::make($request->password),
-            ]);
-
-            Alert::success('Reset Berhasil');
-            return redirect()->route('login');
+        if (! $user) {
+            return redirect()->route('reset')->with('error', 'Link reset tidak valid atau sudah dipakai, silakan ulangi.');
         }
-        else {
-            Alert::error('Email Tidak Ditemukan', 'Reset Gagal');
-        }
+
+        $request->validate([
+            'password' => ['required', 'confirmed'],
+        ], [
+            'password.required' => 'Password baru harus diisi',
+            'password.confirmed' => 'Password tidak cocok',
+        ]);
+
+        $user->update([
+            'password' => Hash::make($request->password),
+            'token_reset' => null,
+        ]);
+
+        return redirect()->route('login')->with('status', 'Password berhasil diperbarui, silakan masuk.');
     }
 
 

@@ -5,6 +5,10 @@
         <h1 class="h4 mb-0">Cakra Krisna Manggala</h1>
     </div>
 
+    @if (session('status'))
+        <div class="alert alert-success mb-4" role="alert">{{ session('status') }}</div>
+    @endif
+
     @if ($errors->any())
         <div class="alert alert-ck mb-4" role="alert">
             {{ $errors->first() }}

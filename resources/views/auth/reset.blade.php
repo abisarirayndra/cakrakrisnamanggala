@@ -1,67 +1,37 @@
-@extends('master.admin1')
+@extends('layouts.guest-cakra')
 
-@section('title')
-    <title>Reset Password</title>
-@endsection
+@section('title', 'Lupa Password')
 
 @section('content')
-<body class="bg-gradient-warning">
+<div class="ck-card ck-login-card p-4 p-md-5 mx-auto">
+    <div class="text-center mb-4">
+        <img src="{{ asset('img/krisna.png') }}" width="72" height="72" alt="Cakra Krisna Manggala">
+        <p class="ck-hint mt-3 mb-1">Sistem E-Learning Terpadu</p>
+        <h1 class="h4 mb-2">Lupa password</h1>
+        <p class="ck-hint small mb-0">Masukkan email dan nomor registrasi yang tertera pada ID card.</p>
+    </div>
 
-  <div class="container">
+    @if (session('error'))
+        <div class="alert alert-ck mb-4" role="alert">{{ session('error') }}</div>
+    @endif
 
-      <!-- Outer Row -->
-      <div class="row justify-content-center">
+    <form action="{{ route('submit_email') }}" method="post" class="row g-3">
+        @csrf
+        <div class="col-12">
+            <label class="form-label" for="email">Email</label>
+            <input id="email" type="email" class="form-control" name="email" value="{{ old('email') }}" autocomplete="username" placeholder="nama@email.com" required>
+        </div>
+        <div class="col-12">
+            <label class="form-label" for="token">Nomor registrasi</label>
+            <input id="token" type="text" class="form-control" name="token" placeholder="Token / No. ID" required>
+        </div>
+        <div class="col-12">
+            <button type="submit" class="btn btn-ck w-100">Lanjutkan</button>
+        </div>
+    </form>
 
-          <div class="col-xl-10 col-lg-12 col-md-9">
-
-              <div class="card o-hidden border-0 shadow-lg my-5">
-                  <div class="card-body p-0">
-                      <!-- Nested Row within Card Body -->
-                      <div class="row">
-                          <div class="col-lg-6 d-none d-lg-block text-center mt-5"><img src="{{asset('img/krisna.png')}}" width="200" height="200" alt=""></div>
-                          <div class="col-lg-6">
-                              <div class="p-5">
-                                  <div class="text-center">
-                                      <h1 class="h4 text-gray-900 mb-4">Reset Password</h1>
-                                  </div>
-                                  <form class="user" action="{{route('submit_email')}}" method="post">
-                                    @csrf
-                                      <div class="form-group">
-                                          <input type="text" class="form-control form-control-user"
-                                              id="exampleInputEmail" aria-describedby="emailHelp"
-                                              placeholder="Email" name="email" required>
-                                      </div>
-                                      <div class="form-group">
-                                        <input type="text" class="form-control form-control-user"
-                                            placeholder="Token / No. ID" name="token" required>
-                                    </div>
-                                      <button type="submit" class="btn btn-warning btn-user btn-block">
-                                          Submit
-                                      </button>
-                                  </form>
-                                @if (session()->has('success'))
-                                    <div class="alert alert-success mt-3">
-                                        <a href="#" class="close" data-dismiss="alert" aria-label="close">×</a>
-                                        <p>{{ session()->get('success') }}</p>
-                                    </div>
-                                @endif
-                                @if (session()->has('error'))
-                                    <div class="alert alert-danger mt-3">
-                                        <a href="#" class="close" data-dismiss="alert" aria-label="close">×</a>
-                                        <p>{{ session()->get('error') }}</p>
-                                    </div>
-                                @endif
-                              </div>
-
-                          </div>
-                      </div>
-                  </div>
-              </div>
-
-          </div>
-
-      </div>
-
-  </div>
+    <div class="text-center mt-4">
+        <a class="ck-hint text-decoration-none" href="{{ route('login') }}">Kembali ke halaman masuk</a>
+    </div>
+</div>
 @endsection
-
