@@ -74,6 +74,9 @@ class CatTesTest extends TestCase
             ->test(CatTes::class, ['jadwal' => $jadwal->id])
             ->assertOk()
             ->assertSee('UTS Matematika')
+            ->assertSee('Bank UTS')
+            ->assertDontSee('Hasil dari 1+1')
+            ->call('pilihBank', BankPaket::firstOrFail()->id)
             ->assertSee('Hasil dari 1+1')
             ->assertSee('2');
     }
@@ -128,9 +131,15 @@ class CatTesTest extends TestCase
 
         Livewire::actingAs($pelajar)
             ->test(CatTes::class, ['jadwal' => $jadwal->id])
+            ->assertSee('Pilih bank soal')
+            ->assertSee('Kumpulkan')
+            ->assertDontSee('ck-nav-nomor', false)
+            ->call('pilihBank', $soal->paket_id)
             ->assertSee('ck-nav-nomor', false)
+            ->assertDontSee('wire:click="kumpulkan"', false)
             ->call('pilihJawaban', 'B')
             ->assertSee('ck-nav-nomor-isi', false)
+            ->call('kePilihan')
             ->call('kumpulkan')
             ->assertSee('Tes selesai')
             ->assertSee('10');
@@ -153,6 +162,7 @@ class CatTesTest extends TestCase
 
         Livewire::actingAs($pelajar)
             ->test(CatTes::class, ['jadwal' => $jadwal->id])
+            ->call('pilihBank', BankPaket::firstOrFail()->id)
             ->call('pilihJawaban', 'C')
             ->call('kumpulkan')
             ->assertSee('Tes selesai')
@@ -190,14 +200,25 @@ class CatTesTest extends TestCase
         $this->actingAs($pelajar)
             ->post(route('pelajar.submit_token'), ['token' => $jadwal->token]);
 
+        CatSesi::create([
+            'jadwal_id' => $jadwal->id,
+            'pelajar_id' => $pelajar->id,
+            'bank_paket_id' => $paket->id,
+            'status' => CatSesi::BERJALAN,
+            'urutan_soal' => BankSoal::query()->orderBy('id')->pluck('id')->map(fn ($id) => (int) $id)->all(),
+            'started_at' => now(),
+        ]);
+
         $this->withSession(['cat_akses_jadwal' => $jadwal->id]);
 
         Livewire::actingAs($pelajar)
             ->test(CatTes::class, ['jadwal' => $jadwal->id])
+            ->call('pilihBank', $paket->id)
             ->call('pilihJawaban', 'B')
             ->call('keSoal', 1)
             ->call('pilihJawaban', 'A')
             ->call('kumpulkan')
+            ->call('pilihBank', $paket->id)
             ->assertSee('Tes selesai')
             ->assertSeeInOrder(['Benar', '1', 'Salah', '2', 'Total skor', '10'])
             ->assertSee('Unduh PDF')
@@ -216,6 +237,7 @@ class CatTesTest extends TestCase
 
         Livewire::actingAs($pelajar)
             ->test(CatTes::class, ['jadwal' => $jadwal->id])
+            ->call('pilihBank', BankPaket::firstOrFail()->id)
             ->call('pilihJawaban', 'B')
             ->call('kumpulkan');
 
@@ -266,6 +288,7 @@ class CatTesTest extends TestCase
 
         Livewire::actingAs($pelajar)
             ->test(CatTes::class, ['jadwal' => $jadwal->id])
+            ->call('pilihBank', BankPaket::firstOrFail()->id)
             ->call('pilihJawaban', 'B')
             ->call('kumpulkan');
 
@@ -296,6 +319,7 @@ class CatTesTest extends TestCase
 
         Livewire::actingAs($pelajar)
             ->test(CatTes::class, ['jadwal' => $jadwal->id])
+            ->call('pilihBank', BankPaket::firstOrFail()->id)
             ->call('pilihJawaban', 'B')
             ->call('kumpulkan');
 
@@ -318,6 +342,7 @@ class CatTesTest extends TestCase
 
         $page = Livewire::actingAs($pelajar)
             ->test(CatTes::class, ['jadwal' => $jadwal->id])
+            ->call('pilihBank', BankPaket::firstOrFail()->id)
             ->call('pilihJawaban', 'B')
             ->call('kumpulkan')
             ->call('pilihJawaban', 'A');
@@ -359,6 +384,7 @@ class CatTesTest extends TestCase
 
         Livewire::actingAs($pelajar)
             ->test(CatTes::class, ['jadwal' => $jadwal->id])
+            ->call('pilihBank', BankPaket::firstOrFail()->id)
             ->call('pilihJawaban', 'B');
 
         Carbon::setTestNow('2026-09-21 09:30:00');
@@ -431,22 +457,19 @@ class CatTesTest extends TestCase
             ->assertSee('Hasil dari 1+1')
             ->assertDontSee('Hasil dari 2+2')
             ->call('pilihJawaban', 'B')
-            ->call('kumpulkan')
-            ->assertSee('Tes selesai')
-            ->assertSeeInOrder(['Bank UTS', 'Selesai', '10', 'Bank Kedua', 'Belum', '-', 'Total', '10']);
-
-        $this->actingAs($pelajar)
-            ->from(route('pelajar.masukkan_token'))
-            ->post(route('pelajar.submit_token'), ['token' => $jadwal->token])
-            ->assertRedirect(route('pelajar.cat.tes', $jadwal));
-
-        $page->call('kePilihan')
+            ->call('kePilihan')
+            ->assertSeeInOrder(['Bank UTS', 'Berjalan', 'Bank Kedua', 'Belum'])
             ->call('pilihBank', $paketDua->id)
             ->assertSee('Hasil dari 2+2')
             ->assertDontSee('Hasil dari 1+1')
             ->call('pilihJawaban', 'B')
-            ->call('kumpulkan')
-            ->assertSeeInOrder(['Bank UTS', '10', 'Bank Kedua', '10', 'Total', '20']);
+            ->call('kePilihan');
+
+        $this->assertSame(0, CatSesi::where('status', CatSesi::SELESAI)->count());
+
+        $page->call('kumpulkan')
+            ->assertSee('Tes selesai')
+            ->assertSeeInOrder(['Bank UTS', 'Selesai', 'Skor 10', 'Bank Kedua', 'Selesai', 'Skor 10', 'Total skor', '20']);
 
         $this->assertSame(2, CatSesi::count());
         $this->assertSame(20, (int) CatSesi::sum('nilai'));
@@ -455,6 +478,34 @@ class CatTesTest extends TestCase
             ->from(route('pelajar.masukkan_token'))
             ->post(route('pelajar.submit_token'), ['token' => $jadwal->token])
             ->assertRedirect(route('pelajar.masukkan_token'));
+    }
+
+    public function test_kumpulkan_marks_untouched_banks_selesai(): void
+    {
+        $pelajar = $this->pelajar();
+        $jadwal = $this->jadwalSiap();
+        $guru = User::query()->where('nama', 'Guru CAT')->firstOrFail();
+        $paketSatu = $jadwal->banks->first();
+        $paketDua = $this->paket($guru, BankSoalTipe::TUNGGAL, 'Bank Kedua');
+        $jadwal->pasangBanks([$paketSatu->id, $paketDua->id]);
+
+        $this->actingAs($pelajar)
+            ->post(route('pelajar.submit_token'), ['token' => $jadwal->token]);
+        $this->withSession(['cat_akses_jadwal' => $jadwal->id]);
+
+        Livewire::actingAs($pelajar)
+            ->test(CatTes::class, ['jadwal' => $jadwal->id])
+            ->call('pilihBank', $paketSatu->id)
+            ->call('pilihJawaban', 'B')
+            ->call('kePilihan')
+            ->call('kumpulkan')
+            ->assertSet('bankId', null)
+            ->assertSee('Tes selesai')
+            ->assertDontSee('wire:click="kumpulkan"', false);
+
+        $this->assertSame(2, CatSesi::where('status', CatSesi::SELESAI)->count());
+        $this->assertSame(0, (int) CatSesi::where('bank_paket_id', $paketDua->id)->value('nilai'));
+        $this->assertTrue($jadwal->fresh()->semuaSelesaiUntuk($pelajar->id));
     }
 
     public function test_starting_sesi_stores_shuffled_soal_ids_per_bank(): void
@@ -467,7 +518,8 @@ class CatTesTest extends TestCase
         $this->withSession(['cat_akses_jadwal' => $jadwal->id]);
 
         Livewire::actingAs($pelajar)
-            ->test(CatTes::class, ['jadwal' => $jadwal->id]);
+            ->test(CatTes::class, ['jadwal' => $jadwal->id])
+            ->call('pilihBank', BankPaket::firstOrFail()->id);
 
         $ids = BankSoal::query()->orderBy('id')->pluck('id')->map(fn ($id) => (int) $id)->all();
         $urutan = array_map('intval', CatSesi::firstOrFail()->urutan_soal ?? []);
@@ -493,6 +545,7 @@ class CatTesTest extends TestCase
 
         Livewire::actingAs($pelajar)
             ->test(CatTes::class, ['jadwal' => $jadwal->id])
+            ->call('pilihBank', BankPaket::firstOrFail()->id)
             ->assertSee('Ketiga')
             ->assertDontSee('Pertama')
             ->call('keSoal', 1)
@@ -525,6 +578,7 @@ class CatTesTest extends TestCase
 
         Livewire::actingAs($pelajar)
             ->test(CatTes::class, ['jadwal' => $jadwal->id])
+            ->call('pilihBank', BankPaket::firstOrFail()->id)
             ->assertSee('Kedua')
             ->call('pilihJawaban', 'C')
             ->call('keSoal', 1)

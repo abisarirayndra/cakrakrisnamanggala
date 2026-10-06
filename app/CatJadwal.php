@@ -99,6 +99,34 @@ class CatJadwal extends Model
             ->each(fn (CatSesi $sesi) => $sesi->kumpulkanSekarang());
     }
 
+    public function kumpulkanSemuaBank(int $pelajarId): void
+    {
+        $sesiPelajar = $this->sesi()
+            ->where('pelajar_id', $pelajarId)
+            ->get()
+            ->keyBy(fn (CatSesi $sesi) => (int) $sesi->bank_paket_id);
+
+        foreach ($this->banks()->pluck('cat_bank_paket.id') as $bankId) {
+            $sesi = $sesiPelajar->get((int) $bankId);
+
+            if ($sesi) {
+                $sesi->kumpulkanSekarang();
+
+                continue;
+            }
+
+            CatSesi::create([
+                'jadwal_id' => $this->id,
+                'pelajar_id' => $pelajarId,
+                'bank_paket_id' => $bankId,
+                'status' => CatSesi::SELESAI,
+                'nilai' => 0,
+                'started_at' => now(),
+                'submitted_at' => now(),
+            ]);
+        }
+    }
+
     public static function historiPelajar(int $pelajarId): Collection
     {
         $ids = CatSesi::query()

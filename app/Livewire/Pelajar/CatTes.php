@@ -51,10 +51,6 @@ class CatTes extends Component
 
         $this->bankId = $bank instanceof BankPaket ? (int) $bank->id : ($bank !== null ? (int) $bank : null);
 
-        if ($this->bankId === null && $model->banks->count() === 1) {
-            $this->bankId = (int) $model->banks->first()->id;
-        }
-
         if ($this->bankId !== null) {
             $this->siapkanSesi($model);
         }
@@ -78,10 +74,6 @@ class CatTes extends Component
 
     public function kePilihan(): void
     {
-        if ($this->jadwal()->banks->count() < 2) {
-            return;
-        }
-
         $this->bankId = null;
         $this->nomor = 0;
         $this->jawaban = [];
@@ -134,16 +126,12 @@ class CatTes extends Component
     public function kumpulkan(): void
     {
         $jadwal = $this->jadwal();
-        if ($this->bankId === null) {
-            $jadwal->kumpulkanSesiBerjalan((int) auth()->id());
-        } else {
-            $sesi = $this->sesi();
-            $sesi?->kumpulkanSekarang();
-        }
+        $jadwal->kumpulkanSemuaBank((int) auth()->id());
+        session()->forget('cat_akses_jadwal');
 
-        if ($jadwal->semuaSelesaiUntuk((int) auth()->id())) {
-            session()->forget('cat_akses_jadwal');
-        }
+        $this->bankId = null;
+        $this->nomor = 0;
+        $this->jawaban = [];
     }
 
     public function render()
@@ -163,6 +151,7 @@ class CatTes extends Component
             'soalAktif' => $soal->get($this->nomor),
             'sesi' => $sesi,
             'ringkasan' => $ringkasan,
+            'semuaSelesai' => $ringkasan['status'] === 'Selesai',
             'laporan' => $sesi?->sudahSelesai() ? $sesi->laporan($soal) : null,
             'matematis' => $soal->contains(fn (BankSoal $item) => (bool) $item->paket?->isMatematis()),
             'sisaDetik' => $sisaDetik,

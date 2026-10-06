@@ -4,16 +4,23 @@
             <div>
                 <p class="text-uppercase small fw-semibold mb-1" style="color: var(--ck-gold);">Computer Assisted Test</p>
                 <h1 class="h4 mb-1">{{ $jadwal->nama }}</h1>
-                <p class="ck-hint mb-0">Pilih bank soal yang ingin dikerjakan.</p>
+                <p class="ck-hint mb-0">
+                    {{ $semuaSelesai ? 'Tes selesai. Pilih bank untuk melihat hasilnya.' : 'Pilih bank soal yang ingin dikerjakan.' }}
+                </p>
             </div>
-            @include('livewire.pelajar.partials.cat-sisa-waktu')
+            @unless ($semuaSelesai)
+                @include('livewire.pelajar.partials.cat-sisa-waktu')
+            @endunless
         </div>
         <div class="d-flex flex-column gap-3">
             @foreach ($ringkasan['banks'] as $bank)
-                <section class="ck-card p-4 d-flex flex-wrap align-items-center justify-content-between gap-3">
+                <section class="ck-card p-4 d-flex flex-wrap align-items-center justify-content-between gap-3" wire:key="cat-bank-{{ $bank['id'] }}">
                     <div>
                         <p class="fw-semibold mb-1">{{ $bank['nama'] }}</p>
-                        <p class="ck-hint mb-0">{{ $bank['jumlah'] }} soal · {{ $bank['status'] }}</p>
+                        <p class="ck-hint mb-0">
+                            {{ $bank['jumlah'] }} soal · {{ $bank['status'] }}
+                            @if ($semuaSelesai) · Skor {{ $bank['skor'] ?? 0 }} @endif
+                        </p>
                     </div>
                     <button type="button" class="btn btn-sm btn-ck" wire:click="pilihBank({{ $bank['id'] }})">
                         {{ $bank['status'] === 'Selesai' ? 'Lihat hasil' : ($bank['status'] === 'Berjalan' ? 'Lanjutkan' : 'Kerjakan') }}
@@ -21,9 +28,29 @@
                 </section>
             @endforeach
         </div>
-        @if (collect($ringkasan['banks'])->contains(fn ($bank) => $bank['status'] === 'Selesai'))
-            <div class="mt-4">
-                <a href="{{ route('pelajar.cat.tes.pdf', $jadwal) }}" class="btn btn-ck-ghost">Unduh PDF</a>
+        @if ($semuaSelesai)
+            <section class="ck-card p-4 mt-3 d-flex flex-wrap align-items-center justify-content-between gap-3">
+                <div>
+                    <p class="ck-hint mb-1">Total skor</p>
+                    <p class="h4 fw-semibold mb-0">{{ $ringkasan['total'] }}</p>
+                </div>
+                <div class="d-flex flex-wrap gap-2">
+                    <a href="{{ route('pelajar.cat.tes.pdf', $jadwal) }}" class="btn btn-ck-ghost">Unduh PDF</a>
+                    <a href="{{ route('pelajar.dinas.beranda') }}" class="btn btn-ck">Kembali ke beranda</a>
+                </div>
+            </section>
+        @else
+            <div class="d-flex flex-wrap justify-content-end gap-2 mt-4">
+                <button
+                    type="button"
+                    class="btn btn-ck"
+                    wire:click="kumpulkan"
+                    wire:confirm="Kumpulkan semua bank soal sekarang? Bank yang belum dikerjakan akan ikut selesai dan jawaban tidak bisa diubah lagi."
+                    wire:loading.attr="disabled"
+                >
+                    <span wire:loading wire:target="kumpulkan" class="spinner-border spinner-border-sm me-1" aria-hidden="true"></span>
+                    Kumpulkan
+                </button>
             </div>
         @endif
     @elseif ($sesi?->sudahSelesai())
@@ -72,9 +99,7 @@
                 </table>
             </div>
             <div class="d-flex flex-wrap gap-2">
-                @if ($daftarBank->count() > 1)
-                    <button type="button" class="btn btn-ck-ghost" wire:click="kePilihan">Pilih bank lain</button>
-                @endif
+                <button type="button" class="btn btn-ck-ghost" wire:click="kePilihan">Daftar bank soal</button>
                 <a href="{{ route('pelajar.cat.tes.pdf', $jadwal) }}" class="btn btn-ck-ghost">Unduh PDF</a>
                 <a href="{{ route('pelajar.dinas.beranda') }}" class="btn btn-ck">Kembali ke beranda</a>
             </div>
@@ -104,13 +129,8 @@
                     </button>
                 @endforeach
             </div>
-            <button
-                type="button"
-                class="btn btn-sm btn-ck"
-                wire:click="kumpulkan"
-                wire:confirm="Kumpulkan jawaban sekarang?"
-            >
-                Kumpulkan
+            <button type="button" class="btn btn-sm btn-ck-ghost ms-auto" wire:click="kePilihan">
+                Daftar bank soal
             </button>
         </div>
 
