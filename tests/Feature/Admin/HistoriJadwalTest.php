@@ -72,6 +72,12 @@ class HistoriJadwalTest extends TestCase
     {
         Carbon::setTestNow('2026-09-14 10:00:00');
         [$admin, $kelas, $mapel, $guru, $slot] = $this->slotFixture();
+        AbsensiPendidik::create([
+            'jadwal_id' => $slot->id,
+            'pendidik_id' => $guru->id,
+            'datang' => '2026-09-14 07:55:00',
+            'status' => AbsensiStatus::ONTIME,
+        ]);
         $fisika = Mapel::create(['mapel' => 'Fisika']);
         Jadwal::create([
             'staf_id' => $admin->id,
@@ -102,6 +108,62 @@ class HistoriJadwalTest extends TestCase
             ->assertDontSee('Fisika')
             ->assertDontSee('Kimia')
             ->assertSee('Detail');
+    }
+
+    public function test_list_shows_ongoing_but_hides_upcoming_and_slots_without_absensi(): void
+    {
+        Carbon::setTestNow('2026-09-14 10:00:00');
+        [$admin, $kelas, $mapel, $guru, $slot, $siswa] = $this->slotFixture();
+        AbsensiPelajar::create([
+            'jadwal_id' => $slot->id,
+            'pelajar_id' => $siswa->id,
+            'datang' => '2026-09-14 08:00:00',
+            'status' => AbsensiStatus::ONTIME,
+        ]);
+        $kosong = Jadwal::create([
+            'staf_id' => $admin->id,
+            'mapel_id' => Mapel::create(['mapel' => 'Fisika'])->id,
+            'pendidik_id' => $guru->id,
+            'kelas_id' => $kelas->id,
+            'mulai' => '2026-09-13 08:00:00',
+            'selesai' => '2026-09-13 09:00:00',
+        ]);
+        $berjalan = Jadwal::create([
+            'staf_id' => $admin->id,
+            'mapel_id' => Mapel::create(['mapel' => 'Kimia'])->id,
+            'pendidik_id' => $guru->id,
+            'kelas_id' => $kelas->id,
+            'mulai' => '2026-09-14 09:30:00',
+            'selesai' => '2026-09-14 10:30:00',
+        ]);
+        AbsensiPelajar::create([
+            'jadwal_id' => $berjalan->id,
+            'pelajar_id' => $siswa->id,
+            'datang' => '2026-09-14 09:30:00',
+            'status' => AbsensiStatus::ONTIME,
+        ]);
+        $nanti = Jadwal::create([
+            'staf_id' => $admin->id,
+            'mapel_id' => Mapel::create(['mapel' => 'Biologi'])->id,
+            'pendidik_id' => $guru->id,
+            'kelas_id' => $kelas->id,
+            'mulai' => '2026-09-14 11:00:00',
+            'selesai' => '2026-09-14 12:00:00',
+        ]);
+        AbsensiPelajar::create([
+            'jadwal_id' => $nanti->id,
+            'pelajar_id' => $siswa->id,
+            'status' => AbsensiStatus::IZIN,
+            'keterangan' => 'Izin awal',
+        ]);
+
+        Livewire::actingAs($admin)
+            ->test(HistoriJadwal::class)
+            ->set('kelas_id', (string) $kelas->id)
+            ->assertSee('Matematika')
+            ->assertSee('Kimia')
+            ->assertDontSee('Fisika')
+            ->assertDontSee('Biologi');
     }
 
     public function test_detail_shows_absensi_and_jurnal(): void
@@ -175,7 +237,7 @@ class HistoriJadwalTest extends TestCase
         $response->assertOk()
             ->assertHeader('content-type', 'application/pdf');
         $this->assertStringStartsWith('%PDF', $response->getContent());
-        $this->assertStringContainsString('laporan-kehadiran', (string) $response->headers->get('content-disposition'));
+        $this->assertStringContainsString('2026-09-14-Matematika-A.pdf', (string) $response->headers->get('content-disposition'));
     }
 
     public function test_pdf_hides_other_markas_slot(): void

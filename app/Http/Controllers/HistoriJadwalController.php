@@ -25,7 +25,12 @@ class HistoriJadwalController extends Controller
             ? 'data:image/png;base64,'.base64_encode((string) file_get_contents($logoPath))
             : null;
 
-        $namaBerkas = 'laporan-kehadiran-'.($slot->kelas?->nama ?: 'kelas').'-'.$slot->mulai->format('Ymd').'.pdf';
+        $namaBerkas = collect([
+            $slot->mulai->format('Y-m-d'),
+            $slot->mapel?->mapel ?: 'mapel',
+            $slot->kelas?->nama ?: 'kelas',
+        ])->map(fn ($bagian) => trim(preg_replace('/[\\\\\/:*?"<>|]+/', ' ', $bagian)))
+            ->implode('-').'.pdf';
 
         return Pdf::loadView('admin.jadwal.histori-pdf', [
             'logo' => $logo,

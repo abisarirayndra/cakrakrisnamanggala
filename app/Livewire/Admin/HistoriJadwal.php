@@ -70,6 +70,8 @@ class HistoriJadwal extends Component
             ->when($kelasAktif, fn ($query) => $query->where('adm_jadwal.kelas_id', $kelasAktif->id))
             ->whereMonth('adm_jadwal.mulai', $this->bulan)
             ->whereYear('adm_jadwal.mulai', $this->tahun)
+            ->where('adm_jadwal.mulai', '<=', now())
+            ->where(fn ($query) => $query->whereHas('absensiPendidik')->orWhereHas('absensiPelajar'))
             ->orderByDesc('adm_jadwal.mulai')
             ->get();
 

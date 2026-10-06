@@ -54,7 +54,9 @@
             </div>
         </section>
 
-        <section class="ck-card p-4">
+        @include('livewire.partials.loading-toast')
+
+        <section class="ck-card p-4" wire:loading.class="ck-loading-dim" wire:target="kelas_id,bulan,tahun">
             @forelse ($slots as $item)
                 <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 py-3 {{ ! $loop->last ? 'border-bottom' : '' }}" wire:key="histori-slot-{{ $item->id }}">
                     <div>
