@@ -106,11 +106,7 @@
 
             <div class="row g-4">
                 <div class="col-md-3 text-center">
-                    @if ($pendidikAktif->foto)
-                        <img src="{{ asset('pendidik/img/'.$pendidikAktif->foto) }}" alt="Foto pendidik" class="rounded" width="140">
-                    @else
-                        <div class="ck-hint">Belum ada foto</div>
-                    @endif
+                    <img src="{{ \App\Support\Foto::url('pendidik/img', $pendidikAktif->foto) }}" alt="Foto pendidik" class="rounded" width="140">
                 </div>
                 <div class="col-md-9">
                     <dl class="row ck-meta mb-4">

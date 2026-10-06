@@ -51,7 +51,7 @@ class PengajarController extends Controller
             'mapelNama' => $data?->mapel?->mapel,
             'nomor_registrasi' => $akun->nomor_registrasi,
             'qr' => $this->qrDataUri($akun->nomor_registrasi),
-            'foto' => $this->imageDataUri(public_path('pendidik/img/'.($data?->foto ?? ''))),
+            'foto' => $this->imageDataUri(\App\Support\Foto::path('pendidik/img', $data?->foto)),
         ])->setPaper([0, 0, 243.78, 153.07]);
 
         return $pdf->download('kartu-absensi-'.$akun->nomor_registrasi.'.pdf');

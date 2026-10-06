@@ -11,7 +11,7 @@
             <div class="p-3 mt-3">
                 <div class="row">
                     <div class="col-xl-4 col-sm-4 text-center">
-                        <img src="{{asset('/pendidik/img/'. $pendidik->foto)}}" width="150" alt="">
+                        <img src="{{ \App\Support\Foto::url('pendidik/img', $pendidik->foto) }}" width="150" alt="">
                     </div>
                     <div class="col-xl-8 col-sm-8">
                         <div class="row">

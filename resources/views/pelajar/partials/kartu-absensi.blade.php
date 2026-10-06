@@ -13,9 +13,7 @@
                     </header>
                     <div class="ck-id-card-body">
                         <div class="ck-photo-frame ck-id-card-photo">
-                            @if ($data?->foto)
-                                <img src="{{ asset('img/pelajar/'.$data->foto) }}" alt="Foto {{ $user }}">
-                            @endif
+                            <img src="{{ \App\Support\Foto::url('img/pelajar', $data?->foto) }}" alt="Foto {{ $user }}">
                         </div>
                         <div class="ck-id-card-meta">
                             <p class="ck-hint mb-1">Nama</p>

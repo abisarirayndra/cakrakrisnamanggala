@@ -125,7 +125,7 @@
                     @if ($foto)
                         <img src="{{ $foto->temporaryUrl() }}" alt="Pratinjau foto">
                     @elseif ($existingFoto)
-                        <img src="{{ asset('img/pelajar/'.$existingFoto) }}" alt="Foto pendaftar">
+                        <img src="{{ \App\Support\Foto::url('img/pelajar', $existingFoto) }}" alt="Foto pendaftar">
                     @else
                         <i class="bi bi-person fs-2 text-secondary"></i>
                     @endif

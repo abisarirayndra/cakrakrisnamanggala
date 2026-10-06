@@ -11,7 +11,7 @@
             <div class="p-3 mt-3">
                 <div class="row">
                     <div class="col-xl-4 col-sm-4 text-center">
-                        <img src="{{asset('/img/pelajar/'. $pendaftar->foto)}}" width="120" alt="">
+                        <img src="{{ \App\Support\Foto::url('img/pelajar', $pendaftar->foto) }}" width="120" alt="">
                     </div>
                     <div class="col-xl-8 col-sm-8">
                         <div class="row">

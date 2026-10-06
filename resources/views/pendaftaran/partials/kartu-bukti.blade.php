@@ -1,9 +1,7 @@
 <div class="row g-4">
     <div class="col-md-4 text-center">
         <div class="ck-photo-frame mx-auto">
-            @if ($data->foto)
-                <img src="{{ asset('img/pelajar/'.$data->foto) }}" alt="Foto {{ $data->nama }}">
-            @endif
+            <img src="{{ \App\Support\Foto::url('img/pelajar', $data->foto) }}" alt="Foto {{ $data->nama }}">
         </div>
     </div>
     <div class="col-md-8">

@@ -116,7 +116,7 @@ class PenggunaController extends Controller
                 ->where('adm_pelajars.pelajar_id', $id)
                 ->firstOrFail();
         $user = $pendaftar->nama;
-        $en_foto = (string) Image::make(public_path('img/pelajar/'. $pendaftar->foto))->encode('data-url');
+        $en_foto = (string) Image::make(\App\Support\Foto::path('img/pelajar', $pendaftar->foto))->encode('data-url');
         $en_logo = (string) Image::make(public_path('img/krisna.png'))->encode('data-url');
         $pdf = PDF::loadView('pendaftaran.review', ['data' => $pendaftar, 'user' => $user,'foto' => $en_foto, 'logo' => $en_logo])->setPaper('a4');
         return $pdf->stream();

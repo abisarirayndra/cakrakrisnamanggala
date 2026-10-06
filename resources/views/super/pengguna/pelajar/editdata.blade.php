@@ -77,7 +77,7 @@
                             <option value="Jember" @if($pelajar->markas == "Jember") {{'selected="selected"'}} @endif>Jember</option>
                         </select>
                     </div>
-                    <img src="{{ asset('img/pendaftar/'. $pelajar->foto) }}" width="100" alt="">
+                    <img src="{{ \App\Support\Foto::url('img/pendaftar', $pelajar->foto) }}" width="100" alt="">
                     <div class="form-group mt-3">
                         <label>Foto (Maksimal 500kb)</label>
                         <input type="file" class="form-control" name="foto">
@@ -152,7 +152,7 @@
                             <option value="Jember" @if($pelajar->markas == "Jember") {{'selected="selected"'}} @endif>Jember</option>
                         </select>
                     </div>
-                    <img src="{{ asset('img/pendaftar/'. $pelajar->foto) }}" width="100" alt="">
+                    <img src="{{ \App\Support\Foto::url('img/pendaftar', $pelajar->foto) }}" width="100" alt="">
                     <div class="form-group mt-3">
                         <label>Foto (Maksimal 500kb)</label>
                         <input type="file" class="form-control" name="foto">

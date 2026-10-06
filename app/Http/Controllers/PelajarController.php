@@ -54,7 +54,7 @@ class PelajarController extends Controller
             'kelasNama' => $akun->kelas?->nama,
             'nomor_registrasi' => $akun->nomor_registrasi,
             'qr' => $this->qrDataUri($akun->nomor_registrasi),
-            'foto' => $this->imageDataUri(public_path('img/pelajar/'.($data?->foto ?? ''))),
+            'foto' => $this->imageDataUri(\App\Support\Foto::path('img/pelajar', $data?->foto)),
         ])->setPaper([0, 0, 243.78, 153.07]);
 
         return $pdf->download('kartu-absensi-'.$akun->nomor_registrasi.'.pdf');

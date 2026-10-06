@@ -11,9 +11,7 @@
         <div class="row g-4 align-items-start">
             <div class="col-md-3 text-center">
                 <div class="ck-photo-frame mx-auto">
-                    @if ($data->foto)
-                        <img src="{{ asset('pendidik/img/'.$data->foto) }}" alt="Foto {{ $user }}">
-                    @endif
+                    <img src="{{ \App\Support\Foto::url('pendidik/img', $data?->foto) }}" alt="Foto {{ $user }}">
                 </div>
             </div>
             <div class="col-md-9">

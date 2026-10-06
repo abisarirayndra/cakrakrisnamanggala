@@ -88,7 +88,7 @@
                             <input type="number" class="form-control form-control-user" name="wa_wali" value="{{$data->wa_wali}}" placeholder="Nomor Telepon/Whatsapp Wali" required>
                         </div>
                         <div class="col-sm-4 mb-3 mb-sm-0">
-                            <img src="{{asset('img/pelajar/'. $data->foto)}}" width="50" alt="" class="m-3">
+                            <img src="{{ \App\Support\Foto::url('img/pelajar', $data->foto) }}" width="50" alt="" class="m-3">
                             <label for="foto">Foto Diri (3x4) <div class="text-danger">Maksimal 500 Kb</div> </label>
                                 <input type="file" id="foto"
                                 name="foto">
