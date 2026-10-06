@@ -94,57 +94,75 @@
         </section>
     @endif
 
-    <div class="d-flex flex-column gap-3">
-        @forelse ($daftar as $item)
-            <section class="ck-card p-4" wire:key="cat-jadwal-{{ $item->id }}">
-                <div class="d-flex flex-wrap align-items-start justify-content-between gap-2">
-                    <div>
-                        <p class="fw-semibold mb-1">{{ $item->nama }}</p>
-                        <p class="ck-hint mb-2">
-                            {{ $item->banks->pluck('nama')->filter()->join(' · ') ?: 'Belum ada bank soal' }}
-                            @if ($item->mulai && $item->selesai)
-                                · {{ $item->mulai->format('d M H:i') }}–{{ $item->selesai->format('H:i') }}
-                            @endif
-                        </p>
-                        <div class="d-flex flex-wrap align-items-center gap-2">
-                            <span class="ck-hint">Token tes</span>
-                            <code class="fs-5 fw-semibold mb-0">{{ $item->token }}</code>
-                            <button
-                                type="button"
-                                class="btn btn-sm btn-ck-ghost"
-                                wire:click="perbaruiToken({{ $item->id }})"
-                                wire:confirm="Perbarui token tes ini? Token lama tidak bisa dipakai lagi."
-                            >
-                                Perbarui
-                            </button>
-                        </div>
-                    </div>
-                    <div class="d-flex flex-wrap gap-2">
-                        <a href="{{ route('admin.cat.jadwal.skor', $item) }}" class="btn btn-sm btn-ck">Live skor</a>
-                        <a href="{{ route('admin.cat.jadwal.report', $item) }}" class="btn btn-sm btn-ck-ghost">Report</a>
-                        <button type="button" class="btn btn-sm btn-ck-ghost" wire:click="lihatChat({{ $item->id }})">
-                            Teks chat
-                        </button>
-                        <button type="button" class="btn btn-sm btn-ck-ghost" wire:click="ubah({{ $item->id }})">
-                            Ubah
-                        </button>
-                        <button
-                            type="button"
-                            class="btn btn-sm btn-outline-danger rounded-pill"
-                            wire:click="hapus({{ $item->id }})"
-                            wire:confirm="Hapus jadwal CAT ini?"
-                        >
-                            Hapus
-                        </button>
-                    </div>
-                </div>
-            </section>
-        @empty
-            <section class="ck-card p-4">
-                <p class="ck-hint mb-0">Belum ada jadwal CAT.</p>
-            </section>
-        @endforelse
-    </div>
+    <section class="ck-card p-4">
+        <div class="table-responsive">
+            <table class="table align-middle mb-0">
+                <thead>
+                    <tr>
+                        <th style="width: 3rem;">No</th>
+                        <th>Nama</th>
+                        <th>Bank soal</th>
+                        <th>Waktu</th>
+                        <th>Token tes</th>
+                        <th class="text-end">Aksi</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @forelse ($daftar as $item)
+                        <tr wire:key="cat-jadwal-{{ $item->id }}">
+                            <td>{{ $loop->iteration }}</td>
+                            <td class="fw-semibold">{{ $item->nama }}</td>
+                            <td>{{ $item->banks->pluck('nama')->filter()->join(' · ') ?: 'Belum ada bank soal' }}</td>
+                            <td class="text-nowrap">
+                                @if ($item->mulai && $item->selesai)
+                                    {{ $item->mulai->format('d M H:i') }}–{{ $item->selesai->format('H:i') }}
+                                @else
+                                    —
+                                @endif
+                            </td>
+                            <td>
+                                <div class="d-flex flex-wrap align-items-center gap-2">
+                                    <code class="fw-semibold">{{ $item->token }}</code>
+                                    <button
+                                        type="button"
+                                        class="btn btn-sm btn-ck-ghost"
+                                        wire:click="perbaruiToken({{ $item->id }})"
+                                        wire:confirm="Perbarui token tes ini? Token lama tidak bisa dipakai lagi."
+                                    >
+                                        Perbarui
+                                    </button>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="d-flex flex-wrap justify-content-end gap-2">
+                                    <a href="{{ route('admin.cat.jadwal.skor', $item) }}" class="btn btn-sm btn-ck">Live skor</a>
+                                    <a href="{{ route('admin.cat.jadwal.report', $item) }}" class="btn btn-sm btn-ck-ghost">Report</a>
+                                    <button type="button" class="btn btn-sm btn-ck-ghost" wire:click="lihatChat({{ $item->id }})">
+                                        Teks chat
+                                    </button>
+                                    <button type="button" class="btn btn-sm btn-ck-ghost" wire:click="ubah({{ $item->id }})">
+                                        Ubah
+                                    </button>
+                                    <button
+                                        type="button"
+                                        class="btn btn-sm btn-outline-danger rounded-pill"
+                                        wire:click="hapus({{ $item->id }})"
+                                        wire:confirm="Hapus jadwal CAT ini?"
+                                    >
+                                        Hapus
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="6" class="ck-hint">Belum ada jadwal CAT.</td>
+                        </tr>
+                    @endforelse
+                </tbody>
+            </table>
+        </div>
+    </section>
 
     @if ($chatId)
         <div class="ck-modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="teksChatTitle">
