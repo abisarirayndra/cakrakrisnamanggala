@@ -114,6 +114,8 @@
                 </div>
                 <div class="col-md-9">
                     <dl class="row ck-meta mb-4">
+                        <dt class="col-sm-4">Nomor registrasi</dt>
+                        <dd class="col-sm-8">{{ $pendidikAktif->user->nomor_registrasi ?: '—' }}</dd>
                         <dt class="col-sm-4">NIK</dt>
                         <dd class="col-sm-8">{{ $pendidikAktif->nik ?: '—' }}</dd>
                         <dt class="col-sm-4">NIP</dt>
@@ -159,7 +161,7 @@
                             type="search"
                             class="form-control"
                             style="max-width: 320px;"
-                            placeholder="Cari nama atau email"
+                            placeholder="Cari nama, email, atau nomor registrasi"
                             aria-label="Cari pendidik"
                             wire:model.live.debounce.400ms="cari"
                         >
@@ -171,6 +173,7 @@
                                 <tr>
                                     <th>Nama</th>
                                     <th>Email</th>
+                                    <th>Nomor registrasi</th>
                                     <th>Markas</th>
                                     <th>Mapel</th>
                                     <th class="text-end">Aksi</th>
@@ -181,6 +184,7 @@
                                     <tr wire:key="pendidik-{{ $pendidik->id }}">
                                         <td class="fw-semibold">{{ $pendidik->nama }}</td>
                                         <td>{{ $pendidik->email }}</td>
+                                        <td>{{ $pendidik->nomor_registrasi ?: '—' }}</td>
                                         <td>{{ $pendidik->pendidik?->namaMarkas() ?: 'Belum ditentukan' }}</td>
                                         <td>{{ $pendidik->pendidik?->mapel?->mapel ?: '—' }}</td>
                                         <td>
@@ -204,7 +208,7 @@
                                     </tr>
                                 @empty
                                     <tr>
-                                        <td colspan="5" class="text-center ck-hint py-4">Tidak ada pendidik ditemukan.</td>
+                                        <td colspan="6" class="text-center ck-hint py-4">Tidak ada pendidik ditemukan.</td>
                                     </tr>
                                 @endforelse
                             </tbody>

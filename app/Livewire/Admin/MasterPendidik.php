@@ -218,7 +218,8 @@ class MasterPendidik extends Component
                 $search = '%'.$this->cari.'%';
 
                 $query->where('users.nama', 'like', $search)
-                    ->orWhere('users.email', 'like', $search);
+                    ->orWhere('users.email', 'like', $search)
+                    ->orWhere('users.nomor_registrasi', 'like', $search);
             }))
             ->orderBy('users.nama')
             ->paginate(10);

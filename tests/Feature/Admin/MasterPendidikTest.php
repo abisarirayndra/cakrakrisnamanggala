@@ -131,6 +131,25 @@ class MasterPendidikTest extends TestCase
             ->assertSee('Matematika');
     }
 
+    public function test_list_and_detail_show_nomor_registrasi(): void
+    {
+        $markas = Markas::create(['markas' => 'Genteng']);
+        $user = User::factory()->create(['role_id' => 3, 'nama' => 'Guru Reg', 'nomor_registrasi' => 'REG-PD-001']);
+        $lain = User::factory()->create(['role_id' => 3, 'nama' => 'Guru Lain', 'nomor_registrasi' => 'REG-PD-999']);
+        Pendidik::create(['pendidik_id' => $user->id, 'mapel_id' => 10, 'markas_id' => $markas->id]);
+        Pendidik::create(['pendidik_id' => $lain->id, 'mapel_id' => 10, 'markas_id' => $markas->id]);
+
+        Livewire::actingAs($this->superAdmin())
+            ->test(MasterPendidik::class)
+            ->assertSee('REG-PD-001')
+            ->set('cari', 'PD-001')
+            ->assertSee('Guru Reg')
+            ->assertDontSee('Guru Lain')
+            ->call('lihat', $user->id)
+            ->assertSee('Nomor registrasi')
+            ->assertSee('REG-PD-001');
+    }
+
     public function test_creating_pendidik_uses_default_password(): void
 
 
