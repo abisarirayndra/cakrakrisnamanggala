@@ -29,9 +29,11 @@
         </div>
     </section>
 
+    @include('livewire.partials.loading-toast')
+
     <div class="row g-4 align-items-start">
         <div class="col-lg-8">
-            <section class="ck-card p-4">
+            <section class="ck-card p-4" wire:loading.class="ck-loading-dim" wire:target="kelas_id,senin">
                 @error('jadwal')
                     <div class="alert alert-ck" role="alert">{{ $message }}</div>
                 @enderror
@@ -54,7 +56,7 @@
                                         </div>
                                         <div class="d-flex flex-wrap align-items-center gap-2">
                                             <p class="mb-0">{{ $slot->mulai->format('H:i') }}–{{ $slot->selesai->format('H:i') }}</p>
-                                            <button type="button" class="btn btn-sm btn-ck-ghost" wire:click="ubah({{ $slot->id }})">
+                                            <button type="button" class="btn btn-sm btn-ck-ghost" wire:click="ubah({{ $slot->id }})" wire:loading.attr="disabled">
                                                 Ubah
                                             </button>
                                             <button
@@ -62,7 +64,9 @@
                                                 class="btn btn-sm btn-outline-danger rounded-pill"
                                                 wire:click="hapus({{ $slot->id }})"
                                                 wire:confirm="Hapus slot ini?"
+                                                wire:loading.attr="disabled"
                                             >
+                                                <span wire:loading wire:target="hapus({{ $slot->id }})" class="spinner-border spinner-border-sm me-1" aria-hidden="true"></span>
                                                 Hapus
                                             </button>
                                         </div>
@@ -91,23 +95,43 @@
                     </div>
                     <div class="mb-3">
                         <label for="mapel_id" class="form-label">Mapel</label>
-                        <select id="mapel_id" class="form-select @error('mapel_id') is-invalid @enderror" wire:model="mapel_id" @disabled($kelas_id === '')>
-                            <option value="">Pilih mapel</option>
-                            @foreach ($mapelList as $mapel)
-                                <option value="{{ $mapel->id }}">{{ $mapel->mapel }}</option>
-                            @endforeach
-                        </select>
-                        @error('mapel_id') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                        <div class="ck-select2" wire:ignore wire:key="mapel-select-{{ $kelas_id }}">
+                            <select
+                                id="mapel_id"
+                                class="form-select"
+                                x-data
+                                x-init="ckSelect2Livewire($el, $wire, 'mapel_id')"
+                                data-placeholder="Cari mapel"
+                                data-empty="Tidak ada mapel"
+                                @disabled($kelas_id === '')
+                            >
+                                <option value="">Pilih mapel</option>
+                                @foreach ($mapelList as $mapel)
+                                    <option value="{{ $mapel->id }}" @selected((string) $mapel->id === (string) $mapel_id)>{{ $mapel->mapel }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        @error('mapel_id') <div class="invalid-feedback d-block">{{ $message }}</div> @enderror
                     </div>
                     <div class="mb-3">
                         <label for="pendidik_id" class="form-label">Pendidik</label>
-                        <select id="pendidik_id" class="form-select @error('pendidik_id') is-invalid @enderror" wire:model="pendidik_id" @disabled($kelas_id === '')>
-                            <option value="">Pilih pendidik</option>
-                            @foreach ($pendidikList as $pendidik)
-                                <option value="{{ $pendidik->id }}">{{ $pendidik->nama }}</option>
-                            @endforeach
-                        </select>
-                        @error('pendidik_id') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                        <div class="ck-select2" wire:ignore wire:key="pendidik-select-{{ $kelas_id }}">
+                            <select
+                                id="pendidik_id"
+                                class="form-select"
+                                x-data
+                                x-init="ckSelect2Livewire($el, $wire, 'pendidik_id')"
+                                data-placeholder="Cari pendidik"
+                                data-empty="Tidak ada pendidik"
+                                @disabled($kelas_id === '')
+                            >
+                                <option value="">Pilih pendidik</option>
+                                @foreach ($pendidikList as $pendidik)
+                                    <option value="{{ $pendidik->id }}" @selected((string) $pendidik->id === (string) $pendidik_id)>{{ $pendidik->nama }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        @error('pendidik_id') <div class="invalid-feedback d-block">{{ $message }}</div> @enderror
                     </div>
                     <div class="row g-3 mb-4">
                         <div class="col-6">
@@ -123,6 +147,7 @@
                     </div>
                     <div class="d-flex flex-column gap-2">
                         <button type="submit" class="btn btn-ck w-100" wire:loading.attr="disabled" @disabled($kelas_id === '')>
+                            <span wire:loading wire:target="simpan" class="spinner-border spinner-border-sm me-1" aria-hidden="true"></span>
                             {{ $editId ? 'Simpan perubahan' : 'Tambah slot' }}
                         </button>
                         @if ($editId)
@@ -134,3 +159,7 @@
         </div>
     </div>
 </div>
+
+@assets
+@include('livewire.partials.select2-livewire')
+@endassets
