@@ -2,10 +2,12 @@
 
 namespace Tests\Feature\Admin;
 
+use App\AbsensiPelajar;
 use App\Kelas;
 use App\Livewire\Admin\MasterPelajar;
 use App\Markas;
 use App\Pelajar;
+use App\Support\AbsensiStatus;
 use App\User;
 use Livewire\Livewire;
 use Tests\Concerns\CreatesAdminMasterSchema;
@@ -336,6 +338,41 @@ class MasterPelajarTest extends TestCase
             ->call('lihat', $pelajar->id)
             ->assertSee('Alumni Suspend')
             ->assertSee('Unsuspend');
+    }
+
+    public function test_detail_shows_rekap_kehadiran_termasuk_izin_dan_alpa(): void
+    {
+        $markas = Markas::create(['markas' => 'Genteng']);
+        $pelajar = User::factory()->create(['role_id' => 4, 'nama' => 'Siswa Rekap']);
+        $lain = User::factory()->create(['role_id' => 4]);
+        Pelajar::create(['pelajar_id' => $pelajar->id, 'markas_id' => $markas->id]);
+
+        $statuses = [
+            AbsensiStatus::ONTIME, AbsensiStatus::ONTIME, AbsensiStatus::TELAT,
+            AbsensiStatus::IZIN, AbsensiStatus::IZIN, AbsensiStatus::SAKIT,
+            AbsensiStatus::ALPA, AbsensiStatus::ALPA, AbsensiStatus::ALPA,
+        ];
+
+        foreach ($statuses as $i => $status) {
+            AbsensiPelajar::create(['jadwal_id' => $i + 1, 'pelajar_id' => $pelajar->id, 'status' => $status]);
+        }
+
+        AbsensiPelajar::create(['jadwal_id' => 99, 'pelajar_id' => $lain->id, 'status' => AbsensiStatus::ALPA]);
+
+        Livewire::actingAs($this->superAdmin())
+            ->test(MasterPelajar::class)
+            ->call('lihat', $pelajar->id)
+            ->assertViewHas('rekapKehadiran', [
+                'hadir' => 3,
+                'ontime' => 2,
+                'telat' => 1,
+                'izin' => 2,
+                'sakit' => 1,
+                'alpa' => 3,
+                'total' => 9,
+            ])
+            ->assertSee('Rekap kehadiran')
+            ->assertSee('Alpa');
     }
 
     public function test_non_admin_cannot_mount_master_pelajar_directly(): void

@@ -135,6 +135,42 @@
                 <dd class="col-sm-9">{{ $pelajarAktif->user->kelas?->nama ?: 'Belum ditentukan' }}</dd>
             </dl>
 
+            @if ($rekapKehadiran)
+                <div class="mb-4">
+                    <div class="d-flex flex-wrap align-items-baseline justify-content-between gap-2 mb-3">
+                        <h3 class="h6 text-uppercase fw-semibold mb-0" style="color: var(--ck-gold);">Rekap kehadiran</h3>
+                        <span class="ck-hint">Total {{ $rekapKehadiran['total'] }} pertemuan tercatat</span>
+                    </div>
+                    <div class="row g-3">
+                        <div class="col-6 col-md">
+                            <section class="ck-card p-3 h-100">
+                                <p class="ck-hint mb-1">Hadir</p>
+                                <p class="h4 mb-1" style="color: var(--ck-success);">{{ $rekapKehadiran['hadir'] }}</p>
+                                <p class="ck-hint small mb-0">Ontime {{ $rekapKehadiran['ontime'] }} · Telat {{ $rekapKehadiran['telat'] }}</p>
+                            </section>
+                        </div>
+                        <div class="col-6 col-md">
+                            <section class="ck-card p-3 h-100">
+                                <p class="ck-hint mb-1">Izin</p>
+                                <p class="h4 mb-0">{{ $rekapKehadiran['izin'] }}</p>
+                            </section>
+                        </div>
+                        <div class="col-6 col-md">
+                            <section class="ck-card p-3 h-100">
+                                <p class="ck-hint mb-1">Sakit</p>
+                                <p class="h4 mb-0">{{ $rekapKehadiran['sakit'] }}</p>
+                            </section>
+                        </div>
+                        <div class="col-6 col-md">
+                            <section class="ck-card p-3 h-100">
+                                <p class="ck-hint mb-1">Alpa</p>
+                                <p class="h4 mb-0" style="color: var(--ck-danger);">{{ $rekapKehadiran['alpa'] }}</p>
+                            </section>
+                        </div>
+                    </div>
+                </div>
+            @endif
+
             <div class="d-flex flex-wrap gap-2">
                 <button type="button" class="btn btn-ck" wire:click="edit({{ $pelajarAktif->pelajar_id }})">Edit biodata</button>
                 @if ((int) $pelajarAktif->user->role_id === 6)

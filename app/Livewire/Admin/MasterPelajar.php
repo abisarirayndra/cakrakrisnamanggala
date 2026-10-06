@@ -2,9 +2,11 @@
 
 namespace App\Livewire\Admin;
 
+use App\AbsensiPelajar;
 use App\Kelas;
 use App\Markas;
 use App\Pelajar;
+use App\Support\AbsensiStatus;
 use App\Support\AdminVisibility;
 use App\User;
 use Illuminate\Support\Facades\File;
@@ -233,10 +235,15 @@ class MasterPelajar extends Component
             ->paginate(10);
 
         $pelajarAktif = null;
+        $rekapKehadiran = null;
 
         if ($this->pelajarUserId !== null) {
             $pelajarAktif = $this->authorizeRow($this->pelajarUserId);
             $pelajarAktif->load(['user.kelas', 'markas']);
+
+            if ($this->halaman === 'lihat') {
+                $rekapKehadiran = $this->rekapKehadiran($this->pelajarUserId);
+            }
         }
 
         $markasList = $actor->isSuperAdmin()
@@ -246,6 +253,7 @@ class MasterPelajar extends Component
         return view('livewire.admin.master-pelajar', [
             'pelajars' => $pelajars,
             'pelajarAktif' => $pelajarAktif,
+            'rekapKehadiran' => $rekapKehadiran,
             'markasList' => $markasList,
             'kelasList' => $this->kelasListFor($actor),
         ]);
@@ -266,6 +274,36 @@ class MasterPelajar extends Component
         }
 
         return $pelajar;
+    }
+
+    /**
+     * @return array{hadir: int, ontime: int, telat: int, izin: int, sakit: int, alpa: int, total: int}
+     */
+    private function rekapKehadiran(int $userId): array
+    {
+        $perStatus = AbsensiPelajar::query()
+            ->where('pelajar_id', $userId)
+            ->whereNotNull('status')
+            ->selectRaw('status, COUNT(*) as jumlah')
+            ->groupBy('status')
+            ->pluck('jumlah', 'status')
+            ->mapWithKeys(fn ($jumlah, $status) => [(int) $status => (int) $jumlah]);
+
+        $ontime = $perStatus->get(AbsensiStatus::ONTIME, 0);
+        $telat = $perStatus->get(AbsensiStatus::TELAT, 0);
+        $izin = $perStatus->get(AbsensiStatus::IZIN, 0);
+        $sakit = $perStatus->get(AbsensiStatus::SAKIT, 0);
+        $alpa = $perStatus->get(AbsensiStatus::ALPA, 0);
+
+        return [
+            'hadir' => $ontime + $telat,
+            'ontime' => $ontime,
+            'telat' => $telat,
+            'izin' => $izin,
+            'sakit' => $sakit,
+            'alpa' => $alpa,
+            'total' => $ontime + $telat + $izin + $sakit + $alpa,
+        ];
     }
 
     private function kelasListFor(User $actor)
