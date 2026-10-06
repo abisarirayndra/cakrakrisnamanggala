@@ -406,6 +406,11 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/mathlive@0.105.3/mathlive-static.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/mathlive@0.105.3/mathlive-fonts.css">
+<style>
+    :root {
+        --keyboard-zindex: 1060;
+    }
+</style>
 @endassets
 @script
 <script>
