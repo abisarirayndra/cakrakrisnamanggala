@@ -271,7 +271,7 @@ class AbsensiSlotTest extends TestCase
         $this->assertSame('Aljabar linier', $row->jurnal);
     }
 
-    public function test_other_guru_pulang_without_jurnal_ok(): void
+    public function test_first_pendidik_pulang_fills_jurnal_even_if_not_guru_utama(): void
     {
         Carbon::setTestNow('2026-09-14 08:30:00');
         [$admin, $kelas, $mapel, $guru, $slot] = $this->slotFixture();
@@ -289,12 +289,53 @@ class AbsensiSlotTest extends TestCase
             ->set('kelas_id', (string) $kelas->id)
             ->set('jadwal_id', (string) $slot->id)
             ->set('mode', 'pulang')
-            ->set('jurnal', '')
             ->set('token', 'GURU02')
             ->call('scan')
+            ->assertHasNoErrors()
+            ->assertSet('showJurnalModal', true)
+            ->set('jurnal', 'Materi pengganti')
+            ->call('simpanJurnalPulang')
             ->assertHasNoErrors();
 
-        $this->assertNotNull(AbsensiPendidik::where('pendidik_id', $lain->id)->first()->pulang);
+        $row = AbsensiPendidik::where('pendidik_id', $lain->id)->first();
+        $this->assertNotNull($row->pulang);
+        $this->assertSame('Materi pengganti', $row->jurnal);
+    }
+
+    public function test_next_pendidik_pulang_skips_jurnal_after_first(): void
+    {
+        Carbon::setTestNow('2026-09-14 08:30:00');
+        [$admin, $kelas, $mapel, $guru, $slot] = $this->slotFixture();
+        $lain = User::factory()->create(['role_id' => 3, 'nomor_registrasi' => 'GURU02']);
+        Pendidik::create(['pendidik_id' => $lain->id, 'markas_id' => $kelas->markas_id]);
+        AbsensiPendidik::create([
+            'jadwal_id' => $slot->id,
+            'pendidik_id' => $lain->id,
+            'datang' => '2026-09-14 08:00:00',
+            'pulang' => '2026-09-14 08:20:00',
+            'jurnal' => 'Sudah diisi',
+            'status' => AbsensiStatus::HADIR,
+        ]);
+        AbsensiPendidik::create([
+            'jadwal_id' => $slot->id,
+            'pendidik_id' => $guru->id,
+            'datang' => '2026-09-14 08:00:00',
+            'status' => AbsensiStatus::HADIR,
+        ]);
+
+        Livewire::actingAs($admin)
+            ->test(AbsensiSlot::class)
+            ->set('kelas_id', (string) $kelas->id)
+            ->set('jadwal_id', (string) $slot->id)
+            ->set('mode', 'pulang')
+            ->set('token', $guru->nomor_registrasi)
+            ->call('scan')
+            ->assertHasNoErrors()
+            ->assertSet('showJurnalModal', false);
+
+        $row = AbsensiPendidik::where('pendidik_id', $guru->id)->first();
+        $this->assertNotNull($row->pulang);
+        $this->assertNull($row->jurnal);
     }
 
     public function test_scan_outside_window_is_rejected(): void
@@ -517,7 +558,8 @@ class AbsensiSlotTest extends TestCase
             ->set('izin_status', (string) AbsensiStatus::SAKIT)
             ->call('simpanIzin')
             ->assertHasNoErrors()
-            ->assertSeeHtml('wire:key="absensi-pelajar-'.$siswa->id.'"');
+            ->assertSeeHtml('wire:key="absensi-pelajar-izin-'.AbsensiPelajar::firstOrFail()->id.'"')
+            ->assertSee('Siswa Izin Roster');
     }
 
     public function test_datang_and_izin_use_separate_report_cards(): void
@@ -552,7 +594,7 @@ class AbsensiSlotTest extends TestCase
             ->assertSee('Siswa Izin Laporan')
             ->html();
 
-        $datangPos = strpos($html, '>Datang</h2>');
+        $datangPos = strpos($html, '>Datang (');
         $izinLaporanPos = strpos($html, 'id="laporan-izin"');
         $datangNama = strpos($html, 'Siswa Datang Laporan');
         $izinNama = strpos($html, 'Siswa Izin Laporan');
@@ -759,6 +801,228 @@ class AbsensiSlotTest extends TestCase
         $this->assertSame(AbsensiStatus::ALPA, (int) $row->status);
         $this->assertNull($row->datang);
         $this->assertSame(0, AbsensiPendidik::count());
+    }
+
+    public function test_edit_absensi_pendidik_updates_jam_status_and_jurnal(): void
+    {
+        Carbon::setTestNow('2026-09-14 08:30:00');
+        [$admin, $kelas, $mapel, $guru, $slot] = $this->slotFixture();
+        $row = AbsensiPendidik::create([
+            'jadwal_id' => $slot->id,
+            'pendidik_id' => $guru->id,
+            'datang' => '2026-09-14 08:10:00',
+            'status' => AbsensiStatus::TELAT,
+        ]);
+
+        Livewire::actingAs($admin)
+            ->test(AbsensiSlot::class)
+            ->set('kelas_id', (string) $kelas->id)
+            ->set('jadwal_id', (string) $slot->id)
+            ->call('ubahAbsensi', 'pendidik', $row->id)
+            ->assertSet('showEditModal', true)
+            ->assertSet('edit_datang', '08:10')
+            ->set('edit_datang', '07:55')
+            ->set('edit_pulang', '09:00')
+            ->set('edit_jurnal', 'Revisi jurnal')
+            ->call('simpanEditAbsensi')
+            ->assertHasNoErrors()
+            ->assertSet('showEditModal', false);
+
+        $row->refresh();
+        $this->assertSame('07:55', $row->datang->format('H:i'));
+        $this->assertSame('09:00', $row->pulang->format('H:i'));
+        $this->assertSame(AbsensiStatus::ONTIME, (int) $row->status);
+        $this->assertSame('Revisi jurnal', $row->jurnal);
+    }
+
+    public function test_edit_absensi_to_izin_clears_jam_and_requires_keterangan(): void
+    {
+        Carbon::setTestNow('2026-09-14 08:30:00');
+        [$admin, $kelas, $mapel, $guru, $slot, $siswa] = $this->slotFixture();
+        $row = AbsensiPelajar::create([
+            'jadwal_id' => $slot->id,
+            'pelajar_id' => $siswa->id,
+            'datang' => '2026-09-14 08:00:00',
+            'status' => AbsensiStatus::ONTIME,
+        ]);
+
+        $component = Livewire::actingAs($admin)
+            ->test(AbsensiSlot::class)
+            ->set('kelas_id', (string) $kelas->id)
+            ->set('jadwal_id', (string) $slot->id)
+            ->call('ubahAbsensi', 'pelajar', $row->id)
+            ->set('edit_status', (string) AbsensiStatus::IZIN)
+            ->call('simpanEditAbsensi')
+            ->assertHasErrors(['edit_keterangan']);
+
+        $component->set('edit_keterangan', 'Acara keluarga')
+            ->call('simpanEditAbsensi')
+            ->assertHasNoErrors();
+
+        $row->refresh();
+        $this->assertNull($row->datang);
+        $this->assertSame(AbsensiStatus::IZIN, (int) $row->status);
+        $this->assertSame('Acara keluarga', $row->keterangan);
+    }
+
+    public function test_hapus_absensi_deletes_row(): void
+    {
+        Carbon::setTestNow('2026-09-14 08:30:00');
+        [$admin, $kelas, $mapel, $guru, $slot, $siswa] = $this->slotFixture();
+        $row = AbsensiPelajar::create([
+            'jadwal_id' => $slot->id,
+            'pelajar_id' => $siswa->id,
+            'datang' => '2026-09-14 08:00:00',
+            'status' => AbsensiStatus::ONTIME,
+        ]);
+
+        Livewire::actingAs($admin)
+            ->test(AbsensiSlot::class)
+            ->set('kelas_id', (string) $kelas->id)
+            ->set('jadwal_id', (string) $slot->id)
+            ->assertSee('Hapus')
+            ->call('hapusAbsensi', 'pelajar', $row->id);
+
+        $this->assertSame(0, AbsensiPelajar::count());
+    }
+
+    public function test_hapus_absensi_other_slot_is_rejected(): void
+    {
+        Carbon::setTestNow('2026-09-14 08:30:00');
+        [$admin, $kelas, $mapel, $guru, $slot, $siswa] = $this->slotFixture();
+        $lain = Jadwal::create([
+            'staf_id' => $admin->id,
+            'mapel_id' => $mapel->id,
+            'pendidik_id' => $guru->id,
+            'kelas_id' => $kelas->id,
+            'mulai' => '2026-09-14 10:00:00',
+            'selesai' => '2026-09-14 11:00:00',
+        ]);
+        $row = AbsensiPelajar::create([
+            'jadwal_id' => $lain->id,
+            'pelajar_id' => $siswa->id,
+            'datang' => '2026-09-14 10:00:00',
+            'status' => AbsensiStatus::ONTIME,
+        ]);
+
+        try {
+            Livewire::actingAs($admin)
+                ->test(AbsensiSlot::class)
+                ->set('kelas_id', (string) $kelas->id)
+                ->set('jadwal_id', (string) $slot->id)
+                ->call('hapusAbsensi', 'pelajar', $row->id);
+        } catch (ModelNotFoundException|NotFoundHttpException) {
+        }
+
+        $this->assertSame(1, AbsensiPelajar::count());
+    }
+
+    public function test_input_manual_is_hidden_by_default(): void
+    {
+        Carbon::setTestNow('2026-09-14 08:30:00');
+        [$admin, $kelas, $mapel, $guru, $slot] = $this->slotFixture();
+
+        Livewire::actingAs($admin)
+            ->test(AbsensiSlot::class)
+            ->set('kelas_id', (string) $kelas->id)
+            ->set('jadwal_id', (string) $slot->id)
+            ->assertSee('Input manual')
+            ->assertDontSeeHtml('id="manual_user_id"')
+            ->call('toggleManual')
+            ->assertSeeHtml('id="manual_user_id"');
+    }
+
+    public function test_download_report_link_appears_after_slot_selected(): void
+    {
+        Carbon::setTestNow('2026-09-14 08:30:00');
+        [$admin, $kelas, $mapel, $guru, $slot] = $this->slotFixture();
+
+        Livewire::actingAs($admin)
+            ->test(AbsensiSlot::class)
+            ->set('kelas_id', (string) $kelas->id)
+            ->assertDontSee('Unduh report')
+            ->set('jadwal_id', (string) $slot->id)
+            ->assertSee('Unduh report')
+            ->assertSeeHtml(route('admin.jadwal.histori.pdf', $slot));
+    }
+
+    public function test_form_izin_is_hidden_by_default(): void
+    {
+        Carbon::setTestNow('2026-09-14 08:30:00');
+        [$admin, $kelas, $mapel, $guru, $slot] = $this->slotFixture();
+
+        Livewire::actingAs($admin)
+            ->test(AbsensiSlot::class)
+            ->set('kelas_id', (string) $kelas->id)
+            ->set('jadwal_id', (string) $slot->id)
+            ->assertDontSeeHtml('id="izin_user_id"')
+            ->call('toggleIzin')
+            ->assertSeeHtml('id="izin_user_id"');
+    }
+
+    public function test_input_manual_datang_uses_current_time(): void
+    {
+        Carbon::setTestNow('2026-09-14 08:30:00');
+        [$admin, $kelas, $mapel, $guru, $slot, $siswa] = $this->slotFixture();
+
+        Livewire::actingAs($admin)
+            ->test(AbsensiSlot::class)
+            ->set('kelas_id', (string) $kelas->id)
+            ->set('jadwal_id', (string) $slot->id)
+            ->call('toggleManual')
+            ->set('manual_mode', 'datang')
+            ->set('manual_user_id', (string) $siswa->id)
+            ->call('simpanManual')
+            ->assertHasNoErrors()
+            ->assertSet('manual_user_id', '');
+
+        $row = AbsensiPelajar::firstOrFail();
+        $this->assertSame('08:30', $row->datang->format('H:i'));
+        $this->assertSame(AbsensiStatus::TELAT, (int) $row->status);
+    }
+
+    public function test_input_manual_pulang_without_datang_is_rejected(): void
+    {
+        Carbon::setTestNow('2026-09-14 08:30:00');
+        [$admin, $kelas, $mapel, $guru, $slot, $siswa] = $this->slotFixture();
+
+        Livewire::actingAs($admin)
+            ->test(AbsensiSlot::class)
+            ->set('kelas_id', (string) $kelas->id)
+            ->set('jadwal_id', (string) $slot->id)
+            ->set('manual_mode', 'pulang')
+            ->set('manual_user_id', (string) $siswa->id)
+            ->call('simpanManual')
+            ->assertHasErrors(['manual_user_id' => 'Belum absen datang']);
+    }
+
+    public function test_input_manual_pulang_pendidik_opens_jurnal(): void
+    {
+        Carbon::setTestNow('2026-09-14 09:00:00');
+        [$admin, $kelas, $mapel, $guru, $slot] = $this->slotFixture();
+        AbsensiPendidik::create([
+            'jadwal_id' => $slot->id,
+            'pendidik_id' => $guru->id,
+            'datang' => '2026-09-14 08:00:00',
+            'status' => AbsensiStatus::HADIR,
+        ]);
+
+        Livewire::actingAs($admin)
+            ->test(AbsensiSlot::class)
+            ->set('kelas_id', (string) $kelas->id)
+            ->set('jadwal_id', (string) $slot->id)
+            ->set('manual_mode', 'pulang')
+            ->set('manual_user_id', (string) $guru->id)
+            ->call('simpanManual')
+            ->assertHasNoErrors()
+            ->assertSet('showJurnalModal', true)
+            ->set('jurnal', 'Jurnal manual')
+            ->call('simpanJurnalPulang')
+            ->assertHasNoErrors();
+
+        $row = AbsensiPendidik::firstOrFail();
+        $this->assertSame('09:00', $row->pulang->format('H:i'));
+        $this->assertSame('Jurnal manual', $row->jurnal);
     }
 
     private function slotFixture(): array
