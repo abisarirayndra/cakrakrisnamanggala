@@ -15,6 +15,7 @@ use Carbon\Carbon;
 use App\AbsensiPendidik;
 use App\AbsensiPelajar;
 use App\AbsensiStaf;
+use App\Support\AbsensiStatus;
 use Image;
 use PDF;
 
@@ -793,7 +794,7 @@ class JadwalAbsensiController extends Controller
     public function uploadAbsensiPendidikJasmani(Request $request){
         // return $request;
         foreach($request->tambah as $key=> $value){
-            AbsensiPendidik::create($value);
+            AbsensiPendidik::create(array_merge($value, ['status' => AbsensiStatus::HADIR]));
         }
 
         return back()->with('success','Absensi Pendidik Berhasil');
@@ -801,7 +802,7 @@ class JadwalAbsensiController extends Controller
     public function uploadAbsensiPelajarJasmani(Request $request){
         // return $request;
         foreach($request->tambah2 as $key=> $value){
-            AbsensiPelajar::create($value);
+            AbsensiPelajar::create(array_merge($value, ['status' => AbsensiStatus::HADIR]));
         }
 
         return back()->with('success-pelajar','Absensi Pelajar Berhasil');

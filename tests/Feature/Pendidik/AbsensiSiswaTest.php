@@ -483,6 +483,39 @@ class AbsensiSiswaTest extends TestCase
         $this->assertNull($row->pulang);
     }
 
+    public function test_absen_lapangan_saves_hadir_not_sakit(): void
+    {
+        [$guru, , , $slot, $siswa] = $this->slotFixture();
+
+        $this->actingAs($guru)
+            ->post(route('pendidik.absensi.upload_absensi_jasmani'), [
+                'tambah' => [[
+                    'pendidik_id' => $guru->id,
+                    'jadwal_id' => $slot->id,
+                    'datang' => $slot->mulai,
+                    'pulang' => $slot->selesai,
+                    'status' => AbsensiStatus::SAKIT,
+                    'jurnal' => 'Lari pagi',
+                ]],
+            ])
+            ->assertRedirect();
+
+        $this->actingAs($guru)
+            ->post(route('pendidik.absensi.upload_absensi_jasmani.pelajar'), [
+                'tambah2' => [[
+                    'pelajar_id' => $siswa->id,
+                    'jadwal_id' => $slot->id,
+                    'datang' => $slot->mulai,
+                    'pulang' => $slot->selesai,
+                    'status' => AbsensiStatus::SAKIT,
+                ]],
+            ])
+            ->assertRedirect();
+
+        $this->assertSame(AbsensiStatus::HADIR, (int) AbsensiPendidik::query()->where('pendidik_id', $guru->id)->value('status'));
+        $this->assertSame(AbsensiStatus::HADIR, (int) AbsensiPelajar::query()->where('pelajar_id', $siswa->id)->value('status'));
+    }
+
     private function slotFixture(): array
     {
         [$guru, $kelas, $mapel] = $this->guruFixture();

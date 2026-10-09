@@ -64,7 +64,6 @@
                                 <input type="hidden" name="tambah[0][jadwal_id]" value="{{ $jadwal->id }}">
                                 <input type="hidden" name="tambah[0][datang]" value="{{ $jadwal->mulai }}">
                                 <input type="hidden" name="tambah[0][pulang]" value="{{ $jadwal->selesai }}">
-                                <input type="hidden" name="tambah[0][status]" value="3">
                             </td>
                             <td>
                                 <input type="text" name="tambah[0][jurnal]" required class="form-control" placeholder="Ngajar apa hari ini ?">
@@ -114,7 +113,6 @@
                                 <input type="hidden" name="tambah2[0][jadwal_id]" value="{{ $jadwal->id }}">
                                 <input type="hidden" name="tambah2[0][datang]" value="{{ $jadwal->mulai }}">
                                 <input type="hidden" name="tambah2[0][pulang]" value="{{ $jadwal->selesai }}">
-                                <input type="hidden" name="tambah2[0][status]" value="3">
                             </td>
                             <td>
                                 <button type="button" name="add2" id="add2" class="btn btn-sm btn-ck">Tambah</button>
@@ -217,7 +215,7 @@
     var i = 0;
     $("#add").click(function () {
         ++i;
-        $("#dynamicTable").append('<tr><td></td><td><select name="tambah['+i+'][pendidik_id]" class="form-select">@foreach ($nama_pendidik as $item)<option value="{{ $item->id }}">{{ $item->nama }}</option>@endforeach</select><input type="hidden" name="tambah['+i+'][jadwal_id]" value="{{ $jadwal->id }}"><input type="hidden" name="tambah['+i+'][datang]" value="{{ $jadwal->mulai }}"><input type="hidden" name="tambah['+i+'][pulang]" value="{{ $jadwal->selesai }}"><input type="hidden" name="tambah['+i+'][status]" value="3"></td><td><input type="text" name="tambah['+i+'][jurnal]" required class="form-control" placeholder="Ngajar apa hari ini ?"></td><td><button type="button" class="btn btn-ck-ghost btn-sm remove-tr">Hapus</button></td></tr>');
+        $("#dynamicTable").append('<tr><td></td><td><select name="tambah['+i+'][pendidik_id]" class="form-select">@foreach ($nama_pendidik as $item)<option value="{{ $item->id }}">{{ $item->nama }}</option>@endforeach</select><input type="hidden" name="tambah['+i+'][jadwal_id]" value="{{ $jadwal->id }}"><input type="hidden" name="tambah['+i+'][datang]" value="{{ $jadwal->mulai }}"><input type="hidden" name="tambah['+i+'][pulang]" value="{{ $jadwal->selesai }}"></td><td><input type="text" name="tambah['+i+'][jurnal]" required class="form-control" placeholder="Ngajar apa hari ini ?"></td><td><button type="button" class="btn btn-ck-ghost btn-sm remove-tr">Hapus</button></td></tr>');
     });
     $(document).on('click', '.remove-tr', function () {
         $(this).parents('tr').remove();
@@ -226,7 +224,7 @@
     var j = 0;
     $("#add2").click(function () {
         ++j;
-        $("#dynamicTable2").append('<tr><td></td><td><select name="tambah2['+j+'][pelajar_id]" class="form-select">@foreach ($nama_pelajar as $item)<option value="{{ $item->id }}">{{ $item->nama }}</option>@endforeach</select><input type="hidden" name="tambah2['+j+'][jadwal_id]" value="{{ $jadwal->id }}"><input type="hidden" name="tambah2['+j+'][datang]" value="{{ $jadwal->mulai }}"><input type="hidden" name="tambah2['+j+'][pulang]" value="{{ $jadwal->selesai }}"><input type="hidden" name="tambah2['+j+'][status]" value="3"></td><td><button type="button" class="btn btn-ck-ghost btn-sm remove-pelajar">Hapus</button></td></tr>');
+        $("#dynamicTable2").append('<tr><td></td><td><select name="tambah2['+j+'][pelajar_id]" class="form-select">@foreach ($nama_pelajar as $item)<option value="{{ $item->id }}">{{ $item->nama }}</option>@endforeach</select><input type="hidden" name="tambah2['+j+'][jadwal_id]" value="{{ $jadwal->id }}"><input type="hidden" name="tambah2['+j+'][datang]" value="{{ $jadwal->mulai }}"><input type="hidden" name="tambah2['+j+'][pulang]" value="{{ $jadwal->selesai }}"></td><td><button type="button" class="btn btn-ck-ghost btn-sm remove-pelajar">Hapus</button></td></tr>');
     });
     $(document).on('click', '.remove-pelajar', function () {
         $(this).parents('tr').remove();
