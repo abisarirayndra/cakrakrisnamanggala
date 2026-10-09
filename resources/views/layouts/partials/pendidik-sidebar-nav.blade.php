@@ -1,6 +1,5 @@
 @php
     $active = fn (string ...$patterns) => request()->routeIs(...$patterns) ? 'active' : '';
-    $pendidikMapel = auth()->user()?->pendidik?->mapel?->mapel;
     $absensiMenuOpen = request()->routeIs(
         'pendidik.absensi',
         'pendidik.absensi.histori-mengajar',
@@ -79,9 +78,3 @@
         </a>
     </div>
 </div>
-@if ($pendidikMapel === 'Jasmani')
-    <a href="{{ route('pendidik.absensi.jadwal_jasmani') }}" data-nav="jasmani" class="ck-nav-link {{ $active('pendidik.absensi.jadwal_jasmani', 'pendidik.absensi.jadwal_jasmani.absensi') }}">
-        <i class="bi bi-geo-alt"></i>
-        <span>Absen Lapangan</span>
-    </a>
-@endif

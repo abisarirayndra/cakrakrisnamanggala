@@ -204,7 +204,7 @@ class PendidikPanelTest extends TestCase
             ->assertOk()
             ->assertSee('ck-sidebar', false)
             ->assertSee('Jadwal Hari Ini')
-            ->assertSee('data-nav="jasmani"', false);
+            ->assertDontSee('data-nav="jasmani"', false);
     }
 
     private function pendidik(array $overrides = []): User
